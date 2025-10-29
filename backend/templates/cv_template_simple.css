@@ -1,0 +1,216 @@
+/* CV Template Simple - CSS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #333;
+    background: #fff;
+}
+
+.cv-container {
+    max-width: 210mm; /* A4 width */
+    min-height: 297mm; /* A4 height */
+    margin: 0 auto;
+    padding: 20mm;
+    background: white;
+}
+
+/* Header */
+.cv-header {
+    border-bottom: 3px solid #2c3e50;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.cv-header h1 {
+    font-size: 32pt;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.cv-header h2 {
+    font-size: 18pt;
+    font-weight: 400;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+}
+
+.contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    font-size: 10pt;
+    color: #555;
+}
+
+.contact-info p {
+    margin: 0;
+}
+
+.contact-info a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.contact-info a:hover {
+    text-decoration: underline;
+}
+
+/* Sections */
+.cv-section {
+    margin-bottom: 25px;
+    page-break-inside: avoid;
+}
+
+.cv-section h3 {
+    font-size: 16pt;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+/* Experience Items */
+.experience-item,
+.education-item,
+.certification-item,
+.project-item {
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+}
+
+.experience-item h4,
+.education-item h4,
+.certification-item h4,
+.project-item h4 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 5px;
+}
+
+.location,
+.institution,
+.issuer {
+    font-size: 11pt;
+    color: #7f8c8d;
+    font-style: italic;
+    margin-bottom: 3px;
+}
+
+.date-range,
+.date,
+.grade {
+    font-size: 10pt;
+    color: #95a5a6;
+    margin-bottom: 8px;
+}
+
+.description,
+.custom-content {
+    font-size: 11pt;
+    color: #555;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+/* Skills */
+.skills-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.skill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #ecf0f1;
+    border-radius: 4px;
+}
+
+.skill-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.skill-level {
+    font-size: 9pt;
+    color: #7f8c8d;
+    text-transform: uppercase;
+}
+
+/* Languages */
+.languages-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.language-item {
+    padding: 8px 15px;
+    background: #e8f4f8;
+    border-left: 3px solid #3498db;
+    border-radius: 2px;
+}
+
+.language-name {
+    font-weight: 500;
+    color: #2c3e50;
+    margin-right: 8px;
+}
+
+.language-level {
+    font-size: 10pt;
+    color: #7f8c8d;
+}
+
+/* Technologies */
+.technologies {
+    font-size: 10pt;
+    color: #555;
+    margin-top: 5px;
+}
+
+/* Links */
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Print styles */
+@media print {
+    body {
+        background: white;
+    }
+
+    .cv-container {
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .cv-section {
+        page-break-inside: avoid;
+    }
+
+    .experience-item,
+    .education-item,
+    .certification-item,
+    .project-item {
+        page-break-inside: avoid;
+    }
+}
