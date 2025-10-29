@@ -33,7 +33,7 @@ class ExperienceSerializer(serializers.ModelSerializer):
         model = Experience
         fields = [
             'id', 'company', 'position', 'location', 'start_date',
-            'end_date', 'is_current', 'description', 'order'
+            'end_date', 'is_current', 'description', 'work_mode', 'order'
         ]
         read_only_fields = ['id']
 
@@ -45,7 +45,7 @@ class EducationSerializer(serializers.ModelSerializer):
         model = Education
         fields = [
             'id', 'institution', 'degree', 'field_of_study', 'location',
-            'start_date', 'end_date', 'is_current', 'grade', 'description', 'order'
+            'start_date', 'end_date', 'is_current', 'grade', 'description', 'work_mode', 'order'
         ]
         read_only_fields = ['id']
 
@@ -72,8 +72,8 @@ class ResumeSerializer(serializers.ModelSerializer):
         model = Resume
         fields = [
             'id', 'session_id', 'user', 'template', 'template_name',
-            'full_name', 'email', 'phone', 'address', 'website',
-            'linkedin_url', 'github_url', 'photo', 'date_of_birth',
+            'full_name', 'email', 'phone', 'address', 'city', 'postal_code',
+            'website', 'linkedin_url', 'github_url', 'photo', 'date_of_birth',
             'nationality', 'driving_license', 'summary', 'title',
             'experience_data', 'education_data', 'skills_data',
             'languages_data', 'certifications_data', 'projects_data',

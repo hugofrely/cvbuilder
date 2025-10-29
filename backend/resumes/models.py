@@ -54,6 +54,8 @@ class Resume(models.Model):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
+    city = models.CharField(max_length=100, blank=True, help_text="City")
+    postal_code = models.CharField(max_length=20, blank=True, help_text="Postal code")
     website = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
@@ -128,6 +130,16 @@ class Experience(models.Model):
     end_date = models.DateField(blank=True, null=True)
     is_current = models.BooleanField(default=False)
     description = models.TextField(blank=True)
+    work_mode = models.CharField(
+        max_length=20,
+        choices=[
+            ('remote', 'Remote'),
+            ('onsite', 'On-site'),
+            ('hybrid', 'Hybrid'),
+        ],
+        blank=True,
+        help_text="Work mode (remote, onsite, hybrid)"
+    )
     order = models.IntegerField(default=0)
 
     class Meta:
@@ -151,6 +163,16 @@ class Education(models.Model):
     is_current = models.BooleanField(default=False)
     grade = models.CharField(max_length=50, blank=True)
     description = models.TextField(blank=True)
+    work_mode = models.CharField(
+        max_length=20,
+        choices=[
+            ('remote', 'Remote'),
+            ('onsite', 'On-site'),
+            ('hybrid', 'Hybrid'),
+        ],
+        blank=True,
+        help_text="Education mode (remote, onsite, hybrid)"
+    )
     order = models.IntegerField(default=0)
 
     class Meta:

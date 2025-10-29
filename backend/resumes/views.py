@@ -154,6 +154,8 @@ class ResumeViewSet(viewsets.ModelViewSet):
                 'email': resume.email,
                 'phone': resume.phone,
                 'address': resume.address,
+                'city': resume.city,
+                'postal_code': resume.postal_code,
                 'website': resume.website,
                 'linkedin_url': resume.linkedin_url,
                 'github_url': resume.github_url,

@@ -24,6 +24,7 @@ export interface Experience {
   endDate: string;
   currentJob: boolean;
   description: string;
+  workMode?: 'remote' | 'onsite' | 'hybrid';
 }
 
 export interface Education {
@@ -35,6 +36,7 @@ export interface Education {
   endDate: string;
   currentStudy: boolean;
   description: string;
+  workMode?: 'remote' | 'onsite' | 'hybrid';
 }
 
 export interface Skill {

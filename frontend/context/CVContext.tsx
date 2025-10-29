@@ -11,9 +11,11 @@ interface CVContextType {
   addExperience: (experience: CVData['experiences'][0]) => void;
   updateExperience: (id: string, experience: Partial<CVData['experiences'][0]>) => void;
   deleteExperience: (id: string) => void;
+  reorderExperiences: (newExperiences: CVData['experiences']) => void;
   addEducation: (education: CVData['education'][0]) => void;
   updateEducation: (id: string, education: Partial<CVData['education'][0]>) => void;
   deleteEducation: (id: string) => void;
+  reorderEducation: (newEducation: CVData['education']) => void;
   addSkill: (skill: CVData['skills'][0]) => void;
   updateSkill: (id: string, skill: Partial<CVData['skills'][0]>) => void;
   deleteSkill: (id: string) => void;
@@ -117,6 +119,14 @@ export function CVProvider({ children }: { children: ReactNode }) {
     triggerAutoSave();
   };
 
+  const reorderExperiences = (newExperiences: CVData['experiences']) => {
+    setCVData((prev) => ({
+      ...prev,
+      experiences: newExperiences,
+    }));
+    triggerAutoSave();
+  };
+
   const addEducation = (education: CVData['education'][0]) => {
     setCVData((prev) => ({
       ...prev,
@@ -139,6 +149,14 @@ export function CVProvider({ children }: { children: ReactNode }) {
     setCVData((prev) => ({
       ...prev,
       education: prev.education.filter((edu) => edu.id !== id),
+    }));
+    triggerAutoSave();
+  };
+
+  const reorderEducation = (newEducation: CVData['education']) => {
+    setCVData((prev) => ({
+      ...prev,
+      education: newEducation,
     }));
     triggerAutoSave();
   };
@@ -244,9 +262,11 @@ export function CVProvider({ children }: { children: ReactNode }) {
         addExperience,
         updateExperience,
         deleteExperience,
+        reorderExperiences,
         addEducation,
         updateEducation,
         deleteEducation,
+        reorderEducation,
         addSkill,
         updateSkill,
         deleteSkill,
