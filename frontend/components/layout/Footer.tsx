@@ -30,26 +30,18 @@ export default function Footer() {
               Liens Rapides
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Accueil
-                </MuiLink>
-              </Link>
-              <Link href="/templates" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Templates
-                </MuiLink>
-              </Link>
-              <Link href="/pricing" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Tarifs
-                </MuiLink>
-              </Link>
-              <Link href="/builder" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Créer un CV
-                </MuiLink>
-              </Link>
+              <MuiLink href="/" component={Link} color="inherit" underline="hover">
+                Accueil
+              </MuiLink>
+              <MuiLink href="/templates" component={Link} color="inherit" underline="hover">
+                Templates
+              </MuiLink>
+              <MuiLink href="/pricing" component={Link} color="inherit" underline="hover">
+                Tarifs
+              </MuiLink>
+              <MuiLink href="/builder" component={Link} color="inherit" underline="hover">
+                Créer un CV
+              </MuiLink>
             </Box>
           </Grid>
 
@@ -58,21 +50,15 @@ export default function Footer() {
               Légal
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Link href="/legal/terms" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Conditions d'utilisation
-                </MuiLink>
-              </Link>
-              <Link href="/legal/privacy" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Politique de confidentialité
-                </MuiLink>
-              </Link>
-              <Link href="/contact" passHref legacyBehavior>
-                <MuiLink color="inherit" underline="hover">
-                  Contact
-                </MuiLink>
-              </Link>
+              <MuiLink href="/legal/terms" component={Link} color="inherit" underline="hover">
+                Conditions d'utilisation
+              </MuiLink>
+              <MuiLink href="/legal/privacy" component={Link} color="inherit" underline="hover">
+                Politique de confidentialité
+              </MuiLink>
+              <MuiLink href="/contact" component={Link} color="inherit" underline="hover">
+                Contact
+              </MuiLink>
             </Box>
           </Grid>
         </Grid>

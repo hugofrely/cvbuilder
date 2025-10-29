@@ -1,33 +1,31 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Container,
   Paper,
   IconButton,
-  Drawer,
   Button,
   useMediaQuery,
   useTheme,
-  AppBar,
-  Toolbar,
   Typography,
   Tooltip,
   Snackbar,
   Alert,
-  CircularProgress,
+  Fade,
+  Divider,
+  alpha,
 } from '@mui/material';
 import {
   Visibility,
-  VisibilityOff,
   Download,
   Save,
   ZoomIn,
   ZoomOut,
-  Menu as MenuIcon,
-  CheckCircle,
   Palette,
+  Edit as EditIcon,
+  Close,
 } from '@mui/icons-material';
 import { CVProvider, useCVContext } from '@/context/CVContext';
 import BuilderStepper from '@/components/builder/BuilderStepper';
@@ -44,10 +42,9 @@ import { useResume } from '@/hooks/useResume';
 function BuilderContent() {
   const { currentStep, cvData, loadCVData, saveStatus, setSaveStatus, selectedTemplateId, setSelectedTemplateId } = useCVContext();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const [showPreview, setShowPreview] = useState(!isMobile);
-  const [previewZoom, setPreviewZoom] = useState(100);
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [previewZoom, setPreviewZoom] = useState(75);
   const [mobileShowPreview, setMobileShowPreview] = useState(false);
   const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false);
 
@@ -55,7 +52,6 @@ function BuilderContent() {
   const {
     resumeId,
     saveStatus: hookSaveStatus,
-    isLoading,
     error,
     saveResume,
     loadResume,
@@ -90,7 +86,6 @@ function BuilderContent() {
         const result = await loadResume(storedResumeId);
         if (result) {
           loadCVData(result.cvData);
-          // Charger le template ID depuis le backend
           if (result.templateId) {
             setSelectedTemplateId(result.templateId);
           }
@@ -112,17 +107,21 @@ function BuilderContent() {
     setSaveStatus(hookSaveStatus);
   }, [hookSaveStatus, setSaveStatus]);
 
+  // Update preview visibility on screen size change
+  useEffect(() => {
+    setShowPreview(!isMobile);
+  }, [isMobile]);
+
   const handleZoomIn = () => {
-    setPreviewZoom((prev) => Math.min(prev + 10, 150));
+    setPreviewZoom((prev) => Math.min(prev + 10, 200));
   };
 
   const handleZoomOut = () => {
-    setPreviewZoom((prev) => Math.max(prev - 10, 50));
+    setPreviewZoom((prev) => Math.max(prev - 10, 30));
   };
 
   const handleExportPDF = async () => {
     if (!resumeId) {
-      // Save first if no resume ID
       await saveResume(cvData);
     }
 
@@ -140,154 +139,172 @@ function BuilderContent() {
   };
 
   const handleTemplateSelect = async (templateId: number) => {
-    // Update context avec le nouveau template
     setSelectedTemplateId(templateId);
-    // Save with new template
     await saveResume(cvData, templateId);
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
-      {/* Barre d'outils supérieure */}
-      <AppBar
-        position="sticky"
-        color="default"
-        elevation={1}
-        sx={{ bgcolor: 'white', borderBottom: 1, borderColor: 'divider' }}
-      >
-        <Toolbar>
-          {isMobile && (
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              onClick={() => setMobileDrawerOpen(true)}
-              sx={{ mr: 2 }}
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Création de CV
-          </Typography>
-
-          {/* Save status indicator */}
-          <Box sx={{ display: 'flex', alignItems: 'center', ml: 2, flexGrow: 1 }}>
-            {saveStatus.status === 'saving' && (
-              <>
-                <CircularProgress size={16} sx={{ mr: 1 }} />
-                <Typography variant="body2" color="text.secondary">
-                  Sauvegarde...
-                </Typography>
-              </>
-            )}
-            {saveStatus.status === 'saved' && (
-              <>
-                <CheckCircle color="success" sx={{ fontSize: 16, mr: 1 }} />
-                <Typography variant="body2" color="success.main">
-                  Sauvegardé
-                </Typography>
-              </>
-            )}
-            {saveStatus.status === 'error' && (
-              <Typography variant="body2" color="error">
-                {saveStatus.message || 'Erreur de sauvegarde'}
-              </Typography>
-            )}
-          </Box>
-
-          {!isMobile && (
-            <>
-              <Tooltip title="Zoom -">
-                <IconButton onClick={handleZoomOut} disabled={previewZoom <= 50}>
-                  <ZoomOut />
-                </IconButton>
-              </Tooltip>
-              <Typography variant="body2" sx={{ mx: 1, minWidth: 50, textAlign: 'center' }}>
-                {previewZoom}%
-              </Typography>
-              <Tooltip title="Zoom +">
-                <IconButton onClick={handleZoomIn} disabled={previewZoom >= 150}>
-                  <ZoomIn />
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title={showPreview ? 'Masquer l\'aperçu' : 'Afficher l\'aperçu'}>
-                <IconButton onClick={() => setShowPreview(!showPreview)} sx={{ ml: 1 }}>
-                  {showPreview ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </Tooltip>
-
-              <Button
-                variant="outlined"
-                startIcon={<Palette />}
-                onClick={() => setTemplateSelectorOpen(true)}
-                sx={{ ml: 2 }}
-              >
-                Template
-              </Button>
-
-              <Button
-                variant="outlined"
-                startIcon={<Save />}
-                onClick={handleSave}
-                sx={{ ml: 1 }}
-              >
-                Sauvegarder
-              </Button>
-            </>
-          )}
-
-          <Button
-            variant="contained"
-            startIcon={<Download />}
-            onClick={handleExportPDF}
-            sx={{ ml: 2 }}
-          >
-            Télécharger
-          </Button>
-        </Toolbar>
-      </AppBar>
-
+    <Box
+      sx={{
+        minHeight: '100vh',
+        bgcolor: alpha(theme.palette.primary.main, 0.02),
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       {/* Contenu principal */}
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, minHeight: 'calc(100vh - 64px)' }}>
-        {/* Panneau de formulaire - Desktop */}
-        {!isMobile && (
-          <Box
-            sx={{
-              width: showPreview ? '45%' : '100%',
-              p: 4,
-              overflowY: 'auto',
-              height: 'calc(100vh - 64px)',
-              transition: 'width 0.3s ease',
-            }}
-          >
-            <Container maxWidth="md">
-              <BuilderStepper />
-              <Paper elevation={0} sx={{ p: 4, border: 1, borderColor: 'divider' }}>
-                {renderStepContent()}
-              </Paper>
-            </Container>
-          </Box>
-        )}
+      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden', pb: { xs: 10, md: 12 } }}>
+        {/* Mode Desktop : Layout côte à côte */}
+        {!isMobile ? (
+          <>
+            {/* Panneau d'édition */}
+            <Box
+              sx={{
+                width: showPreview ? '50%' : '100%',
+                transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+              }}
+            >
+              <Box
+                sx={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  px: { xs: 2, sm: 3, md: 4 },
+                  py: 4,
+                  '&::-webkit-scrollbar': {
+                    width: '8px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    bgcolor: 'transparent',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    bgcolor: alpha(theme.palette.primary.main, 0.2),
+                    borderRadius: '4px',
+                    '&:hover': {
+                      bgcolor: alpha(theme.palette.primary.main, 0.3),
+                    },
+                  },
+                }}
+              >
+                <Container maxWidth="md" sx={{ px: 0 }}>
+                  <BuilderStepper />
+                  <Fade in timeout={300}>
+                    <Paper
+                      elevation={0}
+                      sx={{
+                        p: { xs: 3, sm: 4 },
+                        border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                        borderRadius: 3,
+                        bgcolor: 'white',
+                        boxShadow: `0 2px 12px ${alpha(theme.palette.common.black, 0.04)}`,
+                      }}
+                    >
+                      {renderStepContent()}
+                    </Paper>
+                  </Fade>
+                </Container>
+              </Box>
+            </Box>
 
-        {/* Mobile - Affichage formulaire ou preview */}
-        {isMobile && (
-          <Box sx={{ width: '100%', p: 2, overflowY: 'auto', pb: 10 }}>
+            {/* Panneau de prévisualisation */}
+            <Fade in={showPreview} timeout={300}>
+              <Box
+                sx={{
+                  width: showPreview ? '50%' : 0,
+                  bgcolor: alpha(theme.palette.grey[100], 0.4),
+                  borderLeft: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                  display: showPreview ? 'flex' : 'none',
+                  flexDirection: 'column',
+                  overflow: 'hidden',
+                }}
+              >
+                <Box
+                  sx={{
+                    flex: 1,
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'flex-start',
+                    py: 4,
+                    px: 2,
+                    '&::-webkit-scrollbar': {
+                      width: '8px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      bgcolor: 'transparent',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      bgcolor: alpha(theme.palette.primary.main, 0.2),
+                      borderRadius: '4px',
+                      '&:hover': {
+                        bgcolor: alpha(theme.palette.primary.main, 0.3),
+                      },
+                    },
+                  }}
+                >
+                  <Box
+                    sx={{
+                      transform: `scale(${previewZoom / 100})`,
+                      transformOrigin: 'top center',
+                      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    <CVPreview />
+                  </Box>
+                </Box>
+              </Box>
+            </Fade>
+          </>
+        ) : (
+          /* Mode Mobile */
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             {!mobileShowPreview ? (
-              // Formulaire sur mobile
-              <Box>
+              /* Formulaire sur mobile */
+              <Box
+                sx={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  px: 2,
+                  py: 3,
+                  pb: 12,
+                }}
+              >
                 <BuilderStepper />
-                <Paper elevation={0} sx={{ p: 2, border: 1, borderColor: 'divider' }}>
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 2.5,
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    borderRadius: 2,
+                    bgcolor: 'white',
+                    boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.04)}`,
+                  }}
+                >
                   {renderStepContent()}
                 </Paper>
               </Box>
             ) : (
-              // Preview sur mobile
-              <Box sx={{ bgcolor: 'grey.200', p: 1, borderRadius: 2 }}>
+              /* Preview sur mobile */
+              <Box
+                sx={{
+                  flex: 1,
+                  bgcolor: alpha(theme.palette.grey[100], 0.4),
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  p: 2,
+                  pb: 12,
+                }}
+              >
                 <Box
                   sx={{
-                    transform: 'scale(0.85)',
+                    transform: 'scale(0.4)',
                     transformOrigin: 'top center',
                   }}
                 >
@@ -295,62 +312,202 @@ function BuilderContent() {
                 </Box>
               </Box>
             )}
-          </Box>
-        )}
 
-        {/* Panneau de prévisualisation - Desktop */}
-        {!isMobile && showPreview && (
-          <Box
-            sx={{
-              width: '55%',
-              bgcolor: 'grey.200',
-              p: 4,
-              overflowY: 'auto',
-              height: 'calc(100vh - 64px)',
-              borderLeft: 1,
-              borderColor: 'divider',
-              transition: 'all 0.3s ease',
-            }}
-          >
-            <Box
-              sx={{
-                transform: `scale(${previewZoom / 100})`,
-                transformOrigin: 'top center',
-                transition: 'transform 0.3s ease',
-              }}
-            >
-              <CVPreview />
-            </Box>
-          </Box>
-        )}
-
-        {/* Bouton flottant pour basculer entre formulaire et preview sur mobile */}
-        {isMobile && (
-          <Box
-            sx={{
-              position: 'fixed',
-              bottom: 16,
-              right: 16,
-              zIndex: 1000,
-            }}
-          >
-            <Button
-              variant="contained"
-              startIcon={mobileShowPreview ? <MenuIcon /> : <Visibility />}
-              onClick={() => setMobileShowPreview(!mobileShowPreview)}
-              size="large"
-              sx={{
-                boxShadow: 4,
-                '&:hover': {
-                  boxShadow: 6,
-                },
-              }}
-            >
-              {mobileShowPreview ? 'Modifier' : 'Aperçu'}
-            </Button>
           </Box>
         )}
       </Box>
+
+      {/* Toolbar fixe en bas */}
+      <Fade in timeout={300}>
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            bgcolor: 'white',
+            borderTop: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+            backdropFilter: 'blur(20px)',
+            boxShadow: `0 -4px 20px ${alpha(theme.palette.common.black, 0.08)}`,
+            zIndex: 1100,
+            py: { xs: 1.5, md: 2 },
+            px: { xs: 2, md: 4 },
+          }}
+        >
+          <Container maxWidth={false}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: { xs: 1, md: 2 },
+                flexWrap: 'wrap',
+              }}
+            >
+              {/* Zoom Controls */}
+              {!isMobile && showPreview && (
+                <>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      px: 2,
+                      py: 1,
+                      bgcolor: alpha(theme.palette.grey[100], 0.5),
+                      borderRadius: 2,
+                      border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    }}
+                  >
+                    <Tooltip title="Zoom arrière">
+                      <IconButton
+                        size="small"
+                        onClick={handleZoomOut}
+                        disabled={previewZoom <= 30}
+                        sx={{
+                          '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.1) },
+                        }}
+                      >
+                        <ZoomOut fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        minWidth: 50,
+                        textAlign: 'center',
+                        fontWeight: 600,
+                        color: 'primary.main',
+                      }}
+                    >
+                      {previewZoom}%
+                    </Typography>
+                    <Tooltip title="Zoom avant">
+                      <IconButton
+                        size="small"
+                        onClick={handleZoomIn}
+                        disabled={previewZoom >= 200}
+                        sx={{
+                          '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.1) },
+                        }}
+                      >
+                        <ZoomIn fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+
+                  <Divider orientation="vertical" flexItem />
+                </>
+              )}
+
+              {/* Toggle Preview (Desktop) */}
+              {!isMobile && (
+                <>
+                  <Tooltip title={showPreview ? "Masquer l'aperçu" : "Afficher l'aperçu"}>
+                    <Button
+                      variant={showPreview ? 'contained' : 'outlined'}
+                      size="medium"
+                      startIcon={showPreview ? <Close /> : <Visibility />}
+                      onClick={() => setShowPreview(!showPreview)}
+                      sx={{
+                        borderRadius: 2,
+                        textTransform: 'none',
+                        fontWeight: 600,
+                        minWidth: 140,
+                      }}
+                    >
+                      {showPreview ? 'Masquer' : 'Aperçu'}
+                    </Button>
+                  </Tooltip>
+
+                  <Divider orientation="vertical" flexItem />
+                </>
+              )}
+
+              {/* Toggle Preview (Mobile) */}
+              {isMobile && (
+                <>
+                  <Button
+                    variant={mobileShowPreview ? 'outlined' : 'contained'}
+                    size="medium"
+                    startIcon={mobileShowPreview ? <EditIcon /> : <Visibility />}
+                    onClick={() => setMobileShowPreview(!mobileShowPreview)}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      minWidth: 120,
+                    }}
+                  >
+                    {mobileShowPreview ? 'Modifier' : 'Aperçu'}
+                  </Button>
+
+                  <Divider orientation="vertical" flexItem />
+                </>
+              )}
+
+              {/* Template Button */}
+              <Button
+                variant="outlined"
+                size="medium"
+                startIcon={<Palette />}
+                onClick={() => setTemplateSelectorOpen(true)}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  minWidth: { xs: 'auto', md: 120 },
+                  px: { xs: 2, md: 3 },
+                }}
+              >
+                {isMobile ? 'Modèle' : 'Modèle'}
+              </Button>
+
+              {/* Save Button */}
+              <Button
+                variant="outlined"
+                size="medium"
+                startIcon={<Save />}
+                onClick={handleSave}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  minWidth: { xs: 'auto', md: 140 },
+                  px: { xs: 2, md: 3 },
+                }}
+              >
+                Sauvegarder
+              </Button>
+
+              <Divider orientation="vertical" flexItem />
+
+              {/* Download Button */}
+              <Button
+                variant="contained"
+                size="medium"
+                startIcon={<Download />}
+                onClick={handleExportPDF}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  minWidth: { xs: 'auto', md: 150 },
+                  px: { xs: 2, md: 3 },
+                  boxShadow: 3,
+                  '&:hover': {
+                    boxShadow: 5,
+                    transform: 'translateY(-2px)',
+                  },
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
+              >
+                Télécharger
+              </Button>
+            </Box>
+          </Container>
+        </Box>
+      </Fade>
 
       {/* Template Selector Dialog */}
       <TemplateSelector
@@ -360,14 +517,82 @@ function BuilderContent() {
         currentTemplateId={selectedTemplateId}
       />
 
-      {/* Error Snackbar */}
+      {/* Saving Snackbar */}
+      <Snackbar
+        open={saveStatus.status === 'saving'}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        sx={{ mt: 2 }}
+      >
+        <Alert
+          severity="info"
+          variant="filled"
+          sx={{
+            minWidth: 200,
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          Sauvegarde en cours...
+        </Alert>
+      </Snackbar>
+
+      {/* Saved Snackbar */}
+      <Snackbar
+        open={saveStatus.status === 'saved'}
+        autoHideDuration={2000}
+        onClose={() => setSaveStatus({ status: 'idle' })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        sx={{ mt: 2 }}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          sx={{
+            minWidth: 200,
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          Sauvegardé avec succès !
+        </Alert>
+      </Snackbar>
+
+      {/* Save Error Snackbar */}
+      <Snackbar
+        open={saveStatus.status === 'error'}
+        autoHideDuration={4000}
+        onClose={() => setSaveStatus({ status: 'idle' })}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        sx={{ mt: 2 }}
+      >
+        <Alert
+          severity="error"
+          variant="filled"
+          sx={{
+            minWidth: 200,
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
+          {saveStatus.message || 'Erreur de sauvegarde'}
+        </Alert>
+      </Snackbar>
+
+      {/* General Error Snackbar */}
       <Snackbar
         open={!!error}
         autoHideDuration={6000}
         onClose={() => {}}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert severity="error" sx={{ width: '100%' }}>
+        <Alert
+          severity="error"
+          sx={{
+            width: '100%',
+            borderRadius: 2,
+            boxShadow: 3,
+          }}
+        >
           {error}
         </Alert>
       </Snackbar>

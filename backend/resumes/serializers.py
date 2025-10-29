@@ -5,6 +5,9 @@ from .models import Template, Resume, Experience, Education, Skill
 class TemplateSerializer(serializers.ModelSerializer):
     """Template serializer"""
 
+    # Override thumbnail field to return raw value instead of full URL
+    thumbnail = serializers.CharField(read_only=True)
+
     class Meta:
         model = Template
         fields = [
@@ -16,6 +19,9 @@ class TemplateSerializer(serializers.ModelSerializer):
 
 class TemplateDetailSerializer(serializers.ModelSerializer):
     """Template detail serializer with HTML/CSS"""
+
+    # Override thumbnail field to return raw value instead of full URL
+    thumbnail = serializers.CharField(read_only=True)
 
     class Meta:
         model = Template
