@@ -11,7 +11,7 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
-# Build the application
+# Build the application (standalone mode)
 RUN npm run build
 
 # Production image
@@ -20,18 +20,24 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
+ENV HOSTNAME=0.0.0.0
 
-# Copy necessary files from builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/.next ./.next
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Copy standalone output from builder
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.mjs ./
 
-# Install only production dependencies
-RUN npm ci --only=production
+# Set ownership
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
 
 # Expose the port
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
