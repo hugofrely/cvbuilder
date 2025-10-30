@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from .serializers import (
     UserSerializer,
@@ -10,6 +11,15 @@ from .serializers import (
 )
 
 User = get_user_model()
+
+
+def get_tokens_for_user(user):
+    """Generate JWT tokens for a user"""
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -24,8 +34,13 @@ class UserRegistrationView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
+        # Generate tokens for the new user
+        tokens = get_tokens_for_user(user)
+
         return Response({
             'user': UserSerializer(user).data,
+            'access': tokens['access'],
+            'refresh': tokens['refresh'],
             'message': 'User registered successfully'
         }, status=status.HTTP_201_CREATED)
 
@@ -67,3 +82,21 @@ class ChangePasswordView(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """Custom login view that returns user data along with tokens"""
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == 200:
+            # Get the user from the email
+            email = request.data.get('email')
+            try:
+                user = User.objects.get(email=email)
+                response.data['user'] = UserSerializer(user).data
+            except User.DoesNotExist:
+                pass
+
+        return response

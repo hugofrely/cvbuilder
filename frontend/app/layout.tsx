@@ -6,6 +6,7 @@ import NavBar from "@/components/layout/NavBar";
 import Footer from "@/components/layout/Footer";
 import { Box } from "@mui/material";
 import { StructuredData } from "./structured-data";
+import { AuthProvider } from "@/context/AuthContext";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -74,21 +75,23 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className={`${inter.variable} antialiased`}>
-        <ThemeRegistry>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <NavBar />
-            <Box component="main" sx={{ flexGrow: 1, mt: 8 }}>
-              {children}
+        <AuthProvider>
+          <ThemeRegistry>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+              }}
+            >
+              <NavBar />
+              <Box component="main" sx={{ flexGrow: 1, mt: 8 }}>
+                {children}
+              </Box>
+              <Footer />
             </Box>
-            <Footer />
-          </Box>
-        </ThemeRegistry>
+          </ThemeRegistry>
+        </AuthProvider>
       </body>
     </html>
   );

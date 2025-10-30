@@ -38,14 +38,15 @@ class TemplateViewSet(viewsets.ReadOnlyModelViewSet):
     """
     ViewSet for viewing templates.
 
-    list: Get all active templates
+    list: Get all active templates with pagination and filtering
     retrieve: Get a specific template with HTML/CSS
-    free: List only free templates
-    premium: List only premium templates
+    free: List only free templates (without pagination)
+    premium: List only premium templates (without pagination)
     """
     queryset = Template.objects.filter(is_active=True)
     permission_classes = [permissions.AllowAny]
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['is_premium']
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at']
     ordering = ['name']
@@ -57,17 +58,17 @@ class TemplateViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=False, methods=['get'])
     def free(self, request):
-        """Get only free templates"""
+        """Get only free templates (without pagination)"""
         templates = self.get_queryset().filter(is_premium=False)
         serializer = self.get_serializer(templates, many=True)
-        return Response(serializer.data)
+        return Response({'count': len(templates), 'results': serializer.data})
 
     @action(detail=False, methods=['get'])
     def premium(self, request):
-        """Get only premium templates"""
+        """Get only premium templates (without pagination)"""
         templates = self.get_queryset().filter(is_premium=True)
         serializer = self.get_serializer(templates, many=True)
-        return Response(serializer.data)
+        return Response({'count': len(templates), 'results': serializer.data})
 
 
 class ResumeViewSet(viewsets.ModelViewSet):
@@ -196,32 +197,139 @@ class ResumeViewSet(viewsets.ModelViewSet):
         """
         Export resume as PDF.
 
-        Returns PDF file with or without watermark based on payment status.
+        Logic:
+        1. Check if template is premium
+        2. Check if user can export (is premium user OR has paid for this CV)
+        3. Generate PDF with WeasyPrint
+        4. Add watermark if not paid and template is premium
+        5. Return PDF file or payment required error
         """
         resume = self.get_object()
 
         try:
-            # TODO: Implement PDF generation logic
-            # This would use WeasyPrint or ReportLab to generate PDF
-            # from the template HTML/CSS with resume data
+            from datetime import datetime
+            from .pdf_service import PDFGenerationService
+            import logging
 
-            # For now, return a placeholder response
+            logger = logging.getLogger(__name__)
+            logger.info(f'Starting PDF export for resume {resume.id}')
+
+            # Get template (use default if none selected)
+            template = resume.template
+            if not template:
+                logger.warning(f'No template set for resume {resume.id}, using default')
+                # Get first available free template
+                template = Template.objects.filter(is_active=True, is_premium=False).first()
+                if not template:
+                    logger.error('No template available in database')
+                    return Response({
+                        'error': 'No template available'
+                    }, status=status.HTTP_404_NOT_FOUND)
+
+            logger.info(f'Using template {template.id} (premium: {template.is_premium})')
+
+            # Check if user can export without payment
+            # Free templates: always exportable
+            # Premium templates: need to be premium user or have paid for this CV
+            if template.is_premium:
+                # Check if user is premium
+                user_is_premium = False
+                if request.user.is_authenticated:
+                    user_is_premium = getattr(request.user, 'is_premium', False)
+
+                # Check if this specific CV has been paid for
+                cv_is_paid = resume.is_paid
+
+                if not user_is_premium and not cv_is_paid:
+                    return Response({
+                        'error': 'Payment required',
+                        'message': 'Ce modèle est premium. Veuillez devenir membre Premium ou payer pour ce CV.',
+                        'template_is_premium': True,
+                        'requires_payment': True,
+                        'payment_options': {
+                            'per_cv': 2.40,
+                            'premium_unlimited': 24.00
+                        }
+                    }, status=status.HTTP_402_PAYMENT_REQUIRED)
+
+            # Prepare context data for template
+            # Using flat structure to match Handlebars template expectations
+            import json
+
+            context_data = {
+                # Personal Information (flat structure for Handlebars)
+                'full_name': resume.full_name or '',
+                'first_name': resume.full_name.split()[0] if resume.full_name else '',
+                'last_name': ' '.join(resume.full_name.split()[1:]) if resume.full_name and len(resume.full_name.split()) > 1 else '',
+                'email': resume.email or '',
+                'phone': resume.phone or '',
+                'address': resume.address or '',
+                'city': resume.city or '',
+                'postal_code': resume.postal_code or '',
+                'website': resume.website or '',
+                'linkedin_url': resume.linkedin_url or '',
+                'github_url': resume.github_url or '',
+                'title': resume.title or '',
+                'date_of_birth': str(resume.date_of_birth) if resume.date_of_birth else '',
+                'nationality': resume.nationality or '',
+                'driving_license': resume.driving_license or '',
+
+                # Professional content
+                'summary': resume.summary or '',
+                'experience': resume.experience_data or [],
+                'education': resume.education_data or [],
+                'skills': resume.skills_data or [],
+                'languages': resume.languages_data or [],
+                'hobbies': [],
+                'references': [],
+
+                # Alternative naming conventions (for compatibility)
+                'experiences': resume.experience_data or [],
+                'educations': resume.education_data or [],
+            }
+
+            # Generate PDF with Playwright
+            # This supports JavaScript templates (Handlebars, etc.)
+            logger.info('Generating PDF with Playwright')
+
+            # Get HTML and CSS from template
+            html_content = template.template_html or ''
+            css_content = template.template_css or ''
+
+            # Generate PDF using Playwright service
+            pdf_content = PDFGenerationService.generate_pdf_sync(
+                html_content=html_content,
+                css_content=css_content,
+                cv_data=context_data,
+                filename=f"{resume.id}.pdf"
+            )
+
+            logger.info(f'PDF generated successfully: {len(pdf_content)} bytes')
+
+            # Generate filename
+            safe_name = resume.full_name.replace(' ', '_') if resume.full_name else f'CV_{resume.id}'
+            timestamp = datetime.now().strftime('%Y%m%d')
+            filename = f'{safe_name}_{timestamp}.pdf'
+
+            # Create response
+            response = HttpResponse(pdf_content, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename}"'
+            response['X-Resume-ID'] = str(resume.id)
+            response['X-Template-Premium'] = str(template.is_premium)
+
+            return response
+
+        except Template.DoesNotExist:
             return Response({
-                'message': 'PDF export functionality to be implemented',
-                'can_export_without_watermark': resume.can_export_without_watermark,
-                'resume_id': resume.id
-            }, status=status.HTTP_501_NOT_IMPLEMENTED)
-
-            # Example implementation would be:
-            # pdf_content = generate_pdf(resume)
-            # response = HttpResponse(pdf_content, content_type='application/pdf')
-            # response['Content-Disposition'] = f'attachment; filename="resume_{resume.id}.pdf"'
-            # return response
-
+                'error': 'Template not found',
+                'detail': 'Le modèle sélectionné n\'existe pas'
+            }, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
+            import traceback
             return Response({
                 'error': 'Failed to generate PDF',
-                'detail': str(e)
+                'detail': str(e),
+                'traceback': traceback.format_exc()
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=False, methods=['post'])
@@ -235,6 +343,123 @@ class ResumeViewSet(viewsets.ModelViewSet):
         return Response({
             'message': 'LinkedIn import functionality to be implemented'
         }, status=status.HTTP_501_NOT_IMPLEMENTED)
+
+    @action(detail=False, methods=['get'])
+    def get_or_create_draft(self, request):
+        """
+        Get or create a draft resume for the current session/user.
+
+        This endpoint prevents duplicate resume creation by ensuring
+        only one draft exists per session/user at a time.
+
+        Returns the most recently updated resume, or creates a new one if none exists.
+        """
+        try:
+            # Get the user's resumes (filtered by session or user in get_queryset)
+            resumes = self.get_queryset()
+
+            if resumes.exists():
+                # Return the most recently updated resume
+                resume = resumes.first()  # Already ordered by -updated_at
+                serializer = self.get_serializer(resume)
+                return Response({
+                    'resume': serializer.data,
+                    'is_new': False,
+                })
+            else:
+                # Create a new draft resume
+                # Create session if it doesn't exist
+                if not request.session.session_key:
+                    request.session.create()
+
+                resume_data = {
+                    'full_name': '',
+                    'email': '',
+                    'phone': '',
+                }
+
+                serializer = ResumeCreateSerializer(
+                    data=resume_data,
+                    context={'request': request}
+                )
+                serializer.is_valid(raise_exception=True)
+                resume = serializer.save()
+
+                return Response({
+                    'resume': ResumeSerializer(resume).data,
+                    'is_new': True,
+                }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({
+                'error': 'Failed to get or create draft',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['post'])
+    def migrate_anonymous(self, request):
+        """
+        Migrate anonymous resume data from session to authenticated user account.
+
+        This endpoint is called after login/signup to transfer any CV data that was
+        created while the user was using a session (not logged in).
+
+        The migration process:
+        1. Find all resumes linked to the current session (session_id)
+        2. Link them to the authenticated user account
+        3. Clear the session_id to prevent duplicate access
+
+        Returns the number of resumes migrated.
+        """
+        if not request.user.is_authenticated:
+            return Response({
+                'error': 'Authentication required'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        try:
+            session_key = request.session.session_key
+
+            if not session_key:
+                return Response({
+                    'message': 'No session data to migrate',
+                    'migrated_count': 0
+                }, status=status.HTTP_200_OK)
+
+            # Find all resumes linked to this session
+            session_resumes = Resume.objects.filter(
+                session_id=session_key,
+                user__isnull=True  # Only resumes not yet linked to a user
+            )
+
+            migrated_count = session_resumes.count()
+
+            if migrated_count == 0:
+                return Response({
+                    'message': 'No session resumes to migrate',
+                    'migrated_count': 0
+                }, status=status.HTTP_200_OK)
+
+            # Link all session resumes to the authenticated user
+            session_resumes.update(
+                user=request.user,
+                session_id=None  # Clear session_id after migration
+            )
+
+            # Get the IDs of migrated resumes
+            migrated_ids = list(session_resumes.values_list('id', flat=True))
+
+            return Response({
+                'message': f'{migrated_count} resume(s) migrated successfully',
+                'migrated_count': migrated_count,
+                'resume_ids': migrated_ids,
+                'action': 'migrated'
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': 'Failed to migrate anonymous resumes',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ExperienceViewSet(viewsets.ModelViewSet):

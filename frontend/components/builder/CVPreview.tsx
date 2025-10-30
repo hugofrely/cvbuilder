@@ -11,6 +11,7 @@ export default function CVPreview() {
   const theme = useTheme();
   const [templateHtml, setTemplateHtml] = useState<string>('');
   const [templateCss, setTemplateCss] = useState<string>('');
+  const [isTemplatePremium, setIsTemplatePremium] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -22,6 +23,7 @@ export default function CVPreview() {
         setTemplateHtml(
           '<div style="display: flex; align-items: center; justify-content: center; height: 100%; min-height: 400px; text-align: center; padding: 40px; color: #666; font-family: system-ui, -apple-system, sans-serif;">Sélectionnez un template pour voir l\'aperçu</div>'
         );
+        setIsTemplatePremium(false);
         return;
       }
 
@@ -31,6 +33,7 @@ export default function CVPreview() {
         const template = await templateApi.getById(selectedTemplateId);
         setTemplateHtml(template.template_html || template.templateHtml || '');
         setTemplateCss(template.template_css || template.templateCss || '');
+        setIsTemplatePremium(template.is_premium || template.isPremium || false);
       } catch (err: any) {
         console.error('Error fetching template:', err);
         setError('Erreur lors du chargement du template');
@@ -66,6 +69,47 @@ export default function CVPreview() {
 
     if (!iframeDoc) return;
 
+    // Watermark styles and HTML for premium templates
+    const watermarkStyles = isTemplatePremium ? `
+      /* Watermark overlay */
+      .premium-watermark {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .watermark-text {
+        font-size: 72px;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.08);
+        transform: rotate(-45deg);
+        text-transform: uppercase;
+        letter-spacing: 8px;
+        user-select: none;
+        white-space: nowrap;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+
+      @media print {
+        .premium-watermark {
+          display: flex !important;
+        }
+      }
+    ` : '';
+
+    const watermarkHtml = isTemplatePremium ? `
+      <div class="premium-watermark">
+        <div class="watermark-text">PREMIUM TEMPLATE</div>
+      </div>
+    ` : '';
+
     // Create complete HTML document for iframe with pagination support
     const fullHtml = `
       <!DOCTYPE html>
@@ -87,14 +131,18 @@ export default function CVPreview() {
             body {
               margin: 0;
               padding: 0;
+              position: relative;
             }
 
             /* Template CSS */
             ${templateCss}
+
+            ${watermarkStyles}
           </style>
         </head>
         <body>
           ${renderedHtml}
+          ${watermarkHtml}
         </body>
       </html>
     `;
@@ -117,7 +165,7 @@ export default function CVPreview() {
         iframe.style.height = `${totalHeight}mm`;
       }
     }, 100);
-  }, [renderedHtml, templateCss]);
+  }, [renderedHtml, templateCss, isTemplatePremium]);
 
   if (loading) {
     return (

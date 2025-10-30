@@ -41,6 +41,7 @@ export const useAuthStore = create<AuthStore>()(
         set({
           accessToken,
           refreshToken,
+          isAuthenticated: !!(accessToken && refreshToken),
         }),
 
       logout: () =>

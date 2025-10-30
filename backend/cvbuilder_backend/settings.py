@@ -189,9 +189,12 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+# Frontend URL
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+
 # CORS Settings
 CORS_ALLOWED_ORIGINS = [
-    os.getenv('FRONTEND_URL', 'http://localhost:3000'),
+    FRONTEND_URL,
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -256,16 +259,15 @@ SOCIALACCOUNT_PROVIDERS = {
     },
     'linkedin_oauth2': {
         'SCOPE': [
-            'r_basicprofile',
-            'r_emailaddress',
+            'openid',
+            'profile',
+            'email',
         ],
         'PROFILE_FIELDS': [
             'id',
-            'first-name',
-            'last-name',
-            'email-address',
-            'picture-url',
-            'public-profile-url',
+            'firstName',
+            'lastName',
+            'profilePicture',
         ],
         'APP': {
             'client_id': os.getenv('LINKEDIN_CLIENT_ID'),
@@ -289,6 +291,6 @@ REST_AUTH = {
     'REGISTER_SERIALIZER': 'users.serializers.UserRegistrationSerializer',
 }
 
-# Redirect URLs
-LOGIN_REDIRECT_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000') + '/auth/callback'
-ACCOUNT_LOGOUT_REDIRECT_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
+# Redirect URLs - Redirect to our custom callback that returns JWT tokens
+LOGIN_REDIRECT_URL = '/api/auth/social/callback/'
+ACCOUNT_LOGOUT_REDIRECT_URL = FRONTEND_URL

@@ -9,13 +9,13 @@ export const templateApi = {
       results: Template[];
       next: string | null;
       previous: string | null;
-    }>('/templates/', { params });
+    }>('/api/templates/', { params });
     return response.data;
   },
 
   // Get a single template by ID
   getById: async (id: number) => {
-    const response = await apiClient.get<Template>(`/templates/${id}/`);
+    const response = await apiClient.get<Template>(`/api/templates/${id}/`);
     return response.data;
   },
 
@@ -24,7 +24,7 @@ export const templateApi = {
     const response = await apiClient.get<{
       count: number;
       results: Template[];
-    }>('/templates/free/');
+    }>('/api/templates/free/');
     return response.data.results;
   },
 
@@ -33,7 +33,7 @@ export const templateApi = {
     const response = await apiClient.get<{
       count: number;
       results: Template[];
-    }>('/templates/premium/');
+    }>('/api/templates/premium/');
     return response.data.results;
   },
 };

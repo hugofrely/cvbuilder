@@ -16,7 +16,7 @@ interface UseResumeReturn {
   error: string | null;
 
   // Actions
-  saveResume: (cvData: CVData, templateId?: number | null) => Promise<void>;
+  saveResume: (cvData: CVData, templateId?: number | null) => Promise<string | null>; // Returns resume ID
   loadResume: (id: string) => Promise<{ cvData: CVData; templateId: number | null } | null>;
   deleteResume: (id: string) => Promise<void>;
   exportPDF: (id: string) => Promise<{ pdfUrl: string; hasWatermark: boolean; filename: string }>;
@@ -28,6 +28,36 @@ interface UseResumeReturn {
 
 /**
  * Custom hook to manage resume operations with API
+ *
+ * BACKEND SESSION STRATEGY:
+ * This hook uses Django sessions to support both authenticated and anonymous users:
+ *
+ * ANONYMOUS USERS (not logged in):
+ * - CV data is saved to backend via API using Django session
+ * - Session ID is automatically managed by Django (in cookies)
+ * - Resume is linked to session_id in the database
+ * - Data persists across page reloads for the same session
+ *
+ * AUTHENTICATED USERS (logged in):
+ * - CV data is saved to backend via API
+ * - Resume is linked to user account in the database
+ * - Uses "create-once, update-always" pattern to prevent duplicate resumes
+ * - Resume ID is stored in localStorage for session persistence
+ * - On first save: Create a new resume via POST and store its ID
+ * - On subsequent saves: Always use PATCH to update the existing resume
+ *
+ * MIGRATION ON LOGIN/SIGNUP:
+ * - When a user logs in or signs up, any session-based CV data is automatically
+ *   migrated to their account via a special backend endpoint
+ * - The migration is triggered by the authentication flow
+ * - The session resume is linked to the user account
+ *
+ * BEST PRACTICES IMPLEMENTED:
+ * - Idempotent updates using PATCH (can be safely retried)
+ * - Client-side deduplication via localStorage
+ * - Debounced auto-save (configurable delay)
+ * - Session persistence across page reloads
+ * - Seamless transition from anonymous to authenticated mode
  */
 export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
   const { autoSave = true, autoSaveDelay = 3000 } = options;
@@ -39,11 +69,14 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedDataRef = useRef<string>('');
+  const resumeIdRef = useRef<string | null>(null); // Use ref to avoid stale closure issues
 
   /**
    * Save resume (create or update)
+   * Returns the resume ID (useful for knowing what was created/updated)
+   * Works for both authenticated users and anonymous users (using Django sessions)
    */
-  const saveResume = useCallback(async (cvData: CVData, templateId?: number | null) => {
+  const saveResume = useCallback(async (cvData: CVData, templateId?: number | null): Promise<string | null> => {
     try {
       setSaveStatus({ status: 'saving' });
       setError(null);
@@ -52,18 +85,44 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
       const resumeData = mapCVDataToResume(cvData, templateId);
 
       let savedResume: Resume;
+      let finalResumeId: string | null = null;
 
-      if (resumeId) {
+      // IMPORTANT: Always check ref and localStorage first to prevent duplicate creation
+      // Using ref instead of state to avoid stale closure issues with useCallback
+      const existingResumeId = resumeIdRef.current || localStorage.getItem('currentResumeId');
+
+      console.log('🔍 Save attempt - existingResumeId:', existingResumeId);
+      console.log('🔍 resumeIdRef.current:', resumeIdRef.current);
+      console.log('🔍 localStorage:', localStorage.getItem('currentResumeId'));
+
+      if (existingResumeId) {
         // Update existing resume
-        savedResume = await resumeApi.update(resumeId, resumeData);
+        console.log('✏️ Updating existing resume:', existingResumeId);
+        savedResume = await resumeApi.update(existingResumeId, resumeData);
+        finalResumeId = existingResumeId;
+
+        // Ensure ref is synced
+        if (!resumeIdRef.current) {
+          resumeIdRef.current = existingResumeId;
+        }
       } else {
-        // Create new resume
+        // Create new resume (only on first save when no ID exists)
+        // This works for both authenticated and anonymous users
+        // Django will use session_id for anonymous users
+        console.log('➕ Creating new resume');
         savedResume = await resumeApi.create(resumeData);
-        setResumeId(savedResume.id || null);
+        // Convert ID to string if it's a number
+        finalResumeId = savedResume.id ? String(savedResume.id) : null;
+
+        console.log('✅ New resume created with ID:', finalResumeId);
+
+        // Update both ref and state
+        resumeIdRef.current = finalResumeId;
+        setResumeId(finalResumeId);
 
         // Store resume ID in localStorage for session persistence
-        if (savedResume.id) {
-          localStorage.setItem('currentResumeId', savedResume.id);
+        if (finalResumeId) {
+          localStorage.setItem('currentResumeId', finalResumeId);
         }
       }
 
@@ -80,29 +139,40 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
         setSaveStatus({ status: 'idle' });
       }, 3000);
 
+      return finalResumeId;
+
     } catch (err: any) {
-      console.error('Error saving resume:', err);
+      console.error('❌ Error saving resume:', err);
       setError(err.message || 'Erreur lors de la sauvegarde');
       setSaveStatus({
         status: 'error',
         message: err.message || 'Erreur lors de la sauvegarde',
       });
+      return null;
     }
-  }, [resumeId]);
+  }, []); // Empty dependencies - we use refs instead
 
   /**
    * Load resume by ID
+   * Works for both authenticated users and anonymous users (using Django sessions)
    */
   const loadResume = useCallback(async (id: string): Promise<{ cvData: CVData; templateId: number | null } | null> => {
     try {
       setIsLoading(true);
       setError(null);
 
+      console.log('📥 Loading resume:', id);
+
       const resume = await resumeApi.getById(id);
+
+      // Update both state and ref
       setResumeId(id);
+      resumeIdRef.current = id;
 
       // Store resume ID in localStorage
       localStorage.setItem('currentResumeId', id);
+
+      console.log('✅ Resume loaded and ID stored:', id);
 
       // Map Resume to CVData
       const cvData = mapResumeToCVData(resume);
@@ -118,7 +188,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
       };
 
     } catch (err: any) {
-      console.error('Error loading resume:', err);
+      console.error('❌ Error loading resume:', err);
       setError(err.message || 'Erreur lors du chargement');
       setIsLoading(false);
       return null;
@@ -135,14 +205,15 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
 
       await resumeApi.delete(id);
 
-      // Clear resume ID
+      // Clear resume ID from all places
       setResumeId(null);
+      resumeIdRef.current = null;
       localStorage.removeItem('currentResumeId');
 
       setIsLoading(false);
 
     } catch (err: any) {
-      console.error('Error deleting resume:', err);
+      console.error('❌ Error deleting resume:', err);
       setError(err.message || 'Erreur lors de la suppression');
       setIsLoading(false);
       throw err;
@@ -151,6 +222,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
 
   /**
    * Export resume to PDF
+   * Downloads the PDF blob directly
    */
   const exportPDF = useCallback(async (id: string) => {
     try {
@@ -158,26 +230,49 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
 
       const result = await resumeApi.exportPdf(id);
 
-      // Download the PDF
-      if (result.pdf_url) {
-        const link = document.createElement('a');
-        link.href = result.pdf_url;
-        link.download = result.filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
+      // Create object URL from blob
+      const blobUrl = window.URL.createObjectURL(result.blob);
 
-      // Convert snake_case to camelCase for return value
+      // Create download link and trigger download
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = result.filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the blob URL
+      window.URL.revokeObjectURL(blobUrl);
+
       return {
-        pdfUrl: result.pdf_url,
-        hasWatermark: result.has_watermark,
         filename: result.filename,
+        resumeId: result.resumeId,
+        isPremium: result.isPremium,
       };
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error exporting PDF:', err);
-      setError(err.message || 'Erreur lors de l\'export PDF');
+
+      // Handle payment required error specifically
+      if (err && typeof err === 'object' && 'paymentRequired' in err) {
+        const paymentError = err as {
+          paymentRequired: boolean;
+          message?: string;
+          payment_options?: { per_cv: number; premium_unlimited: number };
+        };
+
+        const errorMessage = paymentError.message || 'Paiement requis pour exporter ce CV premium';
+        setError(errorMessage);
+        throw {
+          paymentRequired: true,
+          message: errorMessage,
+          paymentOptions: paymentError.payment_options,
+        };
+      }
+
+      // Generic error handling
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de l\'export PDF';
+      setError(errorMessage);
       throw err;
     }
   }, []);
@@ -221,7 +316,9 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
   useEffect(() => {
     const storedResumeId = localStorage.getItem('currentResumeId');
     if (storedResumeId) {
+      console.log('🔄 Initializing resume ID from localStorage:', storedResumeId);
       setResumeId(storedResumeId);
+      resumeIdRef.current = storedResumeId; // Keep ref in sync
     }
   }, []);
 

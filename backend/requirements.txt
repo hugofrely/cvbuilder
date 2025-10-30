@@ -23,6 +23,7 @@ stripe==7.8.0
 # PDF Generation
 reportlab==4.0.9
 weasyprint==60.2
+playwright==1.41.0
 
 # LinkedIn Import
 requests==2.31.0

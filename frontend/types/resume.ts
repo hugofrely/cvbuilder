@@ -59,43 +59,70 @@ export interface CustomSection {
 
 export interface Resume {
   id?: string;
+  session_id?: string; // Backend format
   sessionId?: string;
+  user?: string; // Backend format (user ID)
   userId?: string;
-  templateId: number;
+  template?: number; // Backend format
+  templateId?: number;
 
   // Personal Information
-  fullName: string;
-  email: string;
+  full_name?: string; // Backend format
+  fullName?: string;
+  email?: string;
   phone?: string;
   address?: string;
+  city?: string;
+  postal_code?: string; // Backend format
+  postalCode?: string;
   website?: string;
+  linkedin_url?: string; // Backend format
   linkedin?: string;
+  github_url?: string; // Backend format
   github?: string;
+  photo?: string; // Backend format
   profilePhoto?: string;
+  date_of_birth?: string; // Backend format
   dateOfBirth?: string;
   nationality?: string;
+  driving_license?: string; // Backend format
   drivingLicense?: string;
 
   // Professional Summary
   title?: string;
   summary?: string;
 
-  // Sections
-  experiences: Experience[];
-  education: Education[];
-  skills: Skill[];
-  languages: Language[];
-  certifications: Certification[];
-  projects: Project[];
-  customSections: CustomSection[];
+  // JSON Sections (backend format)
+  experience_data?: any[]; // Backend format
+  education_data?: any[]; // Backend format
+  skills_data?: any[]; // Backend format
+  languages_data?: any[]; // Backend format
+  certifications_data?: any[]; // Backend format
+  projects_data?: any[]; // Backend format
+  custom_sections?: any[]; // Backend format
+
+  // Sections (frontend format)
+  experiences?: Experience[];
+  education?: Education[];
+  skills?: Skill[];
+  languages?: Language[];
+  certifications?: Certification[];
+  projects?: Project[];
+  customSections?: CustomSection[];
 
   // Payment & Status
-  isPaid: boolean;
-  paymentType?: 'single' | 'monthly' | 'yearly';
+  is_paid?: boolean; // Backend format
+  isPaid?: boolean;
+  payment_type?: 'free' | 'single' | 'subscription'; // Backend format
+  paymentType?: 'free' | 'single' | 'subscription';
 
   // Metadata
+  created_at?: string; // Backend format
   createdAt?: string;
+  updated_at?: string; // Backend format
   updatedAt?: string;
+  last_accessed?: string; // Backend format
+  lastAccessed?: string;
 }
 
 export interface Template {

@@ -18,8 +18,8 @@ export function mapCVDataToResume(cvData: CVData, templateId?: number | null): a
     postal_code: cvData.personalInfo.postalCode || '',
     website: cvData.personalInfo.website || '',
     linkedin_url: cvData.personalInfo.linkedin || '',
-    github_url: '', // Not in current CVData
-    photo: cvData.personalInfo.photo || '',
+    github_url: cvData.personalInfo.github || '',
+    // photo is excluded - file uploads are handled separately via multipart/form-data
     date_of_birth: cvData.personalInfo.dateOfBirth || null,
     nationality: cvData.personalInfo.nationality || '',
     driving_license: cvData.personalInfo.drivingLicense || '',
@@ -107,54 +107,55 @@ export function mapResumeToCVData(resume: any): CVData {
       nationality: resume.nationality,
       drivingLicense: resume.driving_license || resume.drivingLicense,
       linkedin: resume.linkedin_url || resume.linkedin,
+      github: resume.github_url || resume.github,
       website: resume.website,
     },
 
     professionalSummary: resume.summary || '',
 
-    // Map experiences from backend to frontend
-    experiences: resume.experiences.map((exp: any) => ({
-      id: exp.id?.toString() || Date.now().toString(),
-      jobTitle: exp.position,
-      employer: exp.company,
+    // Map experiences from backend JSON field (experience_data)
+    experiences: (resume.experience_data || []).map((exp: any, index: number) => ({
+      id: exp.id?.toString() || `exp-${index}`,
+      jobTitle: exp.position || '',
+      employer: exp.company || '',
       city: exp.location || '',
-      startDate: exp.startDate,
-      endDate: exp.endDate || '',
-      currentJob: exp.isCurrent,
+      startDate: exp.start_date || '',
+      endDate: exp.end_date || '',
+      currentJob: exp.is_current || false,
       description: exp.description || '',
-      workMode: exp.work_mode || exp.workMode,
+      workMode: exp.work_mode || undefined,
     })),
 
-    // Map education from backend to frontend
-    education: resume.education.map((edu: any) => ({
-      id: edu.id?.toString() || Date.now().toString(),
-      degree: edu.degree,
-      school: edu.institution,
+    // Map education from backend JSON field (education_data)
+    education: (resume.education_data || []).map((edu: any, index: number) => ({
+      id: edu.id?.toString() || `edu-${index}`,
+      degree: edu.degree || '',
+      school: edu.institution || '',
       city: edu.location || '',
-      startDate: edu.startDate,
-      endDate: edu.endDate || '',
-      currentStudy: edu.isCurrent,
+      startDate: edu.start_date || '',
+      endDate: edu.end_date || '',
+      currentStudy: edu.is_current || false,
       description: edu.description || '',
-      workMode: edu.work_mode || edu.workMode,
+      workMode: edu.work_mode || undefined,
     })),
 
-    // Map skills from backend to frontend
-    skills: resume.skills.map((skill: any) => ({
-      id: skill.id?.toString() || Date.now().toString(),
-      name: skill.name,
-      level: mapSkillLevelToFrontend(skill.level),
+    // Map skills from backend JSON field (skills_data)
+    skills: (resume.skills_data || []).map((skill: any, index: number) => ({
+      id: skill.id?.toString() || `skill-${index}`,
+      name: skill.name || '',
+      level: skill.level ? mapSkillLevelToFrontend(skill.level) : 50,
     })),
 
-    // Map languages from backend to frontend
-    languages: resume.languages.map((lang: any) => ({
-      id: lang.id?.toString() || Date.now().toString(),
-      name: lang.name,
-      level: mapLanguageLevelToFrontend(lang.level),
+    // Map languages from backend JSON field (languages_data)
+    languages: (resume.languages_data || []).map((lang: any, index: number) => ({
+      id: lang.id?.toString() || `lang-${index}`,
+      name: lang.name || '',
+      level: lang.level || 'intermediate',
     })),
 
     // Extract hobbies and references from custom sections
-    hobbies: extractHobbies(resume.customSections),
-    references: extractReferences(resume.customSections),
+    hobbies: extractHobbies(resume.custom_sections || resume.customSections),
+    references: extractReferences(resume.custom_sections || resume.customSections),
   };
 }
 
@@ -216,6 +217,8 @@ function mapLanguageLevelToFrontend(level: string): string {
  * Helper: Extract hobbies from custom sections
  */
 function extractHobbies(customSections: Resume['customSections']): CVData['hobbies'] {
+  if (!customSections) return [];
+
   const hobbiesSection = customSections.find(
     section => section.title === 'Centres d\'intérêt'
   );
@@ -232,6 +235,8 @@ function extractHobbies(customSections: Resume['customSections']): CVData['hobbi
  * Helper: Extract references from custom sections
  */
 function extractReferences(customSections: Resume['customSections']): CVData['references'] {
+  if (!customSections) return [];
+
   const referencesSection = customSections.find(
     section => section.title === 'Références'
   );

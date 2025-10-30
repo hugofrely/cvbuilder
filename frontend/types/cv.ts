@@ -12,6 +12,7 @@ export interface PersonalInfo {
   nationality?: string;
   drivingLicense?: string;
   linkedin?: string;
+  github?: string;
   website?: string;
 }
 

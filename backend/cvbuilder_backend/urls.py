@@ -29,7 +29,7 @@ urlpatterns = [
     path('api/payments/', include('payments.urls')),
 
     # Social authentication (django-allauth)
-    path('api/auth/social/', include('allauth.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
 
 # Serve media files in development

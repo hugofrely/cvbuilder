@@ -132,13 +132,14 @@ class ResumeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = [
-            'template', 'full_name', 'email', 'phone', 'address',
+            'id', 'template', 'full_name', 'email', 'phone', 'address',
             'website', 'linkedin_url', 'github_url', 'date_of_birth',
             'nationality', 'driving_license', 'summary', 'title',
             'experience_data', 'education_data', 'skills_data',
             'languages_data', 'certifications_data', 'projects_data',
             'custom_sections'
         ]
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -161,10 +162,12 @@ class ResumeUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = [
-            'template', 'full_name', 'email', 'phone', 'address',
-            'website', 'linkedin_url', 'github_url', 'photo', 'date_of_birth',
+            'template', 'full_name', 'email', 'phone', 'address', 'city', 'postal_code',
+            'website', 'linkedin_url', 'github_url', 'date_of_birth',
             'nationality', 'driving_license', 'summary', 'title',
             'experience_data', 'education_data', 'skills_data',
             'languages_data', 'certifications_data', 'projects_data',
             'custom_sections'
         ]
+        # Note: 'photo' is excluded - file uploads should be handled separately
+        # via multipart/form-data using a dedicated endpoint

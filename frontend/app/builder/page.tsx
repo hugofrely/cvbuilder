@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Box,
   Container,
@@ -26,6 +27,7 @@ import {
   Palette,
   Edit as EditIcon,
   Close,
+  FolderOpen,
 } from '@mui/icons-material';
 import { CVProvider, useCVContext } from '@/context/CVContext';
 import BuilderStepper from '@/components/builder/BuilderStepper';
@@ -37,16 +39,21 @@ import SkillsForm from '@/components/builder/SkillsForm';
 import AdditionalForm from '@/components/builder/AdditionalForm';
 import CVPreview from '@/components/builder/CVPreview';
 import TemplateSelector from '@/components/builder/TemplateSelector';
+import ResumeSelector from '@/components/builder/ResumeSelector';
 import { useResume } from '@/hooks/useResume';
+import { useRouter } from 'next/navigation';
 
 function BuilderContent() {
   const { currentStep, cvData, loadCVData, saveStatus, setSaveStatus, selectedTemplateId, setSelectedTemplateId } = useCVContext();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [previewZoom, setPreviewZoom] = useState(75);
   const [mobileShowPreview, setMobileShowPreview] = useState(false);
   const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false);
+  const [resumeSelectorOpen, setResumeSelectorOpen] = useState(false);
 
   // Use resume hook
   const {
@@ -78,22 +85,43 @@ function BuilderContent() {
     }
   };
 
-  // Load existing resume on mount
+  // Set template from URL parameter on mount
   useEffect(() => {
-    const loadExistingResume = async () => {
+    const templateParam = searchParams.get('template');
+    if (templateParam) {
+      const templateId = parseInt(templateParam, 10);
+      if (!isNaN(templateId)) {
+        setSelectedTemplateId(templateId);
+      }
+    }
+  }, [searchParams, setSelectedTemplateId]);
+
+  // Load existing resume on mount or show selector
+  useEffect(() => {
+    const initializeResume = async () => {
       const storedResumeId = localStorage.getItem('currentResumeId');
+
       if (storedResumeId) {
+        // Try to load the stored resume
         const result = await loadResume(storedResumeId);
         if (result) {
           loadCVData(result.cvData);
-          if (result.templateId) {
+          // Only set template from resume if no template param in URL
+          if (result.templateId && !searchParams.get('template')) {
             setSelectedTemplateId(result.templateId);
           }
+          return; // Successfully loaded, exit
         }
+        // If load failed, clear invalid ID
+        localStorage.removeItem('currentResumeId');
       }
+
+      // No valid stored resume, show selector to let user choose
+      // This allows users to select from existing CVs or create a new one
+      setResumeSelectorOpen(true);
     };
 
-    loadExistingResume();
+    initializeResume();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -128,8 +156,18 @@ function BuilderContent() {
     if (resumeId) {
       try {
         await exportPDF(resumeId);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Export error:', err);
+
+        // Check if it's a payment required error
+        if (err && typeof err === 'object' && 'paymentRequired' in err) {
+          const paymentError = err as { paymentRequired: boolean; paymentOptions?: { per_cv: number } };
+
+          // Redirect to payment page with plan and resume ID
+          if (paymentError.paymentRequired) {
+            router.push(`/payment?plan=pay-per-download&resumeId=${resumeId}`);
+          }
+        }
       }
     }
   };
@@ -141,6 +179,57 @@ function BuilderContent() {
   const handleTemplateSelect = async (templateId: number) => {
     setSelectedTemplateId(templateId);
     await saveResume(cvData, templateId);
+  };
+
+  const handleResumeSelect = async (resumeId: string) => {
+    const result = await loadResume(resumeId);
+    if (result) {
+      loadCVData(result.cvData);
+      if (result.templateId) {
+        setSelectedTemplateId(result.templateId);
+      }
+    }
+  };
+
+  const handleCreateNewResume = () => {
+    // Clear current resume ID to trigger creation on first save
+    localStorage.removeItem('currentResumeId');
+
+    // Reset CV data to empty state
+    // NOTE: No auto-save will be triggered because the data is identical to initial state
+    loadCVData({
+      personalInfo: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        address: '',
+        city: '',
+        postalCode: '',
+        jobTitle: '',
+        website: '',
+        linkedin: '',
+        github: '',
+        dateOfBirth: '',
+        nationality: '',
+        drivingLicense: '',
+      },
+      professionalSummary: '',
+      experiences: [],
+      education: [],
+      skills: [],
+      languages: [],
+      hobbies: [],
+      references: [],
+    });
+
+    // Reset template to default if needed
+    const templateParam = searchParams.get('template');
+    if (templateParam) {
+      setSelectedTemplateId(parseInt(templateParam, 10));
+    } else {
+      setSelectedTemplateId(null);
+    }
   };
 
   return (
@@ -446,6 +535,23 @@ function BuilderContent() {
                 </>
               )}
 
+              {/* My CVs Button */}
+              <Button
+                variant="outlined"
+                size="medium"
+                startIcon={<FolderOpen />}
+                onClick={() => setResumeSelectorOpen(true)}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  minWidth: { xs: 'auto', md: 120 },
+                  px: { xs: 2, md: 3 },
+                }}
+              >
+                {isMobile ? 'Mes CV' : 'Mes CV'}
+              </Button>
+
               {/* Template Button */}
               <Button
                 variant="outlined"
@@ -515,6 +621,14 @@ function BuilderContent() {
         onClose={() => setTemplateSelectorOpen(false)}
         onSelect={handleTemplateSelect}
         currentTemplateId={selectedTemplateId}
+      />
+
+      {/* Resume Selector Dialog */}
+      <ResumeSelector
+        open={resumeSelectorOpen}
+        onClose={() => setResumeSelectorOpen(false)}
+        onSelect={handleResumeSelect}
+        onCreateNew={handleCreateNewResume}
       />
 
       {/* Saving Snackbar */}

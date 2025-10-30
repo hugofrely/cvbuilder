@@ -207,45 +207,253 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 
 ---
 
-## 2. Templates
+## 2. CV Management (Resumes)
 
-### 2.1 Liste de tous les templates
+### 2.1 Liste de tous les CV de l'utilisateur
+
+**Endpoint**: `GET /api/resumes/`
+**Auth**: Non requis (fonctionne avec session pour utilisateurs anonymes)
+
+#### Paramètres de requête
+
+| Paramètre | Type | Requis | Description | Exemple |
+|-----------|------|--------|-------------|---------|
+| `page` | integer | Non | Numéro de la page (défaut: 1) | `?page=2` |
+| `page_size` | integer | Non | Nombre d'éléments par page | `?page_size=10` |
+| `template` | integer | Non | Filtrer par template ID | `?template=1` |
+| `is_paid` | boolean | Non | Filtrer par statut payé | `?is_paid=true` |
+| `search` | string | Non | Recherche dans nom, email, titre | `?search=John` |
+| `ordering` | string | Non | Tri (défaut: `-updated_at`) | `?ordering=-created_at` |
+
+#### Réponse
+
+```json
+{
+  "count": 3,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "123",
+      "session_id": "xyz",
+      "template": 1,
+      "full_name": "John Doe",
+      "email": "john@example.com",
+      "phone": "+33 6 12 34 56 78",
+      "city": "Paris",
+      "title": "Développeur Full Stack",
+      "summary": "Passionné par le développement web...",
+      "experience_data": [...],
+      "education_data": [...],
+      "skills_data": [...],
+      "is_paid": false,
+      "payment_type": "free",
+      "created_at": "2024-01-15T10:00:00Z",
+      "updated_at": "2024-01-20T15:30:00Z",
+      "last_accessed": "2024-01-20T15:30:00Z"
+    }
+  ]
+}
+```
+
+### 2.2 Créer un nouveau CV
+
+**Endpoint**: `POST /api/resumes/`
+**Auth**: Non requis (crée automatiquement une session pour anonymes)
+
+#### Corps de la requête
+
+```json
+{
+  "template": 1,
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "phone": "+33 6 12 34 56 78",
+  "city": "Paris",
+  "title": "Développeur Full Stack",
+  "summary": "Passionné par...",
+  "experience_data": [],
+  "education_data": [],
+  "skills_data": []
+}
+```
+
+#### Réponse
+
+```json
+{
+  "id": "124",
+  "session_id": "xyz",
+  "full_name": "John Doe",
+  ...
+}
+```
+
+### 2.3 Récupérer un CV spécifique
+
+**Endpoint**: `GET /api/resumes/{id}/`
+**Auth**: Doit être propriétaire (utilisateur ou session)
+
+### 2.4 Mettre à jour un CV (Auto-save)
+
+**Endpoint**: `PATCH /api/resumes/{id}/`
+**Auth**: Doit être propriétaire
+
+#### Corps de la requête (partiel)
+
+```json
+{
+  "full_name": "John Updated",
+  "title": "Senior Developer"
+}
+```
+
+### 2.5 Supprimer un CV
+
+**Endpoint**: `DELETE /api/resumes/{id}/`
+**Auth**: Doit être propriétaire
+
+### 2.6 Exporter en PDF
+
+**Endpoint**: `POST /api/resumes/{id}/export_pdf/`
+**Auth**: Doit être propriétaire
+
+#### Réponse
+
+```json
+{
+  "pdf_url": "https://...",
+  "has_watermark": false,
+  "filename": "resume_124.pdf"
+}
+```
+
+### 2.7 Rendre le HTML du CV
+
+**Endpoint**: `GET /api/resumes/{id}/render_html/`
+**Auth**: Doit être propriétaire
+
+#### Réponse
+
+```json
+{
+  "html": "<html>...</html>",
+  "css": "body { ... }",
+  "template_name": "Modern Template"
+}
+```
+
+### 2.8 Obtenir ou créer un brouillon (Get or Create Draft)
+
+**Endpoint**: `GET /api/resumes/get_or_create_draft/`
+**Auth**: Non requis (fonctionne avec session)
+
+**Description**: Retourne le CV le plus récent de l'utilisateur/session, ou crée un nouveau brouillon s'il n'en existe aucun. **Cet endpoint implémente le pattern "un seul brouillon par session"** pour éviter la duplication de CV.
+
+#### Réponse si CV existant
+
+```json
+{
+  "resume": {
+    "id": "123",
+    "full_name": "John Doe",
+    ...
+  },
+  "is_new": false
+}
+```
+
+#### Réponse si nouveau CV créé
+
+```json
+{
+  "resume": {
+    "id": "124",
+    "full_name": "",
+    ...
+  },
+  "is_new": true
+}
+```
+
+**Note importante**: Cette approche garantit qu'un utilisateur anonyme n'aura qu'un seul brouillon actif par session, évitant ainsi la création de doublons lors de l'auto-sauvegarde.
+
+---
+
+## 3. Templates
+
+### 3.1 Liste de tous les templates (avec pagination)
 
 **Endpoint**: `GET /api/templates/`
 **Auth**: Non requis
 
-#### Réponse (200 OK)
-```json
-[
-  {
-    "id": 1,
-    "name": "Modern Professional",
-    "description": "Un template moderne et épuré pour professionnels",
-    "thumbnail": "http://localhost:8000/media/templates/modern_professional.png",
-    "is_premium": false,
-    "is_active": true,
-    "created_at": "2025-10-01T10:00:00Z"
-  },
-  {
-    "id": 2,
-    "name": "Creative Designer",
-    "description": "Template coloré idéal pour les créatifs",
-    "thumbnail": "http://localhost:8000/media/templates/creative_designer.png",
-    "is_premium": true,
-    "is_active": true,
-    "created_at": "2025-10-01T11:00:00Z"
-  },
-  {
-    "id": 3,
-    "name": "Executive Elite",
-    "description": "Template premium pour cadres supérieurs",
-    "thumbnail": "http://localhost:8000/media/templates/executive_elite.png",
-    "is_premium": true,
-    "is_active": true,
-    "created_at": "2025-10-01T12:00:00Z"
-  }
-]
+#### Paramètres de requête
+
+| Paramètre | Type | Requis | Description | Exemple |
+|-----------|------|--------|-------------|---------|
+| `page` | integer | Non | Numéro de la page (défaut: 1) | `?page=2` |
+| `page_size` | integer | Non | Nombre d'éléments par page (défaut: 9, max: 100) | `?page_size=12` |
+| `is_premium` | boolean | Non | Filtrer par type (true = premium, false = gratuit) | `?is_premium=false` |
+| `search` | string | Non | Recherche dans le nom et la description | `?search=modern` |
+| `ordering` | string | Non | Tri (`name`, `-name`, `created_at`, `-created_at`) | `?ordering=-created_at` |
+
+#### Exemples de requêtes
+
 ```
+GET /api/templates/                           # Page 1, tous les templates
+GET /api/templates/?page=2                    # Page 2
+GET /api/templates/?page_size=6               # 6 templates par page
+GET /api/templates/?is_premium=false          # Seulement les templates gratuits
+GET /api/templates/?is_premium=true&page=1    # Templates premium, page 1
+GET /api/templates/?search=professional       # Recherche "professional"
+GET /api/templates/?ordering=-created_at      # Tri par date (plus récent d'abord)
+```
+
+#### Réponse (200 OK) - Avec pagination
+```json
+{
+  "count": 15,
+  "next": "http://localhost:8000/api/templates/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": "Modern Professional",
+      "description": "Un template moderne et épuré pour professionnels",
+      "thumbnail": "http://localhost:8000/media/templates/modern_professional.png",
+      "is_premium": false,
+      "is_active": true,
+      "created_at": "2025-10-01T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "Creative Designer",
+      "description": "Template coloré idéal pour les créatifs",
+      "thumbnail": "http://localhost:8000/media/templates/creative_designer.png",
+      "is_premium": true,
+      "is_active": true,
+      "created_at": "2025-10-01T11:00:00Z"
+    },
+    {
+      "id": 3,
+      "name": "Executive Elite",
+      "description": "Template premium pour cadres supérieurs",
+      "thumbnail": "http://localhost:8000/media/templates/executive_elite.png",
+      "is_premium": true,
+      "is_active": true,
+      "created_at": "2025-10-01T12:00:00Z"
+    }
+    // ... 6 autres templates si page_size=9
+  ]
+}
+```
+
+#### Structure de la réponse paginée
+
+- **count** (integer): Nombre total de templates disponibles
+- **next** (string|null): URL de la page suivante (null si dernière page)
+- **previous** (string|null): URL de la page précédente (null si première page)
+- **results** (array): Liste des templates pour la page actuelle
 
 ---
 
