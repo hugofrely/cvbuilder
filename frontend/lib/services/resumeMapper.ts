@@ -113,7 +113,7 @@ export function mapResumeToCVData(resume: any): CVData {
     professionalSummary: resume.summary || '',
 
     // Map experiences from backend to frontend
-    experiences: resume.experiences.map(exp => ({
+    experiences: resume.experiences.map((exp: any) => ({
       id: exp.id?.toString() || Date.now().toString(),
       jobTitle: exp.position,
       employer: exp.company,
@@ -126,7 +126,7 @@ export function mapResumeToCVData(resume: any): CVData {
     })),
 
     // Map education from backend to frontend
-    education: resume.education.map(edu => ({
+    education: resume.education.map((edu: any) => ({
       id: edu.id?.toString() || Date.now().toString(),
       degree: edu.degree,
       school: edu.institution,
@@ -139,14 +139,14 @@ export function mapResumeToCVData(resume: any): CVData {
     })),
 
     // Map skills from backend to frontend
-    skills: resume.skills.map(skill => ({
+    skills: resume.skills.map((skill: any) => ({
       id: skill.id?.toString() || Date.now().toString(),
       name: skill.name,
       level: mapSkillLevelToFrontend(skill.level),
     })),
 
     // Map languages from backend to frontend
-    languages: resume.languages.map(lang => ({
+    languages: resume.languages.map((lang: any) => ({
       id: lang.id?.toString() || Date.now().toString(),
       name: lang.name,
       level: mapLanguageLevelToFrontend(lang.level),

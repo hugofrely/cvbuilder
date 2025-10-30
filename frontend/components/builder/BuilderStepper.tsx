@@ -97,7 +97,7 @@ export default function BuilderStepper() {
           return (
             <Fade in key={step.id} timeout={300 + index * 50}>
               <Chip
-                icon={isPast ? <Check /> : step.icon}
+                icon={isPast ? <Check /> : (step.icon as React.ReactElement)}
                 label={isSmall ? '' : step.label}
                 onClick={() => handleStepClick(step.id)}
                 sx={{
