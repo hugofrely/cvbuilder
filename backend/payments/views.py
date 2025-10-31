@@ -49,6 +49,7 @@ class CreateCheckoutSessionView(APIView):
         try:
             # Determine price ID based on payment type
             if payment_type == 'single':
+                # Single CV purchase (2.40€)
                 if not resume_id:
                     return Response({
                         'error': 'Resume ID is required for single CV purchase'
@@ -69,23 +70,17 @@ class CreateCheckoutSessionView(APIView):
                     'resume_id': resume_id
                 }
 
-            elif payment_type == 'monthly':
-                price_id = settings.STRIPE_SUBSCRIPTION_MONTHLY_PRICE_ID
-                mode = 'subscription'
+            elif payment_type == 'lifetime':
+                # Lifetime premium access (24€ one-time payment)
+                price_id = settings.STRIPE_LIFETIME_PREMIUM_PRICE_ID
+                mode = 'payment'
                 metadata = {
-                    'payment_type': 'monthly'
-                }
-
-            elif payment_type == 'yearly':
-                price_id = settings.STRIPE_SUBSCRIPTION_YEARLY_PRICE_ID
-                mode = 'subscription'
-                metadata = {
-                    'payment_type': 'yearly'
+                    'payment_type': 'lifetime'
                 }
 
             else:
                 return Response({
-                    'error': 'Invalid payment type'
+                    'error': 'Invalid payment type. Must be "single" or "lifetime".'
                 }, status=status.HTTP_400_BAD_REQUEST)
 
             # Add user ID to metadata if authenticated
@@ -135,7 +130,7 @@ class CreateCheckoutSessionView(APIView):
                 'session_id': checkout_session.id
             }, status=status.HTTP_200_OK)
 
-        except stripe.error.StripeError as e:
+        except stripe.StripeError as e:
             return Response({
                 'error': 'Stripe error',
                 'detail': str(e)
@@ -175,7 +170,7 @@ class StripeWebhookView(APIView):
         except ValueError:
             # Invalid payload
             return HttpResponse(status=400)
-        except stripe.error.SignatureVerificationError:
+        except stripe.SignatureVerificationError:
             # Invalid signature
             return HttpResponse(status=400)
 
@@ -241,8 +236,11 @@ class StripeWebhookView(APIView):
 
             payment.save()
 
-            # If single CV purchase, mark resume as paid
-            if metadata.get('payment_type') == 'single':
+            # Handle payment type specific logic
+            payment_type = metadata.get('payment_type')
+
+            if payment_type == 'single':
+                # Single CV purchase - mark resume as paid
                 resume_id = metadata.get('resume_id')
                 if resume_id:
                     try:
@@ -251,6 +249,19 @@ class StripeWebhookView(APIView):
                         resume.payment_type = 'single'
                         resume.save()
                     except Resume.DoesNotExist:
+                        pass
+
+            elif payment_type == 'lifetime':
+                # Lifetime premium - activate premium for user
+                if user_id:
+                    try:
+                        from django.contrib.auth import get_user_model
+                        User = get_user_model()
+                        user = User.objects.get(id=user_id)
+                        user.is_premium = True
+                        user.subscription_type = 'lifetime'
+                        user.save()
+                    except User.DoesNotExist:
                         pass
 
         except Payment.DoesNotExist:
@@ -456,7 +467,7 @@ class CancelSubscriptionView(APIView):
                 'error': 'No active subscription found'
             }, status=status.HTTP_404_NOT_FOUND)
 
-        except stripe.error.StripeError as e:
+        except stripe.StripeError as e:
             return Response({
                 'error': 'Stripe error',
                 'detail': str(e)

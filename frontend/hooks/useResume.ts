@@ -20,6 +20,7 @@ interface UseResumeReturn {
   loadResume: (id: string) => Promise<{ cvData: CVData; templateId: number | null } | null>;
   deleteResume: (id: string) => Promise<void>;
   exportPDF: (id: string) => Promise<{ pdfUrl: string; hasWatermark: boolean; filename: string }>;
+  clearResumeId: () => void; // Clear current resume ID to force creation of new resume
 
   // Auto-save
   scheduleAutoSave: (cvData: CVData, templateId?: number | null) => void;
@@ -311,6 +312,19 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
   }, []);
 
   /**
+   * Clear resume ID to force creation of new resume on next save
+   * This clears both state, ref, and localStorage
+   */
+  const clearResumeId = useCallback(() => {
+    console.log('🧹 Clearing resume ID from all locations');
+    setResumeId(null);
+    resumeIdRef.current = null;
+    localStorage.removeItem('currentResumeId');
+    // Also clear last saved data to allow saving empty state
+    lastSavedDataRef.current = '';
+  }, []);
+
+  /**
    * Load resume ID from localStorage on mount
    */
   useEffect(() => {
@@ -341,6 +355,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
     loadResume,
     deleteResume,
     exportPDF,
+    clearResumeId,
 
     scheduleAutoSave,
     cancelAutoSave,

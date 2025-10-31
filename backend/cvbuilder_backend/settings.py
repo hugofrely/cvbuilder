@@ -166,6 +166,7 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # For OAuth callbacks
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -240,6 +241,8 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'optional'  # 'mandatory' en production
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
 
 # Social account providers configuration
 SOCIALACCOUNT_PROVIDERS = {
@@ -294,3 +297,19 @@ REST_AUTH = {
 # Redirect URLs - Redirect to our custom callback that returns JWT tokens
 LOGIN_REDIRECT_URL = '/api/auth/social/callback/'
 ACCOUNT_LOGOUT_REDIRECT_URL = FRONTEND_URL
+
+# Stripe Configuration
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.environ.get('STRIPE_WEBHOOK_SECRET', '')
+
+# Stripe Price IDs (must be created in Stripe Dashboard)
+# Single CV purchase (one-time payment of 2.40€)
+STRIPE_SINGLE_CV_PRICE_ID = os.environ.get('STRIPE_SINGLE_CV_PRICE_ID', '')
+
+# Lifetime premium access (one-time payment of 24€)
+STRIPE_LIFETIME_PREMIUM_PRICE_ID = os.environ.get('STRIPE_LIFETIME_PREMIUM_PRICE_ID', '')
+
+# Payment amounts (in cents)
+PAYMENT_AMOUNT_PAY_PER_CV = 240  # 2.40€
+PAYMENT_AMOUNT_LIFETIME_PREMIUM = 2400  # 24€

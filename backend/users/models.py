@@ -5,6 +5,8 @@ from django.db import models
 class User(AbstractUser):
     """Custom user model with additional fields"""
 
+    # Remove username requirement and use email as the unique identifier
+    username = None
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
 
@@ -14,6 +16,7 @@ class User(AbstractUser):
         max_length=20,
         choices=[
             ('none', 'None'),
+            ('lifetime', 'Lifetime'),
             ('monthly', 'Monthly'),
             ('yearly', 'Yearly'),
         ],
@@ -30,7 +33,7 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = 'users'

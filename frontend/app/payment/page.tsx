@@ -16,13 +16,11 @@ import {
   ListItemText,
   Alert,
   CircularProgress,
-  TextField,
   alpha,
   useTheme,
 } from '@mui/material';
 import {
   Check,
-  CreditCard,
   Lock,
   Download,
   WorkspacePremium,
@@ -30,16 +28,16 @@ import {
 } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/useAuthStore';
+import { paymentApi } from '@/lib/api/payment';
 
 export default function PaymentPage() {
   const theme = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   // Get plan from URL
   const planParam = searchParams.get('plan');
@@ -50,21 +48,24 @@ export default function PaymentPage() {
     'pay-per-download': {
       title: 'Paiement par CV',
       price: 2.40,
-      description: 'Export PDF de votre CV',
+      paymentType: 'single' as const,
+      description: 'Export PDF de votre CV premium',
       features: [
         'Export PDF haute qualité',
         'Téléchargement immédiat',
-        'Valable pour 1 CV',
+        'Valable pour 1 CV premium',
       ],
     },
     'premium': {
-      title: 'Premium',
+      title: 'Premium à Vie',
       price: 24.00,
-      description: 'Accès illimité à tous les modèles',
+      paymentType: 'lifetime' as const,
+      description: 'Accès illimité permanent à tous les modèles',
       features: [
         'Tous les modèles premium',
         'Export PDF illimité',
-        'Téléchargement de tous vos CV',
+        'Créez autant de CV que vous voulez',
+        'Accès à vie (paiement unique)',
         'Support prioritaire',
       ],
     },
@@ -74,14 +75,6 @@ export default function PaymentPage() {
     ? plans[planParam as keyof typeof plans]
     : null;
 
-  // Card details state
-  const [cardDetails, setCardDetails] = useState({
-    cardNumber: '',
-    cardName: '',
-    expiryDate: '',
-    cvv: '',
-  });
-
   useEffect(() => {
     // Redirect to pricing if no plan selected
     if (!selectedPlan) {
@@ -89,72 +82,38 @@ export default function PaymentPage() {
     }
   }, [selectedPlan, router]);
 
-  const handlePayment = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePayment = async () => {
     setLoading(true);
     setError(null);
 
     try {
-      // TODO: Integrate with Stripe or other payment provider
-      // For now, simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Validate resume ID for single CV purchase
+      if (selectedPlan?.paymentType === 'single' && !resumeId) {
+        setError('ID du CV manquant. Veuillez réessayer depuis la page du builder.');
+        setLoading(false);
+        return;
+      }
 
-      // Mock payment success
-      console.log('Payment processed:', {
-        plan: planParam,
-        amount: selectedPlan?.price,
-        user: user?.email,
-        resumeId,
+      // Create checkout session with Stripe
+      const response = await paymentApi.createCheckoutSession({
+        payment_type: selectedPlan!.paymentType,
+        resume_id: resumeId ? parseInt(resumeId) : undefined,
+        success_url: `${window.location.origin}/payment/success`,
+        cancel_url: `${window.location.origin}/payment/cancel`,
       });
 
-      setSuccess(true);
-
-      // Redirect after success
-      setTimeout(() => {
-        if (planParam === 'pay-per-download' && resumeId) {
-          router.push(`/builder?resumeId=${resumeId}&download=true`);
-        } else if (planParam === 'premium') {
-          router.push('/dashboard?premium=true');
-        } else {
-          router.push('/builder');
-        }
-      }, 2000);
+      // Redirect to Stripe Checkout
+      window.location.assign(response.checkout_url);
 
     } catch (err: any) {
       console.error('Payment error:', err);
-      setError(err.message || 'Une erreur est survenue lors du paiement');
-    } finally {
+      setError(
+        err.response?.data?.error ||
+        err.message ||
+        'Une erreur est survenue lors de la création de la session de paiement'
+      );
       setLoading(false);
     }
-  };
-
-  const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = e.target.value;
-
-    // Format card number with spaces
-    if (field === 'cardNumber') {
-      value = value.replace(/\s/g, '').replace(/(\d{4})/g, '$1 ').trim();
-      value = value.slice(0, 19); // Max 16 digits + 3 spaces
-    }
-
-    // Format expiry date
-    if (field === 'expiryDate') {
-      value = value.replace(/\D/g, '');
-      if (value.length >= 2) {
-        value = value.slice(0, 2) + '/' + value.slice(2, 4);
-      }
-      value = value.slice(0, 5);
-    }
-
-    // Format CVV
-    if (field === 'cvv') {
-      value = value.replace(/\D/g, '').slice(0, 3);
-    }
-
-    setCardDetails((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
   };
 
   if (!selectedPlan) {
@@ -196,7 +155,7 @@ export default function PaymentPage() {
         </Button>
 
         <Grid container spacing={4}>
-          {/* Left Column - Payment Form */}
+          {/* Left Column - Payment Info */}
           <Grid item xs={12} md={7}>
             <Card
               elevation={2}
@@ -207,10 +166,10 @@ export default function PaymentPage() {
             >
               <CardContent sx={{ p: 4 }}>
                 <Typography variant="h5" fontWeight={700} gutterBottom>
-                  Informations de paiement
+                  Paiement sécurisé avec Stripe
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-                  Toutes les transactions sont sécurisées et cryptées
+                  Vous serez redirigé vers Stripe pour finaliser votre paiement en toute sécurité.
                 </Typography>
 
                 {error && (
@@ -219,102 +178,91 @@ export default function PaymentPage() {
                   </Alert>
                 )}
 
-                {success && (
-                  <Alert severity="success" sx={{ mb: 3 }}>
-                    Paiement réussi ! Redirection en cours...
+                {!isAuthenticated && selectedPlan.paymentType === 'lifetime' && (
+                  <Alert severity="warning" sx={{ mb: 3 }}>
+                    Vous devez être connecté pour acheter l'accès Premium à vie.
                   </Alert>
                 )}
 
-                <Box component="form" onSubmit={handlePayment}>
-                  <TextField
-                    fullWidth
-                    label="Numéro de carte"
-                    placeholder="1234 5678 9012 3456"
-                    value={cardDetails.cardNumber}
-                    onChange={handleInputChange('cardNumber')}
-                    required
-                    disabled={loading || success}
-                    InputProps={{
-                      startAdornment: (
-                        <CreditCard sx={{ mr: 1, color: 'text.secondary' }} />
-                      ),
-                    }}
-                    sx={{ mb: 3 }}
-                  />
-
-                  <TextField
-                    fullWidth
-                    label="Nom sur la carte"
-                    placeholder="JEAN DUPONT"
-                    value={cardDetails.cardName}
-                    onChange={handleInputChange('cardName')}
-                    required
-                    disabled={loading || success}
-                    sx={{ mb: 3 }}
-                  />
-
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Date d'expiration"
-                        placeholder="MM/AA"
-                        value={cardDetails.expiryDate}
-                        onChange={handleInputChange('expiryDate')}
-                        required
-                        disabled={loading || success}
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="CVV"
-                        placeholder="123"
-                        value={cardDetails.cvv}
-                        onChange={handleInputChange('cvv')}
-                        required
-                        disabled={loading || success}
-                        type="password"
-                        InputProps={{
-                          endAdornment: (
-                            <Lock sx={{ color: 'text.secondary', fontSize: 20 }} />
-                          ),
-                        }}
-                      />
-                    </Grid>
-                  </Grid>
-
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    disabled={loading || success}
-                    startIcon={loading ? <CircularProgress size={20} /> : <Lock />}
-                    sx={{
-                      mt: 4,
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontWeight: 700,
-                      fontSize: '1rem',
-                    }}
-                  >
-                    {loading ? 'Traitement...' : `Payer ${selectedPlan.price.toFixed(2)}€`}
-                  </Button>
-
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{
-                      display: 'block',
-                      textAlign: 'center',
-                      mt: 2,
-                    }}
-                  >
-                    🔒 Paiement 100% sécurisé par cryptage SSL
+                {/* Payment Info */}
+                <Box
+                  sx={{
+                    p: 3,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.info.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`,
+                    mb: 3,
+                  }}
+                >
+                  <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                    🔒 Paiement 100% sécurisé
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Vos informations de paiement sont traitées de manière sécurisée par Stripe.
+                    Nous ne stockons jamais vos informations de carte bancaire.
                   </Typography>
                 </Box>
+
+                <Box
+                  sx={{
+                    p: 3,
+                    borderRadius: 2,
+                    bgcolor: alpha(theme.palette.success.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`,
+                    mb: 4,
+                  }}
+                >
+                  <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                    ✓ Ce qui est inclus
+                  </Typography>
+                  <List dense sx={{ py: 0 }}>
+                    {selectedPlan.features.map((feature, index) => (
+                      <ListItem key={index} sx={{ px: 0, py: 0.5 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          <Check sx={{ fontSize: 20, color: theme.palette.success.main }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={feature}
+                          slotProps={{
+                            primary: {
+                              variant: 'body2',
+                            },
+                          }}
+                        />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Box>
+
+                <Button
+                  variant="contained"
+                  size="large"
+                  fullWidth
+                  disabled={loading || (!isAuthenticated && selectedPlan.paymentType === 'lifetime')}
+                  onClick={handlePayment}
+                  startIcon={loading ? <CircularProgress size={20} /> : <Lock />}
+                  sx={{
+                    py: 1.5,
+                    borderRadius: 2,
+                    textTransform: 'none',
+                    fontWeight: 700,
+                    fontSize: '1rem',
+                  }}
+                >
+                  {loading ? 'Redirection vers Stripe...' : 'Continuer vers le paiement'}
+                </Button>
+
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{
+                    display: 'block',
+                    textAlign: 'center',
+                    mt: 2,
+                  }}
+                >
+                  En cliquant sur &quot;Continuer&quot;, vous acceptez nos conditions de service
+                </Typography>
               </CardContent>
             </Card>
           </Grid>
@@ -332,7 +280,7 @@ export default function PaymentPage() {
             >
               <CardContent sx={{ p: 4 }}>
                 <Typography variant="h6" fontWeight={700} gutterBottom>
-                  Récapitulatif de la commande
+                  Récapitulatif
                 </Typography>
 
                 <Box
@@ -362,47 +310,16 @@ export default function PaymentPage() {
                       </Typography>
                     </Box>
                   </Box>
-
-                  <List dense sx={{ py: 0 }}>
-                    {selectedPlan.features.map((feature, index) => (
-                      <ListItem key={index} sx={{ px: 0, py: 0.5 }}>
-                        <ListItemIcon sx={{ minWidth: 28 }}>
-                          <Check
-                            sx={{
-                              fontSize: 18,
-                              color: theme.palette.success.main,
-                            }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={feature}
-                          primaryTypographyProps={{
-                            variant: 'body2',
-                            color: 'text.secondary',
-                          }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
                 </Box>
 
                 <Divider sx={{ my: 3 }} />
 
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                   <Typography variant="body1" color="text.secondary">
-                    Sous-total
+                    Paiement unique
                   </Typography>
                   <Typography variant="body1" fontWeight={600}>
                     {selectedPlan.price.toFixed(2)}€
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-                  <Typography variant="body1" color="text.secondary">
-                    TVA (20%)
-                  </Typography>
-                  <Typography variant="body1" fontWeight={600}>
-                    {(selectedPlan.price * 0.2).toFixed(2)}€
                   </Typography>
                 </Box>
 
@@ -413,9 +330,19 @@ export default function PaymentPage() {
                     Total
                   </Typography>
                   <Typography variant="h6" fontWeight={700} color="primary">
-                    {(selectedPlan.price * 1.2).toFixed(2)}€
+                    {selectedPlan.price.toFixed(2)}€
                   </Typography>
                 </Box>
+
+                {selectedPlan.paymentType === 'lifetime' && (
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mt: 2, textAlign: 'center' }}
+                  >
+                    Accès permanent • Aucun abonnement
+                  </Typography>
+                )}
               </CardContent>
             </Card>
           </Grid>

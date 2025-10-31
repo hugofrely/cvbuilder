@@ -196,22 +196,26 @@ export default function NavBar() {
                   </Button>
                 ) : (
                   <>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      startIcon={<LoginIcon />}
-                      aria-label="Se connecter à votre compte"
-                    >
-                      Se connecter
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      startIcon={<PersonAddIcon />}
-                      aria-label="Créer un nouveau compte"
-                    >
-                      S&apos;inscrire
-                    </Button>
+                    <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        startIcon={<LoginIcon />}
+                        aria-label="Se connecter à votre compte"
+                      >
+                        Se connecter
+                      </Button>
+                    </Link>
+                    <Link href="/auth/register" style={{ textDecoration: 'none' }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<PersonAddIcon />}
+                        aria-label="Créer un nouveau compte"
+                      >
+                        S&apos;inscrire
+                      </Button>
+                    </Link>
                   </>
                 )}
               </Box>
@@ -375,24 +379,28 @@ export default function NavBar() {
             </Button>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                color="primary"
-                startIcon={<LoginIcon />}
-                aria-label="Se connecter à votre compte"
-              >
-                Se connecter
-              </Button>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                startIcon={<PersonAddIcon />}
-                aria-label="Créer un nouveau compte"
-              >
-                S&apos;inscrire
-              </Button>
+              <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<LoginIcon />}
+                  aria-label="Se connecter à votre compte"
+                >
+                  Se connecter
+                </Button>
+              </Link>
+              <Link href="/auth/register" style={{ textDecoration: 'none' }}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  startIcon={<PersonAddIcon />}
+                  aria-label="Créer un nouveau compte"
+                >
+                  S&apos;inscrire
+                </Button>
+              </Link>
             </Box>
           )}
         </Box>

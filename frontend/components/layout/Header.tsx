@@ -6,7 +6,7 @@ import { useAuthStore } from '@/lib/stores/useAuthStore';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { isAuthenticated, logout } = useAuthStore();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -61,12 +61,16 @@ export default function Header() {
               </>
             ) : (
               <>
-                <Button variant="outlined" color="primary">
-                  Se connecter
-                </Button>
-                <Button variant="contained" color="primary">
-                  S'inscrire
-                </Button>
+                <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+                  <Button variant="outlined" color="primary">
+                    Se connecter
+                  </Button>
+                </Link>
+                <Link href="/auth/register" style={{ textDecoration: 'none' }}>
+                  <Button variant="contained" color="primary">
+                    S'inscrire
+                  </Button>
+                </Link>
               </>
             )}
           </Box>

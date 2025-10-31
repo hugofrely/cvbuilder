@@ -64,6 +64,7 @@ function BuilderContent() {
     loadResume,
     exportPDF,
     scheduleAutoSave,
+    clearResumeId,
   } = useResume({ autoSave: true, autoSaveDelay: 3000 });
 
   const renderStepContent = () => {
@@ -192,11 +193,11 @@ function BuilderContent() {
   };
 
   const handleCreateNewResume = () => {
-    // Clear current resume ID to trigger creation on first save
-    localStorage.removeItem('currentResumeId');
+    // IMPORTANT: Clear resume ID from all locations (state, ref, localStorage)
+    // This ensures the next save will create a NEW resume instead of updating the old one
+    clearResumeId();
 
     // Reset CV data to empty state
-    // NOTE: No auto-save will be triggered because the data is identical to initial state
     loadCVData({
       personalInfo: {
         firstName: '',
