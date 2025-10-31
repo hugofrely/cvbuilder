@@ -92,14 +92,30 @@ class ResumeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         """
         Filter resumes by authenticated user or session ID.
+
+        Logic:
+        - Authenticated users: show only resumes linked to their user account
+        - Anonymous users: show only resumes linked to their session that have NO user
         """
-        if self.request.user.is_authenticated:
+        import logging
+        logger = logging.getLogger(__name__)
+
+        is_authenticated = self.request.user.is_authenticated
+        logger.info(f"ResumeViewSet.get_queryset() - user.is_authenticated: {is_authenticated}")
+
+        if is_authenticated:
+            # Show only resumes linked to this user
+            logger.info(f"ResumeViewSet.get_queryset() - Authenticated user: {self.request.user.id}")
             return Resume.objects.filter(user=self.request.user)
 
-        # For anonymous users, filter by session
+        # For anonymous users, filter by session AND ensure no user is linked
         session_key = self.request.session.session_key
+        logger.info(f"ResumeViewSet.get_queryset() - Anonymous user with session_key: {session_key}")
         if session_key:
-            return Resume.objects.filter(session_id=session_key)
+            return Resume.objects.filter(
+                session_id=session_key,
+                user__isnull=True  # Only resumes not yet linked to a user
+            )
 
         return Resume.objects.none()
 

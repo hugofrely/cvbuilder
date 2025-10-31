@@ -166,7 +166,7 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # For OAuth callbacks
+        'cvbuilder_backend.authentication.CsrfExemptSessionAuthentication',  # For anonymous users
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -198,6 +198,11 @@ CORS_ALLOWED_ORIGINS = [
     FRONTEND_URL,
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = [
+    FRONTEND_URL,
+]
 
 # Stripe Settings
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
@@ -313,3 +318,32 @@ STRIPE_LIFETIME_PREMIUM_PRICE_ID = os.environ.get('STRIPE_LIFETIME_PREMIUM_PRICE
 # Payment amounts (in cents)
 PAYMENT_AMOUNT_PAY_PER_CV = 240  # 2.40€
 PAYMENT_AMOUNT_LIFETIME_PREMIUM = 2400  # 24€
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'resumes': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

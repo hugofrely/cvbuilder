@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { authService } from '@/lib/api/auth';
+import { migrateAnonymousResume } from '@/lib/utils/resumeMigration';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -44,6 +45,9 @@ export default function AuthCallbackPage() {
           await refreshUser();
 
           console.log('User loaded successfully');
+
+          // Migrate anonymous resume data after successful OAuth login
+          await migrateAnonymousResume();
 
           // Wait a bit to ensure user is set in context
           await new Promise(resolve => setTimeout(resolve, 500));

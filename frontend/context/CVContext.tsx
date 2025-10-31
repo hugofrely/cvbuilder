@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { CVData, BuilderStep } from '@/types/cv';
 import { SaveStatus } from '@/types/resume';
+import { useAuthStore } from '@/lib/stores/useAuthStore';
 
 interface CVContextType {
   cvData: CVData;
@@ -32,6 +33,7 @@ interface CVContextType {
 
   // Resume management
   loadCVData: (data: CVData) => void;
+  resetCVData: () => void;
   saveStatus: SaveStatus;
   setSaveStatus: (status: SaveStatus) => void;
   triggerAutoSave: () => void;
@@ -64,11 +66,27 @@ const initialCVData: CVData = {
 };
 
 export function CVProvider({ children }: { children: ReactNode }) {
+  const { isAuthenticated } = useAuthStore();
   const [cvData, setCVData] = useState<CVData>(initialCVData);
   const [currentStep, setCurrentStep] = useState<BuilderStep>('personal-info');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ status: 'idle' });
   const [autoSaveTrigger, setAutoSaveTrigger] = useState(0);
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(2);
+
+  // Reset CV data when user logs out
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // Clear currentResumeId from localStorage
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('currentResumeId');
+      }
+      // Reset CV data to initial state
+      setCVData(initialCVData);
+      setCurrentStep('personal-info');
+      setSaveStatus({ status: 'idle' });
+      setSelectedTemplateId(2);
+    }
+  }, [isAuthenticated]);
 
   // Trigger auto-save on data change
   const triggerAutoSave = () => {
@@ -78,6 +96,14 @@ export function CVProvider({ children }: { children: ReactNode }) {
   // Load CV data from external source
   const loadCVData = (data: CVData) => {
     setCVData(data);
+  };
+
+  // Reset CV data to initial state
+  const resetCVData = () => {
+    setCVData(initialCVData);
+    setCurrentStep('personal-info');
+    setSaveStatus({ status: 'idle' });
+    setSelectedTemplateId(2);
   };
 
   const updatePersonalInfo = (data: Partial<CVData['personalInfo']>) => {
@@ -283,6 +309,7 @@ export function CVProvider({ children }: { children: ReactNode }) {
 
         // Resume management
         loadCVData,
+        resetCVData,
         saveStatus,
         setSaveStatus,
         triggerAutoSave,

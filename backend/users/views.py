@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from .serializers import (
     UserSerializer,
     UserRegistrationSerializer,
@@ -100,3 +102,56 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 pass
 
         return response
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class LogoutView(APIView):
+    """
+    Logout endpoint - handles both JWT and session cleanup.
+
+    For authenticated users:
+    - Blacklists the JWT refresh token
+    - Destroys the current session
+    - Creates a new anonymous session
+
+    This ensures that after logout:
+    - JWT tokens can't be reused (blacklisted)
+    - User becomes truly anonymous with a fresh session
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        import logging
+        logger = logging.getLogger(__name__)
+
+        # Log the logout attempt
+        old_session_key = request.session.session_key
+
+        if request.user.is_authenticated:
+            user_id = request.user.id
+            user_email = request.user.email
+            logger.info(f"Logout: User {user_id} ({user_email}) is logging out")
+
+            # Blacklist the refresh token if provided
+            refresh_token = request.data.get('refresh')
+            if refresh_token:
+                try:
+                    from rest_framework_simplejwt.tokens import RefreshToken
+                    token = RefreshToken(refresh_token)
+                    token.blacklist()
+                    logger.info(f"Logout: Refresh token blacklisted for user {user_id}")
+                except Exception as e:
+                    logger.warning(f"Logout: Failed to blacklist token: {e}")
+
+            # Destroy the authenticated session and create a fresh anonymous one
+            request.session.flush()
+            request.session.create()
+            new_session_key = request.session.session_key
+
+            logger.info(f"Logout: User {user_id} session changed from {old_session_key} to {new_session_key}")
+        else:
+            logger.info("Logout: Anonymous user attempting logout")
+
+        return Response({
+            'message': 'Logged out successfully'
+        }, status=status.HTTP_200_OK)

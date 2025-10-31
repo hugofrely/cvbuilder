@@ -9,7 +9,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // For session cookies
+  withCredentials: true, // Needed for Django sessions (anonymous users)
 });
 
 // Request interceptor to add auth token

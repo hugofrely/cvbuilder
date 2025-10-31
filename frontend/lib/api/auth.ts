@@ -82,8 +82,21 @@ class AuthService {
 
   // Logout
   async logout(): Promise<void> {
-    // Just clear tokens on frontend (no backend endpoint needed)
-    this.clearTokens();
+    const refreshToken = this.getRefreshToken();
+
+    console.log('[AuthService] Logout called, refresh token:', refreshToken ? 'present' : 'missing');
+
+    try {
+      // Send refresh token to backend for blacklisting
+      console.log('[AuthService] Calling backend logout endpoint...');
+      const response = await apiClient.post(`${this.baseURL}/logout/`, {
+        refresh: refreshToken
+      });
+      console.log('[AuthService] Backend logout successful:', response.data);
+    } catch (error) {
+      console.error('[AuthService] Logout error:', error);
+      // Continue even if backend call fails
+    }
   }
 
   // Get current user

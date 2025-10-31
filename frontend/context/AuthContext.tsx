@@ -108,12 +108,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async () => {
+    console.log('[AuthContext] Logout initiated');
     setLoading(true);
     try {
+      // Call backend FIRST (while we still have tokens for authentication)
+      // This will blacklist the JWT and create a new anonymous session
+      console.log('[AuthContext] Calling authService.logout()...');
       await authService.logout();
-      storeLogout();
+      console.log('[AuthContext] authService.logout() completed');
+    } catch (error) {
+      console.error('[AuthContext] Logout error:', error);
+      // Continue logout even if backend fails
     } finally {
+      // Clear tokens and user state (always executed)
+      console.log('[AuthContext] Clearing local state...');
+      storeLogout();
+
+      // Clear resume data on logout
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('currentResumeId');
+      }
+
       setLoading(false);
+      console.log('[AuthContext] Logout complete');
     }
   };
 

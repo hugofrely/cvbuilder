@@ -2,15 +2,15 @@
 
 import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
 import Link from 'next/link';
-import { useAuthStore } from '@/lib/stores/useAuthStore';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
 export default function Header() {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('/');
   };
 

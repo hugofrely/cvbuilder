@@ -7,7 +7,8 @@ from .views import (
     UserRegistrationView,
     UserProfileView,
     ChangePasswordView,
-    CustomTokenObtainPairView
+    CustomTokenObtainPairView,
+    LogoutView
 )
 from .oauth_views import (
     GoogleLoginView,
@@ -23,6 +24,7 @@ app_name = 'users'
 urlpatterns = [
     # JWT Authentication
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('verify/', TokenVerifyView.as_view(), name='token_verify'),
 

@@ -44,13 +44,18 @@ export const useAuthStore = create<AuthStore>()(
           isAuthenticated: !!(accessToken && refreshToken),
         }),
 
-      logout: () =>
+      logout: () => {
+        // Clear the localStorage explicitly
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('auth-storage');
+        }
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           isAuthenticated: false,
-        }),
+        });
+      },
 
       updateUser: (updates) =>
         set((state) => ({
