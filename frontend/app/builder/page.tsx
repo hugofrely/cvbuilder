@@ -100,6 +100,25 @@ function BuilderContent() {
   // Load existing resume on mount or show selector
   useEffect(() => {
     const initializeResume = async () => {
+      // First check if there's a resumeId in the URL
+      const urlResumeId = searchParams.get('resumeId');
+
+      if (urlResumeId) {
+        // Load resume from URL parameter
+        const result = await loadResume(urlResumeId);
+        if (result) {
+          loadCVData(result.cvData);
+          // Only set template from resume if no template param in URL
+          if (result.templateId && !searchParams.get('template')) {
+            setSelectedTemplateId(result.templateId);
+          }
+          // Store the resume ID for future use
+          localStorage.setItem('currentResumeId', urlResumeId);
+          return; // Successfully loaded, exit
+        }
+      }
+
+      // If no URL param, check localStorage
       const storedResumeId = localStorage.getItem('currentResumeId');
 
       if (storedResumeId) {
@@ -124,7 +143,7 @@ function BuilderContent() {
 
     initializeResume();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
 
   // Auto-save when CV data or template changes
   useEffect(() => {

@@ -5,6 +5,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template import Context, Template as DjangoTemplate
+from pybars import Compiler
 from .models import Template, Resume, Experience, Education, Skill
 from .serializers import (
     TemplateSerializer,
@@ -182,19 +183,27 @@ class ResumeViewSet(viewsets.ModelViewSet):
                 'driving_license': resume.driving_license,
                 'title': resume.title,
                 'summary': resume.summary,
-                'experience_data': resume.experience_data,
-                'education_data': resume.education_data,
-                'skills_data': resume.skills_data,
-                'languages_data': resume.languages_data,
-                'certifications_data': resume.certifications_data,
-                'projects_data': resume.projects_data,
-                'custom_sections': resume.custom_sections,
+                'experience_data': resume.experience_data or [],
+                'education_data': resume.education_data or [],
+                'skills_data': resume.skills_data or [],
+                'languages_data': resume.languages_data or [],
+                'certifications_data': resume.certifications_data or [],
+                'projects_data': resume.projects_data or [],
+                'custom_sections': resume.custom_sections or [],
             }
 
-            # Render template with context
-            django_template = DjangoTemplate(template.template_html)
-            context = Context(context_data)
-            rendered_html = django_template.render(context)
+            # Render template with Handlebars (pybars)
+            compiler = Compiler()
+
+            # Register custom helpers for Handlebars
+            def first_helper(this, value, count):
+                """Helper to get first N characters of a string"""
+                if value:
+                    return str(value)[:int(count)]
+                return ''
+
+            handlebars_template = compiler.compile(template.template_html)
+            rendered_html = handlebars_template(context_data, helpers={'first': first_helper})
 
             return Response({
                 'html': rendered_html,
