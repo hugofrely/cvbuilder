@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status, permissions, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
@@ -82,8 +83,11 @@ class ResumeViewSet(viewsets.ModelViewSet):
     update/partial_update: Update a resume (auto-save)
     destroy: Delete a resume
     export_pdf: Export resume as PDF
+    upload_photo: Upload a photo for the resume
+    delete_photo: Delete the resume photo
     """
     permission_classes = [permissions.AllowAny]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['template', 'is_paid', 'payment_type']
     search_fields = ['full_name', 'email', 'title']
@@ -471,6 +475,102 @@ class ResumeViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({
                 'error': 'Failed to migrate anonymous resumes',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['post'], parser_classes=[MultiPartParser, FormParser])
+    def upload_photo(self, request, pk=None):
+        """
+        Upload a photo for the resume.
+
+        Expects a multipart/form-data request with a 'photo' file field.
+        Supported formats: JPG, JPEG, PNG, GIF
+        Max file size: 5MB (enforced by Django settings)
+
+        Returns the updated resume with the photo URL.
+        """
+        resume = self.get_object()
+
+        try:
+            # Check if photo file is in request
+            if 'photo' not in request.FILES:
+                return Response({
+                    'error': 'No photo file provided',
+                    'detail': 'Please include a photo file in the request'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            photo_file = request.FILES['photo']
+
+            # Validate file type
+            allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+            if photo_file.content_type not in allowed_types:
+                return Response({
+                    'error': 'Invalid file type',
+                    'detail': f'Only JPG, PNG and GIF images are allowed. Got: {photo_file.content_type}'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Validate file size (5MB max)
+            max_size = 5 * 1024 * 1024  # 5MB in bytes
+            if photo_file.size > max_size:
+                return Response({
+                    'error': 'File too large',
+                    'detail': f'Maximum file size is 5MB. Your file is {photo_file.size / 1024 / 1024:.2f}MB'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Delete old photo if exists
+            if resume.photo:
+                resume.photo.delete(save=False)
+
+            # Save new photo
+            resume.photo = photo_file
+            resume.save(update_fields=['photo'])
+
+            # Return updated resume
+            serializer = ResumeSerializer(resume)
+
+            return Response({
+                'message': 'Photo uploaded successfully',
+                'photo_url': resume.photo.url if resume.photo else None,
+                'resume': serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            import traceback
+            return Response({
+                'error': 'Failed to upload photo',
+                'detail': str(e),
+                'traceback': traceback.format_exc()
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=True, methods=['delete'])
+    def delete_photo(self, request, pk=None):
+        """
+        Delete the resume photo.
+
+        Returns the updated resume without the photo.
+        """
+        resume = self.get_object()
+
+        try:
+            if not resume.photo:
+                return Response({
+                    'message': 'No photo to delete',
+                }, status=status.HTTP_200_OK)
+
+            # Delete the photo file
+            resume.photo.delete(save=True)
+
+            # Return updated resume
+            serializer = ResumeSerializer(resume)
+
+            return Response({
+                'message': 'Photo deleted successfully',
+                'resume': serializer.data
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': 'Failed to delete photo',
                 'detail': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

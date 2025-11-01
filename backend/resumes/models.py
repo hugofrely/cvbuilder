@@ -1,6 +1,27 @@
 from django.db import models
 from django.conf import settings
 import uuid
+import os
+
+
+def resume_photo_upload_path(instance, filename):
+    """
+    Generate upload path for resume photos with UUID filename.
+
+    Args:
+        instance: Resume model instance
+        filename: Original filename
+
+    Returns:
+        Path: resumes/photos/{uuid}.{extension}
+    """
+    # Get file extension
+    ext = filename.split('.')[-1].lower()
+
+    # Generate new filename with UUID
+    new_filename = f"{uuid.uuid4()}.{ext}"
+
+    return os.path.join('resumes', 'photos', new_filename)
 
 
 class Template(models.Model):
@@ -63,7 +84,7 @@ class Resume(models.Model):
     website = models.URLField(blank=True)
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
-    photo = models.ImageField(upload_to='resumes/photos/', blank=True, null=True)
+    photo = models.ImageField(upload_to=resume_photo_upload_path, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True, help_text="Date of birth")
     nationality = models.CharField(max_length=100, blank=True, help_text="Nationality")
     driving_license = models.CharField(max_length=100, blank=True, help_text="Driving license type")

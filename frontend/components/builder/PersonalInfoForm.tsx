@@ -26,7 +26,7 @@ export default function PersonalInfoForm() {
     updatePersonalInfo({ [field]: event.target.value });
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -46,21 +46,76 @@ export default function PersonalInfoForm() {
     setPhotoError('');
     setPhotoLoading(true);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      updatePersonalInfo({ photo: reader.result as string });
+    try {
+      // Get current resume ID from localStorage
+      const resumeId = localStorage.getItem('currentResumeId');
+
+      if (!resumeId) {
+        setPhotoError('Impossible de trouver le CV. Veuillez recharger la page.');
+        setPhotoLoading(false);
+        return;
+      }
+
+      // Upload photo to backend
+      const formData = new FormData();
+      formData.append('photo', file);
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/upload_photo/`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Erreur lors de l\'upload de la photo');
+      }
+
+      const data = await response.json();
+
+      // Update local state with the photo URL from server
+      updatePersonalInfo({ photo: data.photo_url });
       setPhotoLoading(false);
-    };
-    reader.onerror = () => {
-      setPhotoError('Erreur lors du chargement de la photo');
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      setPhotoError(error instanceof Error ? error.message : 'Erreur lors de l\'upload de la photo');
       setPhotoLoading(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handlePhotoDelete = () => {
-    updatePersonalInfo({ photo: '' });
+  const handlePhotoDelete = async () => {
+    setPhotoLoading(true);
     setPhotoError('');
+
+    try {
+      // Get current resume ID from localStorage
+      const resumeId = localStorage.getItem('currentResumeId');
+
+      if (!resumeId) {
+        setPhotoError('Impossible de trouver le CV. Veuillez recharger la page.');
+        setPhotoLoading(false);
+        return;
+      }
+
+      // Delete photo from backend
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/delete_photo/`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Erreur lors de la suppression de la photo');
+      }
+
+      // Update local state
+      updatePersonalInfo({ photo: '' });
+      setPhotoLoading(false);
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+      setPhotoError(error instanceof Error ? error.message : 'Erreur lors de la suppression de la photo');
+      setPhotoLoading(false);
+    }
   };
 
   return (

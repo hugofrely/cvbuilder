@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',  # Required for dj-rest-auth
     'corsheaders',
     'django_filters',
+    'storages',  # Django storages for GCS
 
     # Authentication
     'dj_rest_auth',
@@ -216,12 +217,51 @@ STRIPE_SUBSCRIPTION_YEARLY_PRICE_ID = os.getenv('STRIPE_SUBSCRIPTION_YEARLY_PRIC
 LINKEDIN_CLIENT_ID = os.getenv('LINKEDIN_CLIENT_ID')
 LINKEDIN_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
 
-# Media Files (for CV photos, etc.)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 # Static Files
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Google Cloud Storage Settings
+USE_GCS = os.getenv('USE_GCS', 'False') == 'True'
+
+# GCS Configuration (common settings)
+GS_BUCKET_NAME = os.getenv('GCS_BUCKET_NAME', 'cvbuilder-images')
+GS_PROJECT_ID = os.getenv('GCS_PROJECT_ID', 'cvbuilder-476609')
+
+# Set credentials path for google-cloud-storage library
+credentials_path = os.getenv('GCS_CREDENTIALS')
+if credentials_path:
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
+
+if USE_GCS:
+    # Django 5.1+ STORAGES setting for GCS
+    STORAGES = {
+        'default': {
+            'BACKEND': 'storages.backends.gcloud.GoogleCloudStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    }
+
+    # GCS specific settings
+    GS_DEFAULT_ACL = 'publicRead'  # Make uploaded files publicly accessible
+    GS_FILE_OVERWRITE = True  # Allow overwriting files with the same name
+    GS_MAX_MEMORY_SIZE = 5242880  # 5MB - files larger than this will be streamed
+
+    # Media files will be served from GCS
+    MEDIA_URL = f'https://storage.googleapis.com/{GS_BUCKET_NAME}/'
+else:
+    # Local storage for development
+    STORAGES = {
+        'default': {
+            'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        },
+        'staticfiles': {
+            'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+        },
+    }
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Celery Settings
 CELERY_BROKER_URL = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
