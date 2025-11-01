@@ -133,7 +133,29 @@ export default function Home() {
   ];
 
   return (
-    <Box component="main">
+    <Box component="main" id="main-content">
+      {/* Skip to main content link for keyboard navigation - WCAG 2.4.1 */}
+      <Box
+        component="a"
+        href="#main-content"
+        sx={{
+          position: 'absolute',
+          left: '-9999px',
+          zIndex: 999,
+          padding: '1rem',
+          backgroundColor: 'primary.main',
+          color: 'white',
+          textDecoration: 'none',
+          '&:focus': {
+            left: '50%',
+            top: '1rem',
+            transform: 'translateX(-50%)',
+          },
+        }}
+      >
+        Aller au contenu principal
+      </Box>
+
       {/* Hero Section avec dégradé */}
       <Box
         component="section"
@@ -171,9 +193,10 @@ export default function Home() {
                     alignItems: 'center',
                     justifyContent: { xs: 'center', md: 'flex-start' },
                     gap: 1,
+                    textShadow: '0 1px 2px rgba(0,0,0,0.2)',
                   }}
                 >
-                  <AutoAwesome /> Créateur de CV professionnel
+                  <AutoAwesome aria-hidden="true" /> Créateur de CV professionnel
                 </Typography>
                 <Typography
                   variant="h1"
@@ -185,6 +208,7 @@ export default function Home() {
                     fontWeight: 800,
                     lineHeight: 1.2,
                     mb: 3,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.15)',
                   }}
                 >
                   Créez votre CV professionnel en{' '}
@@ -195,6 +219,7 @@ export default function Home() {
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
+                      textShadow: 'none',
                     }}
                   >
                     5 minutes
@@ -207,8 +232,9 @@ export default function Home() {
                     mb: 4,
                     fontSize: { xs: '1.1rem', md: '1.3rem' },
                     fontWeight: 400,
-                    opacity: 0.95,
+                    opacity: 0.98,
                     lineHeight: 1.6,
+                    textShadow: '0 1px 2px rgba(0,0,0,0.15)',
                   }}
                 >
                   Simple, rapide et professionnel. Aucune inscription requise pour commencer.
@@ -219,11 +245,11 @@ export default function Home() {
                   spacing={2}
                   sx={{ justifyContent: { xs: 'center', md: 'flex-start' } }}
                 >
-                  <Link href="/builder" style={{ textDecoration: 'none' }}>
+                  <Link href="/builder" style={{ textDecoration: 'none' }} tabIndex={-1}>
                     <Button
                       variant="contained"
                       size="large"
-                      endIcon={<ArrowForward />}
+                      endIcon={<ArrowForward aria-hidden="true" />}
                       aria-label="Commencer à créer votre CV gratuitement"
                       sx={{
                         bgcolor: 'white',
@@ -238,12 +264,17 @@ export default function Home() {
                           transform: 'translateY(-2px)',
                           boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
                         },
+                        '&:focus-visible': {
+                          outline: '3px solid',
+                          outlineColor: 'primary.dark',
+                          outlineOffset: '2px',
+                        },
                       }}
                     >
                       Créer mon CV gratuitement
                     </Button>
                   </Link>
-                  <Link href="/templates" style={{ textDecoration: 'none' }}>
+                  <Link href="/templates" style={{ textDecoration: 'none' }} tabIndex={-1}>
                     <Button
                       variant="outlined"
                       size="large"
@@ -259,6 +290,10 @@ export default function Home() {
                           borderColor: 'white',
                           bgcolor: 'rgba(255,255,255,0.1)',
                           transform: 'translateY(-2px)',
+                        },
+                        '&:focus-visible': {
+                          outline: '3px solid white',
+                          outlineOffset: '2px',
                         },
                       }}
                     >
@@ -288,8 +323,10 @@ export default function Home() {
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
+                  role="img"
+                  aria-label="Illustration d'un document de CV"
                 >
-                  <Description sx={{ fontSize: 120, opacity: 0.3 }} />
+                  <Description sx={{ fontSize: 120, opacity: 0.3 }} aria-hidden="true" />
                 </Box>
               </Box>
             </Grid>
@@ -301,6 +338,7 @@ export default function Home() {
       <Box
         component="section"
         aria-label="Statistiques de CV Builder"
+        role="region"
         sx={{
           bgcolor: 'white',
           py: 6,
@@ -341,6 +379,7 @@ export default function Home() {
       <Box
         component="section"
         aria-labelledby="features-title"
+        role="region"
         sx={{
           py: { xs: 8, md: 12 },
           background: `linear-gradient(180deg, ${themeColors.background.default} 0%, ${themeColors.grey[50]} 100%)`,
@@ -429,6 +468,7 @@ export default function Home() {
       <Box
         component="section"
         aria-labelledby="how-it-works-title"
+        role="region"
         sx={{
           py: { xs: 8, md: 12 },
           background: 'white',
@@ -533,6 +573,8 @@ export default function Home() {
       <Box
         component="section"
         aria-labelledby="testimonials-title"
+        role="region"
+        aria-label="Témoignages d'utilisateurs"
         sx={{
           py: { xs: 8, md: 12 },
           background: `linear-gradient(180deg, ${themeColors.grey[50]} 0%, ${themeColors.background.default} 100%)`,
@@ -584,7 +626,11 @@ export default function Home() {
                 >
                   <CardContent sx={{ p: 0 }}>
                     <Stack spacing={2}>
-                      <Box sx={{ display: 'flex', gap: 0.5 }} aria-label={`Note: ${testimonial.rating} sur 5`}>
+                      <Box
+                        sx={{ display: 'flex', gap: 0.5 }}
+                        role="img"
+                        aria-label={`Note: ${testimonial.rating} sur 5 étoiles`}
+                      >
                         {[...Array(testimonial.rating)].map((_, i) => (
                           <Star key={i} sx={{ color: '#FFA500', fontSize: 20 }} aria-hidden="true" />
                         ))}
@@ -634,6 +680,8 @@ export default function Home() {
       <Box
         component="section"
         aria-labelledby="cta-title"
+        role="region"
+        aria-label="Appel à l'action"
         sx={{
           py: { xs: 8, md: 12 },
           background: `linear-gradient(135deg, ${themeColors.primary.dark} 0%, ${themeColors.primary.main} 50%, ${themeColors.secondary.main} 100%)`,
@@ -663,6 +711,7 @@ export default function Home() {
                 fontWeight: 800,
                 fontSize: { xs: '2rem', md: '2.8rem' },
                 mb: 2,
+                textShadow: '0 2px 4px rgba(0,0,0,0.15)',
               }}
             >
               Prêt à créer votre CV professionnel ?
@@ -672,9 +721,10 @@ export default function Home() {
               component="p"
               sx={{
                 mb: 5,
-                opacity: 0.95,
+                opacity: 0.98,
                 fontWeight: 400,
                 lineHeight: 1.7,
+                textShadow: '0 1px 2px rgba(0,0,0,0.15)',
               }}
             >
               Rejoignez plus de 10,000 utilisateurs qui ont déjà créé leur CV avec CV Builder.
@@ -685,11 +735,11 @@ export default function Home() {
               spacing={2}
               sx={{ justifyContent: 'center' }}
             >
-              <Link href="/builder" style={{ textDecoration: 'none' }}>
+              <Link href="/builder" style={{ textDecoration: 'none' }} tabIndex={-1}>
                 <Button
                   variant="contained"
                   size="large"
-                  endIcon={<ArrowForward />}
+                  endIcon={<ArrowForward aria-hidden="true" />}
                   aria-label="Commencer à créer votre CV maintenant"
                   sx={{
                     bgcolor: 'white',
@@ -704,12 +754,17 @@ export default function Home() {
                       transform: 'translateY(-2px)',
                       boxShadow: '0 12px 40px rgba(0,0,0,0.25)',
                     },
+                    '&:focus-visible': {
+                      outline: '3px solid',
+                      outlineColor: 'primary.dark',
+                      outlineOffset: '2px',
+                    },
                   }}
                 >
                   Créer mon CV maintenant
                 </Button>
               </Link>
-              <Link href="/templates" style={{ textDecoration: 'none' }}>
+              <Link href="/templates" style={{ textDecoration: 'none' }} tabIndex={-1}>
                 <Button
                   variant="outlined"
                   size="large"
@@ -727,6 +782,10 @@ export default function Home() {
                       borderWidth: 2,
                       bgcolor: 'rgba(255,255,255,0.15)',
                       transform: 'translateY(-2px)',
+                    },
+                    '&:focus-visible': {
+                      outline: '3px solid white',
+                      outlineOffset: '2px',
                     },
                   }}
                 >

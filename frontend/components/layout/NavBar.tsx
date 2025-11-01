@@ -27,6 +27,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
+import CreateIcon from '@mui/icons-material/Create';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -100,8 +101,14 @@ export default function NavBar() {
       role="navigation"
       aria-label="Navigation principale"
       color="default"
-      elevation={1}
-      sx={{ bgcolor: 'white' }}
+      elevation={0}
+      sx={{
+        bgcolor: 'white',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+        zIndex: 1200,
+      }}
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters sx={{ minHeight: { xs: 56, sm: 64 } }}>
@@ -184,6 +191,19 @@ export default function NavBar() {
 
               {/* Boutons d'authentification Desktop */}
               <Box sx={{ display: 'flex', gap: 1 }} role="group" aria-label="Actions utilisateur">
+                <Link href="/builder" style={{ textDecoration: 'none' }}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<CreateIcon />}
+                    aria-label="Créer mon CV"
+                    sx={{
+                      fontWeight: 600,
+                    }}
+                  >
+                    Créer mon CV
+                  </Button>
+                </Link>
                 {isAuthenticated ? (
                   <Button
                     variant="outlined"
@@ -208,7 +228,7 @@ export default function NavBar() {
                     </Link>
                     <Link href="/auth/register" style={{ textDecoration: 'none' }}>
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         color="primary"
                         startIcon={<PersonAddIcon />}
                         aria-label="Créer un nouveau compte"
@@ -365,6 +385,19 @@ export default function NavBar() {
 
         {/* Boutons d'authentification Mobile */}
         <Box sx={{ p: 2 }} role="group" aria-label="Actions utilisateur">
+          <Link href="/builder" style={{ textDecoration: 'none' }}>
+            <Button
+              fullWidth
+              variant="contained"
+              color="primary"
+              startIcon={<CreateIcon />}
+              aria-label="Créer mon CV"
+              onClick={handleMobileMenuClose}
+              sx={{ mb: 1, fontWeight: 600 }}
+            >
+              Créer mon CV
+            </Button>
+          </Link>
           {isAuthenticated ? (
             <Button
               fullWidth
@@ -393,7 +426,7 @@ export default function NavBar() {
               <Link href="/auth/register" style={{ textDecoration: 'none' }}>
                 <Button
                   fullWidth
-                  variant="contained"
+                  variant="outlined"
                   color="primary"
                   startIcon={<PersonAddIcon />}
                   aria-label="Créer un nouveau compte"

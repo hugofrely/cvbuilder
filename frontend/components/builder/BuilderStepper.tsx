@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Box, Button, Chip, useMediaQuery, useTheme, alpha, Fade } from '@mui/material';
 import {
   Person,
@@ -82,6 +83,9 @@ export default function BuilderStepper() {
     <Box sx={{ width: '100%', mb: 4 }}>
       {/* Navigation par étapes élégante */}
       <Box
+        component="nav"
+        role="navigation"
+        aria-label="Étapes de création du CV"
         sx={{
           display: 'flex',
           gap: 1,
@@ -97,9 +101,12 @@ export default function BuilderStepper() {
           return (
             <Fade in key={step.id} timeout={300 + index * 50}>
               <Chip
-                icon={isPast ? <Check /> : (step.icon as React.ReactElement)}
+                icon={isPast ? <Check aria-hidden="true" /> : (React.cloneElement(step.icon as React.ReactElement, { 'aria-hidden': 'true' }))}
                 label={isSmall ? '' : step.label}
                 onClick={() => handleStepClick(step.id)}
+                aria-label={`${step.label}: ${step.description}${isActive ? ' (étape actuelle)' : ''}${isPast ? ' (complétée)' : ''}`}
+                aria-current={isActive ? 'step' : undefined}
+                component="button"
                 sx={{
                   height: isSmall ? 40 : 44,
                   px: isSmall ? 0 : 2,
@@ -136,6 +143,11 @@ export default function BuilderStepper() {
                       ? alpha(theme.palette.success.main, 0.15)
                       : alpha(theme.palette.grey[500], 0.12),
                   },
+                  '&:focus-visible': {
+                    outline: '3px solid',
+                    outlineColor: 'primary.main',
+                    outlineOffset: '2px',
+                  },
                   '& .MuiChip-icon': {
                     fontSize: 20,
                     color: isActive ? 'white' : isPast ? theme.palette.success.main : 'inherit',
@@ -168,6 +180,7 @@ export default function BuilderStepper() {
               color: 'text.secondary',
               letterSpacing: '0.5px',
             }}
+            aria-hidden="true"
           >
             Étape {currentStepIndex + 1} sur {steps.length}
           </Box>
@@ -181,6 +194,7 @@ export default function BuilderStepper() {
               bgcolor: alpha(theme.palette.primary.main, 0.1),
               borderRadius: 2,
             }}
+            aria-hidden="true"
           >
             {Math.round(((currentStepIndex + 1) / steps.length) * 100)}%
           </Box>
@@ -195,6 +209,11 @@ export default function BuilderStepper() {
             position: 'relative',
             boxShadow: `inset 0 2px 4px ${alpha(theme.palette.common.black, 0.05)}`,
           }}
+          role="progressbar"
+          aria-valuenow={Math.round(((currentStepIndex + 1) / steps.length) * 100)}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Progression du CV: ${Math.round(((currentStepIndex + 1) / steps.length) * 100)}% complétée`}
         >
           <Box
             sx={{
@@ -298,12 +317,13 @@ export default function BuilderStepper() {
       </Fade>
 
       {/* Boutons de navigation élégants */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }} role="group" aria-label="Navigation entre les étapes">
         <Button
           variant="outlined"
           onClick={handleBack}
           disabled={currentStepIndex === 0}
-          startIcon={<KeyboardArrowLeft />}
+          startIcon={<KeyboardArrowLeft aria-hidden="true" />}
+          aria-label={`Retour à l'étape précédente${currentStepIndex > 0 ? `: ${steps[currentStepIndex - 1].label}` : ''}`}
           fullWidth
           sx={{
             py: 1.5,
@@ -321,6 +341,11 @@ export default function BuilderStepper() {
             '&:disabled': {
               border: `2px solid ${alpha(theme.palette.grey[300], 0.5)}`,
             },
+            '&:focus-visible': {
+              outline: '3px solid',
+              outlineColor: 'primary.main',
+              outlineOffset: '2px',
+            },
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
@@ -330,7 +355,8 @@ export default function BuilderStepper() {
           variant="contained"
           onClick={handleNext}
           disabled={currentStepIndex === steps.length - 1}
-          endIcon={<KeyboardArrowRight />}
+          endIcon={<KeyboardArrowRight aria-hidden="true" />}
+          aria-label={`Passer à l'étape suivante${currentStepIndex < steps.length - 1 ? `: ${steps[currentStepIndex + 1].label}` : ''}`}
           fullWidth
           sx={{
             py: 1.5,
@@ -342,6 +368,11 @@ export default function BuilderStepper() {
             '&:hover': {
               boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
               transform: 'translateX(2px)',
+            },
+            '&:focus-visible': {
+              outline: '3px solid',
+              outlineColor: 'primary.dark',
+              outlineOffset: '2px',
             },
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
           }}

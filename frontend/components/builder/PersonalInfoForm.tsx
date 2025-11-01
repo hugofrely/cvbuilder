@@ -64,16 +64,17 @@ export default function PersonalInfoForm() {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
+      <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 600, mb: 3 }}>
         Informations personnelles
       </Typography>
 
       {/* Photo Upload */}
-      <Box sx={{ mb: 4, textAlign: 'center' }}>
+      <Box sx={{ mb: 4, textAlign: 'center' }} role="group" aria-label="Photo de profil">
         <Box sx={{ position: 'relative', display: 'inline-block' }}>
           <Avatar
             src={personalInfo.photo}
             sx={{ width: 120, height: 120, mb: 2 }}
+            alt={personalInfo.photo ? `Photo de profil de ${personalInfo.firstName} ${personalInfo.lastName}` : 'Photo de profil non définie'}
           />
           {photoLoading && (
             <CircularProgress
@@ -84,11 +85,13 @@ export default function PersonalInfoForm() {
                 left: 0,
                 zIndex: 1,
               }}
+              aria-label="Chargement de la photo en cours"
             />
           )}
           {personalInfo.photo && !photoLoading && (
             <IconButton
               onClick={handlePhotoDelete}
+              aria-label="Supprimer la photo de profil"
               sx={{
                 position: 'absolute',
                 top: 0,
@@ -103,7 +106,7 @@ export default function PersonalInfoForm() {
               }}
               size="small"
             >
-              <Delete fontSize="small" />
+              <Delete fontSize="small" aria-hidden="true" />
             </IconButton>
           )}
         </Box>
@@ -111,9 +114,10 @@ export default function PersonalInfoForm() {
           <Button
             variant="outlined"
             component="label"
-            startIcon={<PhotoCamera />}
+            startIcon={<PhotoCamera aria-hidden="true" />}
             size="small"
             disabled={photoLoading}
+            aria-label={personalInfo.photo ? 'Changer la photo de profil' : 'Ajouter une photo de profil'}
           >
             {personalInfo.photo ? 'Changer la photo' : 'Ajouter une photo'}
             <input
@@ -121,6 +125,7 @@ export default function PersonalInfoForm() {
               hidden
               accept="image/*"
               onChange={handlePhotoUpload}
+              aria-label="Sélectionner un fichier image"
             />
           </Button>
           <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
@@ -134,7 +139,7 @@ export default function PersonalInfoForm() {
         )}
       </Box>
 
-      <Grid container spacing={3}>
+      <Grid container spacing={3} component="form" aria-label="Formulaire d'informations personnelles">
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
@@ -142,6 +147,7 @@ export default function PersonalInfoForm() {
             value={personalInfo.firstName}
             onChange={handleChange('firstName')}
             required
+            aria-required="true"
             slotProps={{
               inputLabel: {
                 sx: {
@@ -160,6 +166,7 @@ export default function PersonalInfoForm() {
             value={personalInfo.lastName}
             onChange={handleChange('lastName')}
             required
+            aria-required="true"
             slotProps={{
               inputLabel: {
                 sx: {
@@ -178,6 +185,7 @@ export default function PersonalInfoForm() {
             value={personalInfo.jobTitle}
             onChange={handleChange('jobTitle')}
             required
+            aria-required="true"
             placeholder="Ex: Développeur Full-Stack, Chef de projet..."
             slotProps={{
               inputLabel: {
@@ -198,6 +206,10 @@ export default function PersonalInfoForm() {
             value={personalInfo.email}
             onChange={handleChange('email')}
             required
+            aria-required="true"
+            inputProps={{
+              'aria-label': 'Adresse e-mail',
+            }}
             slotProps={{
               inputLabel: {
                 sx: {
@@ -213,9 +225,14 @@ export default function PersonalInfoForm() {
           <TextField
             fullWidth
             label="Téléphone *"
+            type="tel"
             value={personalInfo.phone}
             onChange={handleChange('phone')}
             required
+            aria-required="true"
+            inputProps={{
+              'aria-label': 'Numéro de téléphone',
+            }}
             slotProps={{
               inputLabel: {
                 sx: {

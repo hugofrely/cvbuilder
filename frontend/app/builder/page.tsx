@@ -323,10 +323,38 @@ function BuilderContent() {
         bgcolor: alpha(theme.palette.primary.main, 0.02),
         display: 'flex',
         flexDirection: 'column',
+        pt: { xs: 7, sm: 8 }, // Padding pour la NavBar
       }}
     >
+      {/* Skip to main content link - WCAG 2.4.1 */}
+      <Box
+        component="a"
+        href="#builder-main-content"
+        sx={{
+          position: 'absolute',
+          left: '-9999px',
+          zIndex: 9999,
+          padding: '1rem',
+          backgroundColor: 'primary.main',
+          color: 'white',
+          textDecoration: 'none',
+          fontWeight: 600,
+          '&:focus': {
+            left: '50%',
+            top: '5rem',
+            transform: 'translateX(-50%)',
+          },
+        }}
+      >
+        Aller au contenu principal
+      </Box>
+
       {/* Contenu principal */}
-      <Box sx={{ flex: 1, display: 'flex', overflow: 'hidden', pb: { xs: 10, md: 12 } }}>
+      <Box
+        component="main"
+        id="builder-main-content"
+        sx={{ flex: 1, display: 'flex', overflow: 'hidden', pb: { xs: 10, md: 12 } }}
+      >
         {/* Mode Desktop : Layout côte à côte */}
         {!isMobile ? (
           <>
@@ -493,6 +521,9 @@ function BuilderContent() {
       {/* Toolbar fixe en bas */}
       <Fade in timeout={300}>
         <Box
+          component="nav"
+          role="toolbar"
+          aria-label="Barre d'outils du créateur de CV"
           sx={{
             position: 'fixed',
             bottom: 0,
@@ -531,17 +562,20 @@ function BuilderContent() {
                       borderRadius: 2,
                       border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
                     }}
+                    role="group"
+                    aria-label="Contrôles de zoom"
                   >
                     <Tooltip title="Zoom arrière">
                       <IconButton
                         size="small"
                         onClick={handleZoomOut}
                         disabled={previewZoom <= 30}
+                        aria-label={`Zoom arrière, zoom actuel ${previewZoom}%`}
                         sx={{
                           '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.1) },
                         }}
                       >
-                        <ZoomOut fontSize="small" />
+                        <ZoomOut fontSize="small" aria-hidden="true" />
                       </IconButton>
                     </Tooltip>
                     <Typography
@@ -552,6 +586,8 @@ function BuilderContent() {
                         fontWeight: 600,
                         color: 'primary.main',
                       }}
+                      aria-live="polite"
+                      aria-atomic="true"
                     >
                       {previewZoom}%
                     </Typography>
@@ -560,11 +596,12 @@ function BuilderContent() {
                         size="small"
                         onClick={handleZoomIn}
                         disabled={previewZoom >= 200}
+                        aria-label={`Zoom avant, zoom actuel ${previewZoom}%`}
                         sx={{
                           '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.1) },
                         }}
                       >
-                        <ZoomIn fontSize="small" />
+                        <ZoomIn fontSize="small" aria-hidden="true" />
                       </IconButton>
                     </Tooltip>
                   </Box>
@@ -580,8 +617,10 @@ function BuilderContent() {
                     <Button
                       variant={showPreview ? 'contained' : 'outlined'}
                       size="medium"
-                      startIcon={showPreview ? <Close /> : <Visibility />}
+                      startIcon={showPreview ? <Close aria-hidden="true" /> : <Visibility aria-hidden="true" />}
                       onClick={() => setShowPreview(!showPreview)}
+                      aria-label={showPreview ? "Masquer l'aperçu du CV" : "Afficher l'aperçu du CV"}
+                      aria-pressed={showPreview}
                       sx={{
                         borderRadius: 2,
                         textTransform: 'none',
@@ -603,8 +642,10 @@ function BuilderContent() {
                   <Button
                     variant={mobileShowPreview ? 'outlined' : 'contained'}
                     size="medium"
-                    startIcon={mobileShowPreview ? <EditIcon /> : <Visibility />}
+                    startIcon={mobileShowPreview ? <EditIcon aria-hidden="true" /> : <Visibility aria-hidden="true" />}
                     onClick={() => setMobileShowPreview(!mobileShowPreview)}
+                    aria-label={mobileShowPreview ? "Retour au mode édition" : "Afficher l'aperçu du CV"}
+                    aria-pressed={mobileShowPreview}
                     sx={{
                       borderRadius: 2,
                       textTransform: 'none',
@@ -682,12 +723,15 @@ function BuilderContent() {
                 <>
                   <IconButton
                     onClick={(e) => setMobileMenuOpen(true)}
+                    aria-label="Ouvrir le menu des actions"
+                    aria-haspopup="true"
+                    aria-expanded={mobileMenuOpen}
                     sx={{
                       border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
                       borderRadius: 2,
                     }}
                   >
-                    <MoreVert />
+                    <MoreVert aria-hidden="true" />
                   </IconButton>
 
                   <Divider orientation="vertical" flexItem />
@@ -698,8 +742,9 @@ function BuilderContent() {
               <Button
                 variant="contained"
                 size="medium"
-                startIcon={<Download />}
+                startIcon={<Download aria-hidden="true" />}
                 onClick={handleExportPDF}
+                aria-label="Télécharger le CV en PDF"
                 sx={{
                   borderRadius: 2,
                   textTransform: 'none',
@@ -746,6 +791,8 @@ function BuilderContent() {
         <Alert
           severity="info"
           variant="filled"
+          role="status"
+          aria-live="polite"
           sx={{
             minWidth: 200,
             borderRadius: 2,
@@ -767,6 +814,8 @@ function BuilderContent() {
         <Alert
           severity="success"
           variant="filled"
+          role="status"
+          aria-live="polite"
           sx={{
             minWidth: 200,
             borderRadius: 2,
@@ -788,6 +837,8 @@ function BuilderContent() {
         <Alert
           severity="error"
           variant="filled"
+          role="alert"
+          aria-live="assertive"
           sx={{
             minWidth: 200,
             borderRadius: 2,
@@ -807,6 +858,8 @@ function BuilderContent() {
       >
         <Alert
           severity="error"
+          role="alert"
+          aria-live="assertive"
           sx={{
             width: '100%',
             borderRadius: 2,

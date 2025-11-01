@@ -18,7 +18,7 @@ export default function LayoutContent({ children }: { children: React.ReactNode 
       }}
     >
       <NavBar />
-      <Box component="main" sx={{ flexGrow: 1, mt: isBuilderPage ? 0 : 8 }}>
+      <Box component="main" sx={{ flexGrow: 1, mt: 8 }}>
         {children}
       </Box>
       {!isBuilderPage && <Footer />}
