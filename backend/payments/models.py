@@ -1,9 +1,12 @@
 from django.db import models
 from django.conf import settings
+import uuid
 
 
 class Payment(models.Model):
     """Payment transactions model"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -66,6 +69,8 @@ class Payment(models.Model):
 class Subscription(models.Model):
     """Subscription model tracking user subscriptions"""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -116,6 +121,8 @@ class Subscription(models.Model):
 
 class WebhookEvent(models.Model):
     """Track Stripe webhook events for debugging and auditing"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     event_id = models.CharField(max_length=255, unique=True)
     event_type = models.CharField(max_length=100)

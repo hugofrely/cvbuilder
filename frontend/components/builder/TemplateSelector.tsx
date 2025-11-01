@@ -39,8 +39,11 @@ import { Template } from '@/types/resume';
 interface TemplateSelectorProps {
   open: boolean;
   onClose: () => void;
-  onSelect: (templateId: number) => void;
-  currentTemplateId?: number | null;
+  onSelect: (templateId: string) => void;
+  currentTemplateId?: string | null;
+  isPaidResume?: boolean;
+  resumeId?: string | null;
+  onDuplicate?: (newResumeId: string, newTemplateId: string) => void;
 }
 
 type FilterType = 'all' | 'free' | 'premium';
@@ -62,18 +65,25 @@ export default function TemplateSelector({
   onClose,
   onSelect,
   currentTemplateId,
+  isPaidResume = false,
+  resumeId = null,
+  onDuplicate,
 }: TemplateSelectorProps) {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<number | null>(currentTemplateId || null);
+  const [selectedId, setSelectedId] = useState<string | null>(currentTemplateId || null);
   const [filter, setFilter] = useState<FilterType>('all');
   const [page, setPage] = useState(1);
 
   // Preview modal
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null);
+
+  // Duplicate confirmation dialog
+  const [duplicateDialogOpen, setDuplicateDialogOpen] = useState(false);
+  const [pendingTemplateId, setPendingTemplateId] = useState<string | null>(null);
 
   const loadTemplates = useCallback(async () => {
     try {
@@ -125,9 +135,32 @@ export default function TemplateSelector({
 
   const handleSelect = () => {
     if (selectedId) {
-      onSelect(selectedId);
+      // Check if CV is paid and template is different
+      if (isPaidResume && selectedId !== currentTemplateId) {
+        // Show duplicate dialog
+        setPendingTemplateId(selectedId);
+        setDuplicateDialogOpen(true);
+      } else {
+        // Allow template change
+        onSelect(selectedId);
+        onClose();
+      }
+    }
+  };
+
+  const handleDuplicateConfirm = () => {
+    if (pendingTemplateId && onDuplicate && resumeId) {
+      // Call the duplicate callback with resume ID and new template ID
+      onDuplicate(resumeId, pendingTemplateId);
+      setDuplicateDialogOpen(false);
+      setPendingTemplateId(null);
       onClose();
     }
+  };
+
+  const handleDuplicateCancel = () => {
+    setDuplicateDialogOpen(false);
+    setPendingTemplateId(null);
   };
 
   const handleFilterChange = (
@@ -230,7 +263,7 @@ export default function TemplateSelector({
 
             <RadioGroup
               value={selectedId || ''}
-              onChange={(e) => setSelectedId(Number(e.target.value))}
+              onChange={(e) => setSelectedId(e.target.value)}
               aria-label="Sélection du template"
             >
               <Box
@@ -581,6 +614,38 @@ export default function TemplateSelector({
               Sélectionner ce template
             </Button>
           )}
+        </DialogActions>
+      </Dialog>
+
+      {/* Duplicate Confirmation Dialog */}
+      <Dialog
+        open={duplicateDialogOpen}
+        onClose={handleDuplicateCancel}
+        maxWidth="sm"
+        fullWidth
+        aria-labelledby="duplicate-dialog-title"
+      >
+        <DialogTitle id="duplicate-dialog-title">
+          CV déjà payé - Duplication requise
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="info" sx={{ mb: 2 }}>
+            Ce CV a déjà été payé pour le template actuellement sélectionné.
+          </Alert>
+          <Typography variant="body1" paragraph>
+            Pour changer de template, vous devez créer une copie de votre CV. Cette copie sera un nouveau CV avec le nouveau template sélectionné.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Votre CV original restera inchangé avec son template actuel.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button onClick={handleDuplicateCancel} variant="outlined">
+            Annuler
+          </Button>
+          <Button onClick={handleDuplicateConfirm} variant="contained" color="primary">
+            Dupliquer et changer de template
+          </Button>
         </DialogActions>
       </Dialog>
     </Dialog>

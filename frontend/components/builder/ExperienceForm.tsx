@@ -22,6 +22,7 @@ import {
 import { Add, Delete, Edit, WorkOutline, DragIndicator, ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
 import { Experience } from '@/types/cv';
+import { BuilderNavigation } from './BuilderStepper';
 
 export default function ExperienceForm() {
   const { cvData, addExperience, updateExperience, deleteExperience, reorderExperiences } = useCVContext();
@@ -336,6 +337,8 @@ export default function ExperienceForm() {
           Ajouter une expérience
         </Button>
       )}
+
+      <BuilderNavigation />
     </Box>
   );
 }

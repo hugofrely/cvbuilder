@@ -14,7 +14,7 @@ export const templateApi = {
   },
 
   // Get a single template by ID
-  getById: async (id: number) => {
+  getById: async (id: string) => {
     const response = await apiClient.get<Template>(`/api/templates/${id}/`);
     return response.data;
   },

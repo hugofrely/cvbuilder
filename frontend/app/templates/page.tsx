@@ -104,7 +104,7 @@ export default function TemplatesPage() {
     setPreviewOpen(true);
   };
 
-  const handleUseTemplate = (templateId: number) => {
+  const handleUseTemplate = (templateId: string) => {
     router.push(`/builder?template=${templateId}`);
   };
 

@@ -17,6 +17,7 @@ import {
 import { Add, Delete, StarOutline } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
 import { Skill } from '@/types/cv';
+import { BuilderNavigation } from './BuilderStepper';
 
 export default function SkillsForm() {
   const { cvData, addSkill, updateSkill, deleteSkill } = useCVContext();
@@ -158,6 +159,8 @@ export default function SkillsForm() {
           Ajouter une compétence
         </Button>
       )}
+
+      <BuilderNavigation />
     </Box>
   );
 }

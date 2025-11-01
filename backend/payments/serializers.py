@@ -32,7 +32,7 @@ class CreateCheckoutSessionSerializer(serializers.Serializer):
     """Serializer for creating Stripe checkout session"""
 
     payment_type = serializers.ChoiceField(choices=['single', 'lifetime'])
-    resume_id = serializers.IntegerField(required=False, allow_null=True)
+    resume_id = serializers.UUIDField(required=False, allow_null=True)
     success_url = serializers.URLField(required=False)
     cancel_url = serializers.URLField(required=False)
 

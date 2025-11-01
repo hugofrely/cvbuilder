@@ -6,6 +6,8 @@ import uuid
 class Template(models.Model):
     """CV Template model"""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     thumbnail = models.ImageField(upload_to='templates/', blank=True, null=True)
@@ -27,6 +29,8 @@ class Template(models.Model):
 
 class Resume(models.Model):
     """Resume/CV model - stores user CV data"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     # Session ID for anonymous users
     session_id = models.CharField(max_length=255, blank=True, null=True, db_index=True)
@@ -122,6 +126,8 @@ class Resume(models.Model):
 class Experience(models.Model):
     """Work Experience model"""
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name='experiences')
     company = models.CharField(max_length=255)
     position = models.CharField(max_length=255)
@@ -152,6 +158,8 @@ class Experience(models.Model):
 
 class Education(models.Model):
     """Education model"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name='education')
     institution = models.CharField(max_length=255)
@@ -185,6 +193,8 @@ class Education(models.Model):
 
 class Skill(models.Model):
     """Skills model"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     resume = models.ForeignKey(Resume, on_delete=models.CASCADE, related_name='skills')
     name = models.CharField(max_length=100)

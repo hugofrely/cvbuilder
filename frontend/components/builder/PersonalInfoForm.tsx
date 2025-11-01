@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { PhotoCamera, Delete } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
+import { BuilderNavigation } from './BuilderStepper';
 
 export default function PersonalInfoForm() {
   const { cvData, updatePersonalInfo } = useCVContext();
@@ -316,6 +317,8 @@ export default function PersonalInfoForm() {
           />
         </Grid>
       </Grid>
+
+      <BuilderNavigation />
     </Box>
   );
 }

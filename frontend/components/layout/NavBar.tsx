@@ -108,6 +108,7 @@ export default function NavBar() {
         borderColor: 'divider',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
         zIndex: 1200,
+        borderRadius: 0,
       }}
     >
       <Container maxWidth="lg">

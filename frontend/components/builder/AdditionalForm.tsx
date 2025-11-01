@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { Add, Delete, Language, SportsEsports, Person } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
+import { BuilderNavigation } from './BuilderStepper';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -329,6 +330,8 @@ export default function AdditionalForm() {
           </Button>
         )}
       </TabPanel>
+
+      <BuilderNavigation />
     </Box>
   );
 }

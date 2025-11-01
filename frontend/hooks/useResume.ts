@@ -14,16 +14,18 @@ interface UseResumeReturn {
   saveStatus: SaveStatus;
   isLoading: boolean;
   error: string | null;
+  isPaid: boolean;
 
   // Actions
-  saveResume: (cvData: CVData, templateId?: number | null) => Promise<string | null>; // Returns resume ID
-  loadResume: (id: string) => Promise<{ cvData: CVData; templateId: number | null } | null>;
+  saveResume: (cvData: CVData, templateId?: string | null) => Promise<string | null>; // Returns resume ID
+  loadResume: (id: string) => Promise<{ cvData: CVData; templateId: string | null; isPaid: boolean } | null>;
   deleteResume: (id: string) => Promise<void>;
-  exportPDF: (id: string) => Promise<{ pdfUrl: string; hasWatermark: boolean; filename: string }>;
+  exportPDF: (id: string) => Promise<{ filename: string; resumeId: string; isPremium: boolean }>;
   clearResumeId: () => void; // Clear current resume ID to force creation of new resume
+  duplicateResume: (id: string) => Promise<string | null>; // Duplicate a resume and return new ID
 
   // Auto-save
-  scheduleAutoSave: (cvData: CVData, templateId?: number | null) => void;
+  scheduleAutoSave: (cvData: CVData, templateId?: string | null) => void;
   cancelAutoSave: () => void;
 }
 
@@ -67,6 +69,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ status: 'idle' });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isPaid, setIsPaid] = useState(false);
 
   const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastSavedDataRef = useRef<string>('');
@@ -77,7 +80,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
    * Returns the resume ID (useful for knowing what was created/updated)
    * Works for both authenticated users and anonymous users (using Django sessions)
    */
-  const saveResume = useCallback(async (cvData: CVData, templateId?: number | null): Promise<string | null> => {
+  const saveResume = useCallback(async (cvData: CVData, templateId?: string | null): Promise<string | null> => {
     try {
       setSaveStatus({ status: 'saving' });
       setError(null);
@@ -157,7 +160,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
    * Load resume by ID
    * Works for both authenticated users and anonymous users (using Django sessions)
    */
-  const loadResume = useCallback(async (id: string): Promise<{ cvData: CVData; templateId: number | null } | null> => {
+  const loadResume = useCallback(async (id: string): Promise<{ cvData: CVData; templateId: string | null; isPaid: boolean } | null> => {
     try {
       setIsLoading(true);
       setError(null);
@@ -173,7 +176,11 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
       // Store resume ID in localStorage
       localStorage.setItem('currentResumeId', id);
 
-      console.log('✅ Resume loaded and ID stored:', id);
+      // Update isPaid status
+      const resumeIsPaid = (resume as any).is_paid || (resume as any).isPaid || false;
+      setIsPaid(resumeIsPaid);
+
+      console.log('✅ Resume loaded and ID stored:', id, 'isPaid:', resumeIsPaid);
 
       // Map Resume to CVData
       const cvData = mapResumeToCVData(resume);
@@ -186,6 +193,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
         cvData,
         // Handle both snake_case and camelCase from backend
         templateId: (resume as any).template || (resume as any).templateId || null,
+        isPaid: resumeIsPaid,
       };
 
     } catch (err: any) {
@@ -281,7 +289,7 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
   /**
    * Schedule auto-save with debounce
    */
-  const scheduleAutoSave = useCallback((cvData: CVData, templateId?: number | null) => {
+  const scheduleAutoSave = useCallback((cvData: CVData, templateId?: string | null) => {
     if (!autoSave) return;
 
     // Cancel previous timeout
@@ -320,8 +328,60 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
     setResumeId(null);
     resumeIdRef.current = null;
     localStorage.removeItem('currentResumeId');
+    setIsPaid(false);
     // Also clear last saved data to allow saving empty state
     lastSavedDataRef.current = '';
+  }, []);
+
+  /**
+   * Duplicate a resume (create a copy without payment status)
+   * Returns the new resume ID
+   */
+  const duplicateResume = useCallback(async (id: string): Promise<string | null> => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      console.log('📋 Duplicating resume:', id);
+
+      // Load the existing resume
+      const resume = await resumeApi.getById(id);
+
+      // Create a copy without the ID and without payment status
+      const duplicateData: Partial<Resume> = {
+        ...resume,
+        id: undefined,
+        is_paid: false,
+        isPaid: false,
+        payment_type: 'free',
+        paymentType: 'free',
+      };
+
+      // Create the new resume
+      const newResume = await resumeApi.create(duplicateData);
+      const newResumeId = newResume.id ? String(newResume.id) : null;
+
+      console.log('✅ Resume duplicated with new ID:', newResumeId);
+
+      // Update state with new resume ID
+      setResumeId(newResumeId);
+      resumeIdRef.current = newResumeId;
+      setIsPaid(false);
+
+      // Store new resume ID in localStorage
+      if (newResumeId) {
+        localStorage.setItem('currentResumeId', newResumeId);
+      }
+
+      setIsLoading(false);
+      return newResumeId;
+
+    } catch (err: any) {
+      console.error('❌ Error duplicating resume:', err);
+      setError(err.message || 'Erreur lors de la duplication');
+      setIsLoading(false);
+      return null;
+    }
   }, []);
 
   /**
@@ -350,12 +410,14 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
     saveStatus,
     isLoading,
     error,
+    isPaid,
 
     saveResume,
     loadResume,
     deleteResume,
     exportPDF,
     clearResumeId,
+    duplicateResume,
 
     scheduleAutoSave,
     cancelAutoSave,

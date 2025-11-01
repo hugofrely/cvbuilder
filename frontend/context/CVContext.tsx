@@ -39,8 +39,12 @@ interface CVContextType {
   triggerAutoSave: () => void;
 
   // Template management
-  selectedTemplateId: number | null;
-  setSelectedTemplateId: (templateId: number | null) => void;
+  selectedTemplateId: string | null;
+  setSelectedTemplateId: (templateId: string | null) => void;
+
+  // Payment status
+  isPaidResume: boolean;
+  setIsPaidResume: (isPaid: boolean) => void;
 }
 
 const CVContext = createContext<CVContextType | undefined>(undefined);
@@ -71,7 +75,8 @@ export function CVProvider({ children }: { children: ReactNode }) {
   const [currentStep, setCurrentStep] = useState<BuilderStep>('personal-info');
   const [saveStatus, setSaveStatus] = useState<SaveStatus>({ status: 'idle' });
   const [autoSaveTrigger, setAutoSaveTrigger] = useState(0);
-  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(2);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [isPaidResume, setIsPaidResume] = useState(false);
 
   // Reset CV data when user logs out
   useEffect(() => {
@@ -84,7 +89,8 @@ export function CVProvider({ children }: { children: ReactNode }) {
       setCVData(initialCVData);
       setCurrentStep('personal-info');
       setSaveStatus({ status: 'idle' });
-      setSelectedTemplateId(2);
+      setSelectedTemplateId(null);
+      setIsPaidResume(false);
     }
   }, [isAuthenticated]);
 
@@ -103,7 +109,8 @@ export function CVProvider({ children }: { children: ReactNode }) {
     setCVData(initialCVData);
     setCurrentStep('personal-info');
     setSaveStatus({ status: 'idle' });
-    setSelectedTemplateId(2);
+    setSelectedTemplateId(null);
+    setIsPaidResume(false);
   };
 
   const updatePersonalInfo = (data: Partial<CVData['personalInfo']>) => {
@@ -317,6 +324,10 @@ export function CVProvider({ children }: { children: ReactNode }) {
         // Template management
         selectedTemplateId,
         setSelectedTemplateId,
+
+        // Payment status
+        isPaidResume,
+        setIsPaidResume,
       }}
     >
       {children}

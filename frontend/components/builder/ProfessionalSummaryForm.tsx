@@ -4,6 +4,7 @@ import React from 'react';
 import { Box, TextField, Typography, Chip } from '@mui/material';
 import { useCVContext } from '@/context/CVContext';
 import { Lightbulb } from '@mui/icons-material';
+import { BuilderNavigation } from './BuilderStepper';
 
 export default function ProfessionalSummaryForm() {
   const { cvData, updateProfessionalSummary } = useCVContext();
@@ -63,6 +64,8 @@ export default function ProfessionalSummaryForm() {
           ))}
         </Box>
       </Box>
+
+      <BuilderNavigation />
     </Box>
   );
 }

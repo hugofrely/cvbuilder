@@ -357,18 +357,6 @@ class ResumeViewSet(viewsets.ModelViewSet):
                 'traceback': traceback.format_exc()
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['post'])
-    def import_linkedin(self, request):
-        """
-        Import resume data from LinkedIn profile.
-
-        Expected payload: { "linkedin_url": "..." } or LinkedIn API data
-        """
-        # TODO: Implement LinkedIn import logic
-        return Response({
-            'message': 'LinkedIn import functionality to be implemented'
-        }, status=status.HTTP_501_NOT_IMPLEMENTED)
-
     @action(detail=False, methods=['get'])
     def get_or_create_draft(self, request):
         """

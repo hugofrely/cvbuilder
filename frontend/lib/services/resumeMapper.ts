@@ -5,7 +5,7 @@ import { Resume } from '@/types/resume';
  * Maps frontend CVData to backend Resume format
  * Uses snake_case for Django backend
  */
-export function mapCVDataToResume(cvData: CVData, templateId?: number | null): any {
+export function mapCVDataToResume(cvData: CVData, templateId?: string | null): any {
   return {
     template: templateId || null,
 

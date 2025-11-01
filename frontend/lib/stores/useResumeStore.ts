@@ -4,18 +4,18 @@ import { Resume, SaveStatus } from '@/types/resume';
 interface ResumeStore {
   resume: Resume | null;
   saveStatus: SaveStatus;
-  selectedTemplateId: number;
+  selectedTemplateId: string | null;
 
   // Actions
   setResume: (resume: Resume) => void;
   updateResume: (updates: Partial<Resume>) => void;
   setSaveStatus: (status: SaveStatus) => void;
-  setSelectedTemplate: (templateId: number) => void;
+  setSelectedTemplate: (templateId: string | null) => void;
   resetResume: () => void;
 }
 
 const defaultResume: Resume = {
-  templateId: 1, // Default to free template
+  templateId: null, // Default to no template
   fullName: '',
   email: '',
   phone: '',
@@ -39,7 +39,7 @@ const defaultResume: Resume = {
 export const useResumeStore = create<ResumeStore>((set) => ({
   resume: defaultResume,
   saveStatus: { status: 'idle' },
-  selectedTemplateId: 1,
+  selectedTemplateId: null,
 
   setResume: (resume) => set({ resume }),
 
@@ -60,6 +60,6 @@ export const useResumeStore = create<ResumeStore>((set) => ({
     set({
       resume: defaultResume,
       saveStatus: { status: 'idle' },
-      selectedTemplateId: 1,
+      selectedTemplateId: null,
     }),
 }));

@@ -63,8 +63,8 @@ export interface Resume {
   sessionId?: string;
   user?: string; // Backend format (user ID)
   userId?: string;
-  template?: number; // Backend format
-  templateId?: number;
+  template?: string | null; // Backend format (UUID)
+  templateId?: string | null;
 
   // Personal Information
   full_name?: string; // Backend format
@@ -126,7 +126,7 @@ export interface Resume {
 }
 
 export interface Template {
-  id?: number;
+  id?: string | null; // Changed to string (UUID)
   name: string;
   isPremium?: boolean;
   is_premium?: boolean; // Backend format

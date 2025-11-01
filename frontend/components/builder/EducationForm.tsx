@@ -21,6 +21,7 @@ import {
 import { Add, Delete, Edit, SchoolOutlined, DragIndicator, ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
 import { Education } from '@/types/cv';
+import { BuilderNavigation } from './BuilderStepper';
 
 export default function EducationForm() {
   const { cvData, addEducation, updateEducation, deleteEducation, reorderEducation } = useCVContext();
@@ -333,6 +334,8 @@ export default function EducationForm() {
           Ajouter une formation
         </Button>
       )}
+
+      <BuilderNavigation />
     </Box>
   );
 }

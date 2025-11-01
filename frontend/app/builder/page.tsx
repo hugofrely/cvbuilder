@@ -35,6 +35,7 @@ import {
   MoreVert,
 } from '@mui/icons-material';
 import { CVProvider, useCVContext } from '@/context/CVContext';
+import { CVData } from '@/types/cv';
 import BuilderStepper from '@/components/builder/BuilderStepper';
 import PersonalInfoForm from '@/components/builder/PersonalInfoForm';
 import ProfessionalSummaryForm from '@/components/builder/ProfessionalSummaryForm';
@@ -50,7 +51,7 @@ import { useRouter } from 'next/navigation';
 import { resumeApi } from '@/lib/api/resume';
 
 function BuilderContent() {
-  const { currentStep, cvData, loadCVData, saveStatus, setSaveStatus, selectedTemplateId, setSelectedTemplateId } = useCVContext();
+  const { currentStep, cvData, loadCVData, saveStatus, setSaveStatus, selectedTemplateId, setSelectedTemplateId, isPaidResume, setIsPaidResume } = useCVContext();
   const searchParams = useSearchParams();
   const router = useRouter();
   const theme = useTheme();
@@ -67,11 +68,13 @@ function BuilderContent() {
     resumeId,
     saveStatus: hookSaveStatus,
     error,
+    isPaid,
     saveResume,
     loadResume,
     exportPDF,
     scheduleAutoSave,
     clearResumeId,
+    duplicateResume,
   } = useResume({ autoSave: true, autoSaveDelay: 3000 });
 
   const renderStepContent = () => {
@@ -97,12 +100,15 @@ function BuilderContent() {
   useEffect(() => {
     const templateParam = searchParams.get('template');
     if (templateParam) {
-      const templateId = parseInt(templateParam, 10);
-      if (!isNaN(templateId)) {
-        setSelectedTemplateId(templateId);
-      }
+      // Template IDs are now UUIDs (strings), no need to parse as int
+      setSelectedTemplateId(templateParam);
     }
   }, [searchParams, setSelectedTemplateId]);
+
+  // Sync isPaid status from hook to context
+  useEffect(() => {
+    setIsPaidResume(isPaid);
+  }, [isPaid, setIsPaidResume]);
 
   // Load existing resume on mount or show selector
   useEffect(() => {
@@ -115,6 +121,7 @@ function BuilderContent() {
         const result = await loadResume(urlResumeId);
         if (result) {
           loadCVData(result.cvData);
+          setIsPaidResume(result.isPaid);
           // Only set template from resume if no template param in URL
           if (result.templateId && !searchParams.get('template')) {
             setSelectedTemplateId(result.templateId);
@@ -133,6 +140,7 @@ function BuilderContent() {
         const result = await loadResume(storedResumeId);
         if (result) {
           loadCVData(result.cvData);
+          setIsPaidResume(result.isPaid);
           // Only set template from resume if no template param in URL
           if (result.templateId && !searchParams.get('template')) {
             setSelectedTemplateId(result.templateId);
@@ -260,15 +268,40 @@ function BuilderContent() {
     await saveResume(cvData, selectedTemplateId);
   };
 
-  const handleTemplateSelect = async (templateId: number) => {
+  const handleTemplateSelect = async (templateId: string) => {
     setSelectedTemplateId(templateId);
     await saveResume(cvData, templateId);
+  };
+
+  const handleDuplicateResume = async (oldResumeId: string, newTemplateId: string) => {
+    // Duplicate the resume
+    const newResumeId = await duplicateResume(oldResumeId);
+
+    if (newResumeId) {
+      // Load the duplicated resume
+      const result = await loadResume(newResumeId);
+      if (result) {
+        loadCVData(result.cvData);
+        setIsPaidResume(false); // New resume is not paid
+        setSelectedTemplateId(newTemplateId);
+
+        // Save with new template
+        await saveResume(result.cvData, newTemplateId);
+
+        // Show success message
+        setSaveStatus({
+          status: 'saved',
+          message: 'CV dupliqué avec succès avec le nouveau template',
+        });
+      }
+    }
   };
 
   const handleResumeSelect = async (resumeId: string) => {
     const result = await loadResume(resumeId);
     if (result) {
       loadCVData(result.cvData);
+      setIsPaidResume(result.isPaid);
       if (result.templateId) {
         setSelectedTemplateId(result.templateId);
       }
@@ -310,7 +343,7 @@ function BuilderContent() {
     // Reset template to default if needed
     const templateParam = searchParams.get('template');
     if (templateParam) {
-      setSelectedTemplateId(parseInt(templateParam, 10));
+      setSelectedTemplateId(templateParam);
     } else {
       setSelectedTemplateId(null);
     }
@@ -323,7 +356,6 @@ function BuilderContent() {
         bgcolor: alpha(theme.palette.primary.main, 0.02),
         display: 'flex',
         flexDirection: 'column',
-        pt: { xs: 7, sm: 8 }, // Padding pour la NavBar
       }}
     >
       {/* Skip to main content link - WCAG 2.4.1 */}
@@ -366,6 +398,7 @@ function BuilderContent() {
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
+                bgcolor: 'white',
               }}
             >
               <Box
@@ -375,6 +408,7 @@ function BuilderContent() {
                   overflowX: 'hidden',
                   px: { xs: 2, sm: 3, md: 4 },
                   py: 4,
+                  bgcolor: '#fafafa',
                   '&::-webkit-scrollbar': {
                     width: '8px',
                   },
@@ -415,11 +449,22 @@ function BuilderContent() {
               <Box
                 sx={{
                   width: showPreview ? '50%' : 0,
-                  bgcolor: alpha(theme.palette.grey[100], 0.4),
-                  borderLeft: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                  bgcolor: '#e8eaf0',
+                  borderLeft: `3px solid ${alpha(theme.palette.primary.main, 0.15)}`,
                   display: showPreview ? 'flex' : 'none',
                   flexDirection: 'column',
                   overflow: 'hidden',
+                  position: 'relative',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(168, 85, 247, 0.03) 100%)',
+                    pointerEvents: 'none',
+                  },
                 }}
               >
                 <Box
@@ -432,17 +477,20 @@ function BuilderContent() {
                     alignItems: 'flex-start',
                     py: 4,
                     px: 2,
+                    position: 'relative',
+                    zIndex: 1,
                     '&::-webkit-scrollbar': {
-                      width: '8px',
+                      width: '10px',
                     },
                     '&::-webkit-scrollbar-track': {
-                      bgcolor: 'transparent',
+                      bgcolor: alpha(theme.palette.common.black, 0.05),
+                      borderRadius: '10px',
                     },
                     '&::-webkit-scrollbar-thumb': {
-                      bgcolor: alpha(theme.palette.primary.main, 0.2),
-                      borderRadius: '4px',
+                      bgcolor: alpha(theme.palette.primary.main, 0.3),
+                      borderRadius: '10px',
                       '&:hover': {
-                        bgcolor: alpha(theme.palette.primary.main, 0.3),
+                        bgcolor: alpha(theme.palette.primary.main, 0.5),
                       },
                     },
                   }}
@@ -772,6 +820,9 @@ function BuilderContent() {
         onClose={() => setTemplateSelectorOpen(false)}
         onSelect={handleTemplateSelect}
         currentTemplateId={selectedTemplateId}
+        isPaidResume={isPaidResume}
+        resumeId={resumeId}
+        onDuplicate={handleDuplicateResume}
       />
 
       {/* Resume Selector Dialog */}

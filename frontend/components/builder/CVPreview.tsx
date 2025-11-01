@@ -7,7 +7,7 @@ import { templateApi } from '@/lib/api/template';
 import { TemplateRenderer } from '@/lib/services/templateRenderer';
 
 export default function CVPreview() {
-  const { cvData, selectedTemplateId } = useCVContext();
+  const { cvData, selectedTemplateId, isPaidResume } = useCVContext();
   const theme = useTheme();
   const [templateHtml, setTemplateHtml] = useState<string>('');
   const [templateCss, setTemplateCss] = useState<string>('');
@@ -69,8 +69,10 @@ export default function CVPreview() {
 
     if (!iframeDoc) return;
 
-    // Watermark styles and HTML for premium templates
-    const watermarkStyles = isTemplatePremium ? `
+    // Watermark styles and HTML for premium templates (only show if not paid)
+    const showWatermark = isTemplatePremium && !isPaidResume;
+
+    const watermarkStyles = showWatermark ? `
       /* Watermark overlay */
       .premium-watermark {
         position: fixed;
@@ -104,7 +106,7 @@ export default function CVPreview() {
       }
     ` : '';
 
-    const watermarkHtml = isTemplatePremium ? `
+    const watermarkHtml = showWatermark ? `
       <div class="premium-watermark">
         <div class="watermark-text">PREMIUM TEMPLATE</div>
       </div>
@@ -165,7 +167,7 @@ export default function CVPreview() {
         iframe.style.height = `${totalHeight}mm`;
       }
     }, 100);
-  }, [renderedHtml, templateCss, isTemplatePremium]);
+  }, [renderedHtml, templateCss, isTemplatePremium, isPaidResume]);
 
   if (loading) {
     return (

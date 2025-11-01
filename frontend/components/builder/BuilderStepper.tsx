@@ -242,144 +242,82 @@ export default function BuilderStepper() {
           />
         </Box>
       </Box>
+    </Box>
+  );
+}
 
-      {/* Titre et description élégants */}
-      <Fade in timeout={300}>
-        <Box
-          sx={{
-            textAlign: 'center',
-            mb: 3,
-            py: 3,
-            px: 2,
-            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.04)} 0%, ${alpha(
-              theme.palette.primary.light,
-              0.06
-            )} 100%)`,
-            borderRadius: 3,
-            border: `1px solid ${alpha(theme.palette.primary.main, 0.08)}`,
-            position: 'relative',
-            overflow: 'hidden',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-            },
-          }}
-        >
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 1.5,
-              mb: 1,
-            }}
-          >
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 40,
-                height: 40,
-                borderRadius: '50%',
-                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                color: 'primary.main',
-              }}
-            >
-              {steps[currentStepIndex].icon}
-            </Box>
-            <Box
-              sx={{
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                color: 'text.primary',
-                letterSpacing: '-0.5px',
-              }}
-            >
-              {steps[currentStepIndex].label}
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              fontSize: '0.9rem',
-              color: 'text.secondary',
-              fontWeight: 400,
-            }}
-          >
-            {steps[currentStepIndex].description}
-          </Box>
-        </Box>
-      </Fade>
+// Export navigation buttons as a separate component
+export function BuilderNavigation() {
+  const { currentStep, setCurrentStep } = useCVContext();
+  const theme = useTheme();
 
-      {/* Boutons de navigation élégants */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }} role="group" aria-label="Navigation entre les étapes">
-        <Button
-          variant="outlined"
-          onClick={handleBack}
-          disabled={currentStepIndex === 0}
-          startIcon={<KeyboardArrowLeft aria-hidden="true" />}
-          aria-label={`Retour à l'étape précédente${currentStepIndex > 0 ? `: ${steps[currentStepIndex - 1].label}` : ''}`}
-          fullWidth
-          sx={{
-            py: 1.5,
-            borderRadius: 2.5,
-            textTransform: 'none',
-            fontWeight: 600,
-            fontSize: '0.95rem',
-            border: `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-            color: 'primary.main',
-            '&:hover': {
-              border: `2px solid ${theme.palette.primary.main}`,
-              bgcolor: alpha(theme.palette.primary.main, 0.05),
-              transform: 'translateX(-2px)',
-            },
-            '&:disabled': {
-              border: `2px solid ${alpha(theme.palette.grey[300], 0.5)}`,
-            },
-            '&:focus-visible': {
-              outline: '3px solid',
-              outlineColor: 'primary.main',
-              outlineOffset: '2px',
-            },
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          Précédent
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleNext}
-          disabled={currentStepIndex === steps.length - 1}
-          endIcon={<KeyboardArrowRight aria-hidden="true" />}
-          aria-label={`Passer à l'étape suivante${currentStepIndex < steps.length - 1 ? `: ${steps[currentStepIndex + 1].label}` : ''}`}
-          fullWidth
-          sx={{
-            py: 1.5,
-            borderRadius: 2.5,
-            textTransform: 'none',
-            fontWeight: 600,
-            fontSize: '0.95rem',
-            boxShadow: `0 4px 14px ${alpha(theme.palette.primary.main, 0.3)}`,
-            '&:hover': {
-              boxShadow: `0 6px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
-              transform: 'translateX(2px)',
-            },
-            '&:focus-visible': {
-              outline: '3px solid',
-              outlineColor: 'primary.dark',
-              outlineOffset: '2px',
-            },
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
-        >
-          Suivant
-        </Button>
-      </Box>
+  const currentStepIndex = steps.findIndex((step) => step.id === currentStep);
+
+  const handleNext = () => {
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStep(steps[currentStepIndex + 1].id);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStepIndex > 0) {
+      setCurrentStep(steps[currentStepIndex - 1].id);
+    }
+  };
+
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, mt: 3 }} role="group" aria-label="Navigation entre les étapes">
+      <Button
+        variant="outlined"
+        onClick={handleBack}
+        disabled={currentStepIndex === 0}
+        startIcon={<KeyboardArrowLeft aria-hidden="true" />}
+        aria-label={`Retour à l'étape précédente${currentStepIndex > 0 ? `: ${steps[currentStepIndex - 1].label}` : ''}`}
+        size="small"
+        sx={{
+          py: 0.75,
+          px: 2,
+          borderRadius: 1.5,
+          textTransform: 'none',
+          fontWeight: 500,
+          fontSize: '0.813rem',
+          border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+          color: 'primary.main',
+          '&:hover': {
+            border: `1px solid ${theme.palette.primary.main}`,
+            bgcolor: alpha(theme.palette.primary.main, 0.05),
+          },
+          '&:disabled': {
+            border: `1px solid ${alpha(theme.palette.grey[300], 0.5)}`,
+          },
+          transition: 'all 0.2s ease',
+        }}
+      >
+        Précédent
+      </Button>
+      <Button
+        variant="contained"
+        onClick={handleNext}
+        disabled={currentStepIndex === steps.length - 1}
+        endIcon={<KeyboardArrowRight aria-hidden="true" />}
+        aria-label={`Passer à l'étape suivante${currentStepIndex < steps.length - 1 ? `: ${steps[currentStepIndex + 1].label}` : ''}`}
+        size="small"
+        sx={{
+          py: 0.75,
+          px: 2,
+          borderRadius: 1.5,
+          textTransform: 'none',
+          fontWeight: 500,
+          fontSize: '0.813rem',
+          boxShadow: 'none',
+          '&:hover': {
+            boxShadow: 1,
+          },
+          transition: 'all 0.2s ease',
+        }}
+      >
+        Suivant
+      </Button>
     </Box>
   );
 }

@@ -2,7 +2,7 @@ import apiClient from './axios';
 
 export interface CreateCheckoutSessionRequest {
   payment_type: 'single' | 'lifetime';
-  resume_id?: number;
+  resume_id?: string;
   success_url?: string;
   cancel_url?: string;
 }
