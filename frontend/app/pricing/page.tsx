@@ -16,14 +16,17 @@ import {
   Chip,
   alpha,
   useTheme,
+  Divider,
 } from '@mui/material';
 import {
   Check,
   Download,
-  Palette,
-  Star,
   WorkspacePremium,
   CheckCircle,
+  Star,
+  Palette,
+  Security,
+  Speed,
 } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/useAuthStore';
@@ -37,7 +40,6 @@ export default function PricingPage() {
     if (!isAuthenticated) {
       router.push('/auth/register?returnTo=/pricing&plan=pay-per-download');
     } else {
-      // Redirect to payment for pay-per-download
       router.push('/payment?plan=pay-per-download');
     }
   };
@@ -46,7 +48,6 @@ export default function PricingPage() {
     if (!isAuthenticated) {
       router.push('/auth/register?returnTo=/pricing&plan=premium');
     } else {
-      // Redirect to payment for premium
       router.push('/payment?plan=premium');
     }
   };
@@ -63,13 +64,13 @@ export default function PricingPage() {
         'Accès aux modèles gratuits',
         'Export PDF gratuit',
         'Sans inscription',
-        'Téléchargement illimité des modèles gratuits',
+        'Téléchargement illimité',
         'Création de CV illimitée',
       ],
       cta: 'Commencer gratuitement',
       onAction: () => router.push('/builder'),
       popular: false,
-      isFree: true,
+      icon: CheckCircle,
     },
     {
       id: 'pay-per-download',
@@ -89,7 +90,7 @@ export default function PricingPage() {
       cta: 'Choisir un modèle premium',
       onAction: handlePayPerDownload,
       popular: false,
-      isFree: false,
+      icon: Download,
     },
     {
       id: 'premium',
@@ -101,7 +102,7 @@ export default function PricingPage() {
       features: [
         'Tous les modèles premium',
         'Export PDF illimité',
-        'Créez autant de CV que vous voulez',
+        'CV illimités',
         'Téléchargement de tous vos CV',
         'Stockage sécurisé',
         'Support prioritaire',
@@ -109,7 +110,7 @@ export default function PricingPage() {
       cta: 'Devenir Premium',
       onAction: handlePremium,
       popular: true,
-      isFree: false,
+      icon: WorkspacePremium,
     },
   ];
 
@@ -124,12 +125,7 @@ export default function PricingPage() {
     >
       <Container maxWidth="lg">
         {/* Header */}
-        <Box
-          sx={{
-            textAlign: 'center',
-            mb: 8,
-          }}
-        >
+        <Box sx={{ textAlign: 'center', mb: 10 }}>
           <Chip
             label="Tarifs"
             color="primary"
@@ -161,224 +157,254 @@ export default function PricingPage() {
               maxWidth: 700,
               mx: 'auto',
               fontSize: { xs: '1rem', sm: '1.125rem' },
+              lineHeight: 1.6,
             }}
           >
-            Commencez gratuitement ou choisissez la formule qui vous convient. Modèles gratuits sans limite ou accès premium selon vos besoins.
+            Commencez gratuitement ou choisissez la formule qui vous convient.
+            <br />
+            Modèles gratuits sans limite ou accès premium selon vos besoins.
           </Typography>
         </Box>
 
         {/* Pricing Cards */}
-        <Grid container spacing={4} justifyContent="center" alignItems="stretch">
-          {pricingPlans.map((plan) => (
-            <Grid item xs={12} sm={6} md={4} key={plan.id}>
-              <Card
-                elevation={plan.popular ? 12 : 2}
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  position: 'relative',
-                  borderRadius: 4,
-                  border: plan.popular
-                    ? `2px solid ${plan.color}`
-                    : `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                  transition: 'all 0.3s ease-in-out',
-                  transform: plan.popular ? 'scale(1.05)' : 'scale(1)',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                    boxShadow: plan.popular ? 16 : 8,
-                  },
-                }}
-              >
-                {/* Popular Badge */}
-                {plan.popular && (
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: -16,
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      bgcolor: plan.color,
-                      color: 'white',
-                      px: 3,
-                      py: 1,
-                      borderRadius: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      boxShadow: 4,
-                    }}
-                  >
-                    <Star sx={{ fontSize: 20 }} />
-                    <Typography variant="body2" fontWeight={700}>
-                      Le plus populaire
-                    </Typography>
-                  </Box>
-                )}
-
-                <CardContent
+        <Grid container spacing={4} justifyContent="center" sx={{ mb: 10 }}>
+          {pricingPlans.map((plan) => {
+            const Icon = plan.icon;
+            return (
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={plan.id}>
+                <Card
+                  elevation={plan.popular ? 12 : 2}
                   sx={{
-                    flex: 1,
-                    pt: plan.popular ? 6 : 4,
-                    pb: 2,
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    position: 'relative',
+                    borderRadius: 4,
+                    overflow: 'visible',
+                    border: plan.popular
+                      ? `3px solid ${plan.color}`
+                      : `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    transform: plan.popular ? 'scale(1.05)' : 'scale(1)',
+                    '&:hover': {
+                      transform: plan.popular ? 'scale(1.08)' : 'scale(1.03)',
+                      boxShadow: plan.popular ? 16 : 8,
+                    },
                   }}
                 >
-                  {/* Icon */}
-                  <Box
+                  {/* Popular Badge - IMPROVED VISIBILITY */}
+                  {plan.popular && (
+                    <Box
+                      sx={{
+                        position: 'absolute',
+                        top: -20,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        bgcolor: plan.color,
+                        color: 'white',
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: 3,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        boxShadow: `0 8px 24px ${alpha(plan.color, 0.4)}`,
+                        zIndex: 10,
+                        fontWeight: 700,
+                        fontSize: '0.875rem',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.5,
+                      }}
+                    >
+                      <Star sx={{ fontSize: 20 }} />
+                      Le plus populaire
+                    </Box>
+                  )}
+
+                  <CardContent
                     sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: 3,
-                      bgcolor: alpha(plan.color, 0.1),
+                      flex: 1,
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
+                      flexDirection: 'column',
+                      pt: plan.popular ? 7 : 4,
+                      pb: 3,
+                      px: 3,
+                      textAlign: 'center',
                     }}
                   >
-                    {plan.id === 'premium' ? (
-                      <WorkspacePremium sx={{ fontSize: 32, color: plan.color }} />
-                    ) : plan.id === 'free' ? (
-                      <CheckCircle sx={{ fontSize: 32, color: plan.color }} />
-                    ) : (
-                      <Download sx={{ fontSize: 32, color: plan.color }} />
-                    )}
-                  </Box>
+                    {/* Icon - CENTERED */}
+                    <Box
+                      sx={{
+                        width: 80,
+                        height: 80,
+                        borderRadius: '50%',
+                        bgcolor: alpha(plan.color, 0.1),
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mx: 'auto',
+                        mb: 3,
+                      }}
+                    >
+                      <Icon sx={{ fontSize: 40, color: plan.color }} />
+                    </Box>
 
-                  {/* Title */}
-                  <Typography
-                    variant="h5"
-                    component="h3"
-                    fontWeight={700}
-                    gutterBottom
-                  >
-                    {plan.title}
-                  </Typography>
+                    {/* Title - CENTERED */}
+                    <Typography
+                      variant="h5"
+                      component="h3"
+                      fontWeight={700}
+                      gutterBottom
+                      sx={{ textAlign: 'center' }}
+                    >
+                      {plan.title}
+                    </Typography>
 
-                  {/* Description */}
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 3 }}
-                  >
-                    {plan.description}
-                  </Typography>
+                    {/* Description - CENTERED */}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ mb: 3, textAlign: 'center', minHeight: 40 }}
+                    >
+                      {plan.description}
+                    </Typography>
 
-                  {/* Price */}
-                  <Box sx={{ mb: 4 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'baseline', mb: 1 }}>
-                      <Typography
-                        variant="h3"
-                        component="span"
-                        fontWeight={800}
-                        color={plan.color}
+                    <Divider sx={{ mb: 3 }} />
+
+                    {/* Price - CENTERED */}
+                    <Box sx={{ mb: 4, textAlign: 'center' }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'baseline',
+                          justifyContent: 'center',
+                          mb: 0.5,
+                        }}
                       >
-                        {plan.price}€
+                        <Typography
+                          variant="h2"
+                          component="span"
+                          fontWeight={800}
+                          color={plan.color}
+                          sx={{ fontSize: { xs: '2.5rem', md: '3rem' } }}
+                        >
+                          {plan.price}€
+                        </Typography>
+                      </Box>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ textAlign: 'center' }}
+                      >
+                        {plan.period}
                       </Typography>
                     </Box>
-                    <Typography variant="body2" color="text.secondary">
-                      {plan.period}
-                    </Typography>
-                  </Box>
 
-                  {/* Features */}
-                  <List sx={{ py: 0 }}>
-                    {plan.features.map((feature, index) => (
-                      <ListItem key={index} sx={{ px: 0, py: 1 }}>
-                        <ListItemIcon sx={{ minWidth: 36 }}>
-                          <Check
-                            sx={{
-                              color: plan.color,
-                              fontSize: 20,
+                    <Divider sx={{ mb: 3 }} />
+
+                    {/* Features - LEFT ALIGNED for readability */}
+                    <List sx={{ py: 0, flex: 1 }}>
+                      {plan.features.map((feature, index) => (
+                        <ListItem key={index} sx={{ px: 0, py: 1 }}>
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            <Check
+                              sx={{
+                                color: plan.color,
+                                fontSize: 20,
+                                fontWeight: 700,
+                              }}
+                            />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={feature}
+                            primaryTypographyProps={{
+                              variant: 'body2',
+                              color: 'text.primary',
+                              fontWeight: 500,
                             }}
                           />
-                        </ListItemIcon>
-                        <ListItemText
-                          primary={feature}
-                          primaryTypographyProps={{
-                            variant: 'body2',
-                            color: 'text.primary',
-                          }}
-                        />
-                      </ListItem>
-                    ))}
-                  </List>
-                </CardContent>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </CardContent>
 
-                {/* CTA Button */}
-                <CardActions sx={{ p: 3, pt: 0 }}>
-                  <Button
-                    variant={plan.popular ? 'contained' : 'outlined'}
-                    size="large"
-                    fullWidth
-                    onClick={plan.onAction}
-                    sx={{
-                      py: 1.5,
-                      borderRadius: 2,
-                      textTransform: 'none',
-                      fontWeight: 700,
-                      fontSize: '1rem',
-                      ...(plan.popular
-                        ? {
-                            bgcolor: plan.color,
-                            '&:hover': {
-                              bgcolor: alpha(plan.color, 0.9),
-                            },
-                          }
-                        : {
-                            borderColor: plan.color,
-                            color: plan.color,
-                            '&:hover': {
-                              borderColor: alpha(plan.color, 0.9),
-                              bgcolor: alpha(plan.color, 0.05),
-                            },
-                          }),
-                    }}
-                  >
-                    {plan.cta}
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+                  {/* CTA Button - CENTERED */}
+                  <CardActions sx={{ p: 3, pt: 0 }}>
+                    <Button
+                      variant={plan.popular ? 'contained' : 'outlined'}
+                      size="large"
+                      fullWidth
+                      onClick={plan.onAction}
+                      sx={{
+                        py: 1.75,
+                        borderRadius: 3,
+                        textTransform: 'none',
+                        fontWeight: 700,
+                        fontSize: '1rem',
+                        boxShadow: plan.popular ? 3 : 0,
+                        ...(plan.popular
+                          ? {
+                              bgcolor: plan.color,
+                              color: 'white',
+                              '&:hover': {
+                                bgcolor: alpha(plan.color, 0.9),
+                                boxShadow: 6,
+                                transform: 'translateY(-2px)',
+                              },
+                            }
+                          : {
+                              borderWidth: 2,
+                              borderColor: plan.color,
+                              color: plan.color,
+                              '&:hover': {
+                                borderWidth: 2,
+                                borderColor: plan.color,
+                                bgcolor: alpha(plan.color, 0.08),
+                                transform: 'translateY(-2px)',
+                              },
+                            }),
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      {plan.cta}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
         </Grid>
 
-        {/* Additional Info */}
-        <Box
-          sx={{
-            mt: 8,
-            textAlign: 'center',
-          }}
-        >
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+        {/* Additional Info - CENTERED */}
+        <Box sx={{ textAlign: 'center', mb: 10 }}>
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{ mb: 2, fontWeight: 500 }}
+          >
             🔒 Paiement sécurisé • 💳 Sans engagement • ✅ Satisfaction garantie
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Besoin d'aide pour choisir ? Contactez-nous à{' '}
+            Besoin d'aide pour choisir ?{' '}
             <Box
               component="a"
               href="mailto:support@cvbuilder.com"
               sx={{
                 color: theme.palette.primary.main,
                 textDecoration: 'none',
-                fontWeight: 600,
+                fontWeight: 700,
                 '&:hover': {
                   textDecoration: 'underline',
                 },
               }}
             >
-              support@cvbuilder.com
+              Contactez-nous
             </Box>
           </Typography>
         </Box>
 
-        {/* Features Comparison */}
-        <Box
-          sx={{
-            mt: 10,
-            mb: 4,
-          }}
-        >
+        {/* Features Comparison - ALL CENTERED */}
+        <Box sx={{ mt: 10, mb: 4 }}>
           <Typography
             variant="h4"
             component="h2"
@@ -389,83 +415,96 @@ export default function PricingPage() {
             Pourquoi choisir nos formules ?
           </Typography>
 
-          <Grid container spacing={4}>
-            <Grid item xs={12} md={4}>
+          <Grid container spacing={6}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ textAlign: 'center' }}>
                 <Box
                   sx={{
-                    width: 80,
-                    height: 80,
+                    width: 100,
+                    height: 100,
                     borderRadius: '50%',
                     bgcolor: alpha(theme.palette.primary.main, 0.1),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
-                    mb: 2,
+                    mb: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.1)',
+                      bgcolor: alpha(theme.palette.primary.main, 0.15),
+                    },
                   }}
                 >
-                  <Palette sx={{ fontSize: 40, color: theme.palette.primary.main }} />
+                  <Palette sx={{ fontSize: 50, color: theme.palette.primary.main }} />
                 </Box>
                 <Typography variant="h6" fontWeight={700} gutterBottom>
                   Modèles professionnels
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ px: 2 }}>
                   Des templates conçus par des experts RH pour maximiser vos chances
                 </Typography>
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ textAlign: 'center' }}>
                 <Box
                   sx={{
-                    width: 80,
-                    height: 80,
+                    width: 100,
+                    height: 100,
                     borderRadius: '50%',
                     bgcolor: alpha(theme.palette.success.main, 0.1),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
-                    mb: 2,
+                    mb: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.1)',
+                      bgcolor: alpha(theme.palette.success.main, 0.15),
+                    },
                   }}
                 >
-                  <Download sx={{ fontSize: 40, color: theme.palette.success.main }} />
+                  <Speed sx={{ fontSize: 50, color: theme.palette.success.main }} />
                 </Box>
                 <Typography variant="h6" fontWeight={700} gutterBottom>
-                  Export haute qualité
+                  Rapide et simple
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  PDF optimisé pour l'impression et l'envoi par email
+                <Typography variant="body2" color="text.secondary" sx={{ px: 2 }}>
+                  Créez votre CV professionnel en moins de 5 minutes chrono
                 </Typography>
               </Box>
             </Grid>
 
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ textAlign: 'center' }}>
                 <Box
                   sx={{
-                    width: 80,
-                    height: 80,
+                    width: 100,
+                    height: 100,
                     borderRadius: '50%',
                     bgcolor: alpha(theme.palette.warning.main, 0.1),
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     mx: 'auto',
-                    mb: 2,
+                    mb: 3,
+                    transition: 'all 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.1)',
+                      bgcolor: alpha(theme.palette.warning.main, 0.15),
+                    },
                   }}
                 >
-                  <WorkspacePremium
-                    sx={{ fontSize: 40, color: theme.palette.warning.main }}
-                  />
+                  <Security sx={{ fontSize: 50, color: theme.palette.warning.main }} />
                 </Box>
                 <Typography variant="h6" fontWeight={700} gutterBottom>
-                  Sans engagement
+                  Sécurisé et fiable
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Payez uniquement ce dont vous avez besoin, quand vous en avez besoin
+                <Typography variant="body2" color="text.secondary" sx={{ px: 2 }}>
+                  Vos données sont protégées et stockées de manière sécurisée
                 </Typography>
               </Box>
             </Grid>

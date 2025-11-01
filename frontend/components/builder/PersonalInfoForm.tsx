@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -9,16 +9,57 @@ import {
   IconButton,
   Avatar,
   Button,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
-import { PhotoCamera } from '@mui/icons-material';
+import { PhotoCamera, Delete } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
 
 export default function PersonalInfoForm() {
   const { cvData, updatePersonalInfo } = useCVContext();
   const { personalInfo } = cvData;
+  const [photoLoading, setPhotoLoading] = useState(false);
+  const [photoError, setPhotoError] = useState('');
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     updatePersonalInfo({ [field]: event.target.value });
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (max 5MB)
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_SIZE) {
+      setPhotoError('La photo ne doit pas dépasser 5 MB');
+      return;
+    }
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setPhotoError('Le fichier doit être une image');
+      return;
+    }
+
+    setPhotoError('');
+    setPhotoLoading(true);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      updatePersonalInfo({ photo: reader.result as string });
+      setPhotoLoading(false);
+    };
+    reader.onerror = () => {
+      setPhotoError('Erreur lors du chargement de la photo');
+      setPhotoLoading(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handlePhotoDelete = () => {
+    updatePersonalInfo({ photo: '' });
+    setPhotoError('');
   };
 
   return (
@@ -29,81 +70,161 @@ export default function PersonalInfoForm() {
 
       {/* Photo Upload */}
       <Box sx={{ mb: 4, textAlign: 'center' }}>
-        <Avatar
-          src={personalInfo.photo}
-          sx={{ width: 120, height: 120, mx: 'auto', mb: 2 }}
-        />
-        <Button
-          variant="outlined"
-          component="label"
-          startIcon={<PhotoCamera />}
-          size="small"
-        >
-          Ajouter une photo
-          <input
-            type="file"
-            hidden
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = () => {
-                  updatePersonalInfo({ photo: reader.result as string });
-                };
-                reader.readAsDataURL(file);
-              }
-            }}
+        <Box sx={{ position: 'relative', display: 'inline-block' }}>
+          <Avatar
+            src={personalInfo.photo}
+            sx={{ width: 120, height: 120, mb: 2 }}
           />
-        </Button>
+          {photoLoading && (
+            <CircularProgress
+              size={120}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 1,
+              }}
+            />
+          )}
+          {personalInfo.photo && !photoLoading && (
+            <IconButton
+              onClick={handlePhotoDelete}
+              sx={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                bgcolor: 'error.main',
+                color: 'white',
+                width: 32,
+                height: 32,
+                '&:hover': {
+                  bgcolor: 'error.dark',
+                },
+              }}
+              size="small"
+            >
+              <Delete fontSize="small" />
+            </IconButton>
+          )}
+        </Box>
+        <Box>
+          <Button
+            variant="outlined"
+            component="label"
+            startIcon={<PhotoCamera />}
+            size="small"
+            disabled={photoLoading}
+          >
+            {personalInfo.photo ? 'Changer la photo' : 'Ajouter une photo'}
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={handlePhotoUpload}
+            />
+          </Button>
+          <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1 }}>
+            Max 5 MB - JPG, PNG, GIF
+          </Typography>
+        </Box>
+        {photoError && (
+          <Alert severity="error" sx={{ mt: 2, maxWidth: 300, mx: 'auto' }}>
+            {photoError}
+          </Alert>
+        )}
       </Box>
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Prénom"
+            label="Prénom *"
             value={personalInfo.firstName}
             onChange={handleChange('firstName')}
             required
+            slotProps={{
+              inputLabel: {
+                sx: {
+                  '& .MuiFormLabel-asterisk': {
+                    color: 'error.main',
+                  },
+                },
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Nom"
+            label="Nom *"
             value={personalInfo.lastName}
             onChange={handleChange('lastName')}
             required
+            slotProps={{
+              inputLabel: {
+                sx: {
+                  '& .MuiFormLabel-asterisk': {
+                    color: 'error.main',
+                  },
+                },
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
-            label="Titre du poste"
+            label="Titre du poste *"
             value={personalInfo.jobTitle}
             onChange={handleChange('jobTitle')}
             required
             placeholder="Ex: Développeur Full-Stack, Chef de projet..."
+            slotProps={{
+              inputLabel: {
+                sx: {
+                  '& .MuiFormLabel-asterisk': {
+                    color: 'error.main',
+                  },
+                },
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Email"
+            label="Email *"
             type="email"
             value={personalInfo.email}
             onChange={handleChange('email')}
             required
+            slotProps={{
+              inputLabel: {
+                sx: {
+                  '& .MuiFormLabel-asterisk': {
+                    color: 'error.main',
+                  },
+                },
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Téléphone"
+            label="Téléphone *"
             value={personalInfo.phone}
             onChange={handleChange('phone')}
             required
+            slotProps={{
+              inputLabel: {
+                sx: {
+                  '& .MuiFormLabel-asterisk': {
+                    color: 'error.main',
+                  },
+                },
+              },
+            }}
           />
         </Grid>
         <Grid size={{ xs: 12 }}>

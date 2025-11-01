@@ -2,6 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  Box,
+  Container,
+  Typography,
+  CircularProgress,
+  Paper,
+} from '@mui/material';
+import { CheckCircle, Error } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import { authService } from '@/lib/api/auth';
 import { migrateAnonymousResume } from '@/lib/utils/resumeMigration';
@@ -11,7 +19,7 @@ export default function AuthCallbackPage() {
   const searchParams = useSearchParams();
   const { refreshUser } = useAuth();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('Processing authentication...');
+  const [message, setMessage] = useState('Authentification en cours...');
 
   useEffect(() => {
     let isProcessed = false;
@@ -27,12 +35,12 @@ export default function AuthCallbackPage() {
         // Get tokens from URL params (sent by backend after OAuth)
         const access = searchParams.get('access');
         const refresh = searchParams.get('refresh');
-        const error = searchParams.get('error');
+        const errorParam = searchParams.get('error');
 
-        console.log('Tokens received:', { hasAccess: !!access, hasRefresh: !!refresh, error });
+        console.log('Tokens received:', { hasAccess: !!access, hasRefresh: !!refresh, error: errorParam });
 
-        if (error) {
-          throw new Error(error);
+        if (errorParam) {
+          throw new Error(errorParam);
         }
 
         if (access && refresh) {
@@ -53,7 +61,7 @@ export default function AuthCallbackPage() {
           await new Promise(resolve => setTimeout(resolve, 500));
 
           setStatus('success');
-          setMessage('Authentication successful! Redirecting...');
+          setMessage('Connexion réussie ! Redirection...');
 
           // Redirect to builder page
           setTimeout(() => {
@@ -61,12 +69,12 @@ export default function AuthCallbackPage() {
             router.push('/builder');
           }, 1000);
         } else {
-          throw new Error('No tokens received');
+          throw new Error('Aucun token reçu');
         }
       } catch (error: any) {
         console.error('OAuth callback error:', error);
         setStatus('error');
-        setMessage(error.message || 'Authentication failed. Please try again.');
+        setMessage(error.message || 'Échec de l\'authentification. Veuillez réessayer.');
 
         // Redirect to login after error
         setTimeout(() => {
@@ -80,55 +88,100 @@ export default function AuthCallbackPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 text-center">
-        <div>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 50%)',
+          pointerEvents: 'none',
+        },
+      }}
+    >
+      <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 1 }}>
+        <Paper
+          elevation={8}
+          sx={{
+            p: { xs: 4, sm: 6 },
+            borderRadius: 3,
+            bgcolor: 'white',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            textAlign: 'center',
+          }}
+        >
           {status === 'loading' && (
-            <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mb-4"></div>
-              <h2 className="text-xl font-semibold text-gray-900">{message}</h2>
-            </div>
+            <Box>
+              <CircularProgress
+                size={64}
+                thickness={4}
+                sx={{
+                  mb: 3,
+                  color: 'primary.main',
+                }}
+              />
+              <Typography
+                variant="h5"
+                component="h1"
+                sx={{ fontWeight: 600, color: 'text.primary' }}
+              >
+                {message}
+              </Typography>
+            </Box>
           )}
 
           {status === 'success' && (
-            <div className="flex flex-col items-center">
-              <svg
-                className="h-16 w-16 text-green-600 mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <Box>
+              <CheckCircle
+                sx={{
+                  fontSize: 64,
+                  color: 'success.main',
+                  mb: 3,
+                }}
+              />
+              <Typography
+                variant="h5"
+                component="h1"
+                sx={{ fontWeight: 600, color: 'text.primary' }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h2 className="text-xl font-semibold text-gray-900">{message}</h2>
-            </div>
+                {message}
+              </Typography>
+            </Box>
           )}
 
           {status === 'error' && (
-            <div className="flex flex-col items-center">
-              <svg
-                className="h-16 w-16 text-red-600 mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <Box>
+              <Error
+                sx={{
+                  fontSize: 64,
+                  color: 'error.main',
+                  mb: 3,
+                }}
+              />
+              <Typography
+                variant="h5"
+                component="h1"
+                sx={{ fontWeight: 600, color: 'text.primary', mb: 2 }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h2 className="text-xl font-semibold text-gray-900">{message}</h2>
-            </div>
+                {message}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Redirection vers la page de connexion...
+              </Typography>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
+        </Paper>
+      </Container>
+    </Box>
   );
 }

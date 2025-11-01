@@ -17,6 +17,10 @@ import {
   Fade,
   Divider,
   alpha,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   Visibility,
@@ -28,6 +32,7 @@ import {
   Edit as EditIcon,
   Close,
   FolderOpen,
+  MoreVert,
 } from '@mui/icons-material';
 import { CVProvider, useCVContext } from '@/context/CVContext';
 import BuilderStepper from '@/components/builder/BuilderStepper';
@@ -42,6 +47,7 @@ import TemplateSelector from '@/components/builder/TemplateSelector';
 import ResumeSelector from '@/components/builder/ResumeSelector';
 import { useResume } from '@/hooks/useResume';
 import { useRouter } from 'next/navigation';
+import { resumeApi } from '@/lib/api/resume';
 
 function BuilderContent() {
   const { currentStep, cvData, loadCVData, saveStatus, setSaveStatus, selectedTemplateId, setSelectedTemplateId } = useCVContext();
@@ -50,10 +56,11 @@ function BuilderContent() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const [showPreview, setShowPreview] = useState(!isMobile);
-  const [previewZoom, setPreviewZoom] = useState(75);
+  const [previewZoom, setPreviewZoom] = useState(85);
   const [mobileShowPreview, setMobileShowPreview] = useState(false);
   const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false);
   const [resumeSelectorOpen, setResumeSelectorOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Use resume hook
   const {
@@ -136,9 +143,21 @@ function BuilderContent() {
         localStorage.removeItem('currentResumeId');
       }
 
-      // No valid stored resume, show selector to let user choose
-      // This allows users to select from existing CVs or create a new one
-      setResumeSelectorOpen(true);
+      // IMPROVED: Check if user has existing resumes before showing selector
+      try {
+        const existingResumes = await resumeApi.getAll();
+        if (existingResumes && existingResumes.length > 0) {
+          // User has existing CVs, show selector to choose
+          setResumeSelectorOpen(true);
+        } else {
+          // No existing CVs - start fresh with empty CV (better UX for first-time users)
+          // User can access their CVs later via "Mes CV" button
+          console.log('No existing resumes found - starting with fresh CV');
+        }
+      } catch (error) {
+        console.error('Error checking existing resumes:', error);
+        // If error checking, just start with empty CV
+      }
     };
 
     initializeResume();
@@ -168,7 +187,52 @@ function BuilderContent() {
     setPreviewZoom((prev) => Math.max(prev - 10, 30));
   };
 
+  const validateCV = (): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    // Validate required fields
+    if (!cvData.personalInfo.firstName || !cvData.personalInfo.firstName.trim()) {
+      errors.push('Le prénom est requis');
+    }
+    if (!cvData.personalInfo.lastName || !cvData.personalInfo.lastName.trim()) {
+      errors.push('Le nom est requis');
+    }
+    if (!cvData.personalInfo.email || !cvData.personalInfo.email.trim()) {
+      errors.push('L\'email est requis');
+    }
+    if (!cvData.personalInfo.phone || !cvData.personalInfo.phone.trim()) {
+      errors.push('Le téléphone est requis');
+    }
+    if (!cvData.personalInfo.jobTitle || !cvData.personalInfo.jobTitle.trim()) {
+      errors.push('Le titre du poste est requis');
+    }
+
+    // Recommend at least one section completed
+    const hasExperience = cvData.experiences && cvData.experiences.length > 0;
+    const hasEducation = cvData.education && cvData.education.length > 0;
+    const hasSkills = cvData.skills && cvData.skills.length > 0;
+    const hasSummary = cvData.professionalSummary && cvData.professionalSummary.trim();
+
+    if (!hasExperience && !hasEducation && !hasSkills && !hasSummary) {
+      errors.push('Ajoutez au moins une section (expérience, formation, compétences ou résumé professionnel) pour un CV complet');
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
+  };
+
   const handleExportPDF = async () => {
+    // Validate CV before export
+    const validation = validateCV();
+    if (!validation.isValid) {
+      // Show validation errors
+      const errorMessage = validation.errors.join('\n• ');
+      alert(`⚠️ Veuillez compléter les informations suivantes :\n\n• ${errorMessage}`);
+      return;
+    }
+
     if (!resumeId) {
       await saveResume(cvData);
     }
@@ -545,70 +609,92 @@ function BuilderContent() {
                       borderRadius: 2,
                       textTransform: 'none',
                       fontWeight: 600,
-                      minWidth: 120,
+                      minWidth: 100,
                     }}
                   >
-                    {mobileShowPreview ? 'Modifier' : 'Aperçu'}
+                    {mobileShowPreview ? 'Éditer' : 'Aperçu'}
                   </Button>
 
                   <Divider orientation="vertical" flexItem />
                 </>
               )}
 
-              {/* My CVs Button */}
-              <Button
-                variant="outlined"
-                size="medium"
-                startIcon={<FolderOpen />}
-                onClick={() => setResumeSelectorOpen(true)}
-                sx={{
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  minWidth: { xs: 'auto', md: 120 },
-                  px: { xs: 2, md: 3 },
-                }}
-              >
-                {isMobile ? 'Mes CV' : 'Mes CV'}
-              </Button>
+              {/* Desktop: Full buttons */}
+              {!isMobile && (
+                <>
+                  {/* My CVs Button */}
+                  <Button
+                    variant="outlined"
+                    size="medium"
+                    startIcon={<FolderOpen />}
+                    onClick={() => setResumeSelectorOpen(true)}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      minWidth: 120,
+                      px: 3,
+                    }}
+                  >
+                    Mes CV
+                  </Button>
 
-              {/* Template Button */}
-              <Button
-                variant="outlined"
-                size="medium"
-                startIcon={<Palette />}
-                onClick={() => setTemplateSelectorOpen(true)}
-                sx={{
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  minWidth: { xs: 'auto', md: 120 },
-                  px: { xs: 2, md: 3 },
-                }}
-              >
-                {isMobile ? 'Modèle' : 'Modèle'}
-              </Button>
+                  {/* Template Button */}
+                  <Button
+                    variant="outlined"
+                    size="medium"
+                    startIcon={<Palette />}
+                    onClick={() => setTemplateSelectorOpen(true)}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      minWidth: 120,
+                      px: 3,
+                    }}
+                  >
+                    Modèle
+                  </Button>
 
-              {/* Save Button */}
-              <Button
-                variant="outlined"
-                size="medium"
-                startIcon={<Save />}
-                onClick={handleSave}
-                sx={{
-                  borderRadius: 2,
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  minWidth: { xs: 'auto', md: 140 },
-                  px: { xs: 2, md: 3 },
-                }}
-              >
-                Sauvegarder
-              </Button>
+                  {/* Save Button */}
+                  <Button
+                    variant="outlined"
+                    size="medium"
+                    startIcon={<Save />}
+                    onClick={handleSave}
+                    sx={{
+                      borderRadius: 2,
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      minWidth: 140,
+                      px: 3,
+                    }}
+                  >
+                    Sauvegarder
+                  </Button>
 
-              <Divider orientation="vertical" flexItem />
+                  <Divider orientation="vertical" flexItem />
+                </>
+              )}
 
-              {/* Download Button */}
+              {/* Mobile: Menu + Download only */}
+              {isMobile && (
+                <>
+                  <IconButton
+                    onClick={(e) => setMobileMenuOpen(true)}
+                    sx={{
+                      border: `1px solid ${alpha(theme.palette.divider, 0.2)}`,
+                      borderRadius: 2,
+                    }}
+                  >
+                    <MoreVert />
+                  </IconButton>
+
+                  <Divider orientation="vertical" flexItem />
+                </>
+              )}
+
+              {/* Download Button - Always visible */}
               <Button
                 variant="contained"
                 size="medium"
@@ -628,7 +714,7 @@ function BuilderContent() {
                   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 }}
               >
-                Télécharger
+                {isMobile ? 'PDF' : 'Télécharger'}
               </Button>
             </Box>
           </Container>
@@ -730,6 +816,56 @@ function BuilderContent() {
           {error}
         </Alert>
       </Snackbar>
+
+      {/* Mobile Menu */}
+      <Menu
+        anchorEl={null}
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        PaperProps={{
+          sx: {
+            mt: -8,
+            width: 200,
+            borderRadius: 2,
+          },
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            setResumeSelectorOpen(true);
+            setMobileMenuOpen(false);
+          }}
+        >
+          <ListItemIcon>
+            <FolderOpen fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Mes CV</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setTemplateSelectorOpen(true);
+            setMobileMenuOpen(false);
+          }}
+        >
+          <ListItemIcon>
+            <Palette fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Changer de modèle</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleSave();
+            setMobileMenuOpen(false);
+          }}
+        >
+          <ListItemIcon>
+            <Save fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Sauvegarder</ListItemText>
+        </MenuItem>
+      </Menu>
     </Box>
   );
 }

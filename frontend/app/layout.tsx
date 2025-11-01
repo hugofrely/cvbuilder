@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ThemeRegistry from "@/components/common/ThemeRegistry";
-import NavBar from "@/components/layout/NavBar";
-import Footer from "@/components/layout/Footer";
-import { Box } from "@mui/material";
 import { StructuredData } from "./structured-data";
 import { AuthProvider } from "@/context/AuthContext";
+import LayoutContent from "./LayoutContent";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -77,19 +75,7 @@ export default function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <AuthProvider>
           <ThemeRegistry>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "100vh",
-              }}
-            >
-              <NavBar />
-              <Box component="main" sx={{ flexGrow: 1, mt: 8 }}>
-                {children}
-              </Box>
-              <Footer />
-            </Box>
+            <LayoutContent>{children}</LayoutContent>
           </ThemeRegistry>
         </AuthProvider>
       </body>
