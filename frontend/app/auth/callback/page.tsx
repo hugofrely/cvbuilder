@@ -30,47 +30,58 @@ function AuthCallbackContent() {
       isProcessed = true;
 
       try {
-        console.log('Starting OAuth callback...');
+        console.log('Starting Supabase OAuth callback...');
 
-        // Get tokens from URL params (sent by backend after OAuth)
-        const access = searchParams.get('access');
-        const refresh = searchParams.get('refresh');
+        // Check for error in URL params
         const errorParam = searchParams.get('error');
-
-        console.log('Tokens received:', { hasAccess: !!access, hasRefresh: !!refresh, error: errorParam });
+        const errorDescription = searchParams.get('error_description');
 
         if (errorParam) {
-          throw new Error(errorParam);
+          throw new Error(errorDescription || errorParam);
         }
 
-        if (access && refresh) {
-          console.log('Storing tokens...');
-          // Store the tokens
-          authService.setTokens({ access, refresh });
+        // Supabase handles the session automatically via the auth listener
+        // We just need to wait for the session to be established
+        console.log('Waiting for Supabase session...');
 
-          console.log('Loading user data...');
-          // Refresh user data
-          await refreshUser();
+        // Wait for session to be established (max 5 seconds)
+        let attempts = 0;
+        const maxAttempts = 10;
 
-          console.log('User loaded successfully');
+        while (attempts < maxAttempts) {
+          const session = await authService.getSession();
 
-          // Migrate anonymous resume data after successful OAuth login
-          await migrateAnonymousResume();
+          if (session) {
+            console.log('Session established, loading user data...');
 
-          // Wait a bit to ensure user is set in context
+            // Refresh user data
+            await refreshUser();
+
+            console.log('User loaded successfully');
+
+            // Migrate anonymous resume data after successful OAuth login
+            await migrateAnonymousResume();
+
+            setStatus('success');
+            setMessage('Connexion réussie ! Redirection...');
+
+            // Redirect to builder page
+            setTimeout(() => {
+              console.log('Redirecting to /builder');
+              router.push('/builder');
+            }, 1000);
+
+            return;
+          }
+
+          // Wait 500ms before trying again
           await new Promise(resolve => setTimeout(resolve, 500));
-
-          setStatus('success');
-          setMessage('Connexion réussie ! Redirection...');
-
-          // Redirect to builder page
-          setTimeout(() => {
-            console.log('Redirecting to /builder');
-            router.push('/builder');
-          }, 1000);
-        } else {
-          throw new Error('Aucun token reçu');
+          attempts++;
         }
+
+        // If we get here, session was not established
+        throw new Error('Timeout: Session not established');
+
       } catch (error: any) {
         console.error('OAuth callback error:', error);
         setStatus('error');

@@ -26,7 +26,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle auth errors
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -36,28 +36,21 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      const { refreshToken, setTokens, logout } = useAuthStore.getState();
+      const { logout } = useAuthStore.getState();
 
-      if (refreshToken) {
-        try {
-          // Try to refresh the token
-          const response = await axios.post(`${API_URL}/auth/refresh/`, {
-            refresh: refreshToken,
-          });
+      // With Supabase, token refresh is automatic
+      // If we get 401, it means the session is truly expired
+      // So we logout and redirect to login
+      console.error('Authentication error: Session expired');
+      logout();
 
-          const { access, refresh } = response.data;
-          setTokens(access, refresh);
-
-          // Retry the original request with new token
-          originalRequest.headers.Authorization = `Bearer ${access}`;
-          return apiClient(originalRequest);
-        } catch (refreshError) {
-          // Refresh failed, logout user
-          logout();
-          window.location.href = '/';
-          return Promise.reject(refreshError);
-        }
+      // Only redirect if not already on auth pages
+      if (typeof window !== 'undefined' &&
+          !window.location.pathname.startsWith('/auth/')) {
+        window.location.href = '/auth/login';
       }
+
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);

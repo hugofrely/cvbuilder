@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { authService, LoginCredentials, RegisterData } from '@/lib/api/auth';
 import { useAuthStore } from '@/lib/stores/useAuthStore';
 import { migrateAnonymousResume } from '@/lib/utils/resumeMigration';
+import type { Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   user: any | null;
@@ -27,10 +28,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const loadUser = async () => {
     console.log('AuthContext: loadUser called');
-    console.log('AuthContext: isAuthenticated?', authService.isAuthenticated());
-    console.log('AuthContext: Store state:', { user, isAuthenticated });
     try {
-      if (authService.isAuthenticated()) {
+      const session = await authService.getSession();
+
+      if (session) {
         console.log('AuthContext: Fetching user data...');
         const userData = await authService.getCurrentUser();
         console.log('AuthContext: User data received:', userData);
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         });
         console.log('AuthContext: User set in store');
       } else {
-        console.log('AuthContext: Not authenticated, skipping user load');
+        console.log('AuthContext: No session, skipping user load');
       }
     } catch (error) {
       console.error('Failed to load user:', error);
@@ -55,24 +56,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   useEffect(() => {
+    // Load user on mount
     loadUser();
+
+    // Setup Supabase auth listener
+    const unsubscribe = authService.setupAuthListener(async (session: Session | null) => {
+      if (session) {
+        await loadUser();
+      } else {
+        storeLogout();
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const login = async (credentials: LoginCredentials) => {
     setLoading(true);
     try {
-      const response = await authService.login(credentials);
-      if (response.user) {
-        setUser({
-          id: response.user.id.toString(),
-          email: response.user.email,
-          isPremium: response.user.is_premium,
-          subscriptionType: response.user.subscription_type as 'monthly' | 'yearly' | undefined,
-          subscriptionEndDate: response.user.subscription_end_date,
-        });
-      } else {
-        await loadUser();
-      }
+      await authService.login(credentials);
+      await loadUser();
 
       // Migrate anonymous resume data after successful login
       await migrateAnonymousResume();
@@ -84,18 +89,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = async (data: RegisterData) => {
     setLoading(true);
     try {
-      const response = await authService.register(data);
-      if (response.user) {
-        setUser({
-          id: response.user.id.toString(),
-          email: response.user.email,
-          isPremium: response.user.is_premium,
-          subscriptionType: response.user.subscription_type as 'monthly' | 'yearly' | undefined,
-          subscriptionEndDate: response.user.subscription_end_date,
-        });
-      } else {
-        await loadUser();
-      }
+      await authService.register(data);
+      await loadUser();
 
       // Migrate anonymous resume data after successful registration
       await migrateAnonymousResume();
@@ -108,16 +103,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.log('[AuthContext] Logout initiated');
     setLoading(true);
     try {
-      // Call backend FIRST (while we still have tokens for authentication)
-      // This will blacklist the JWT and create a new anonymous session
-      console.log('[AuthContext] Calling authService.logout()...');
       await authService.logout();
       console.log('[AuthContext] authService.logout() completed');
     } catch (error) {
       console.error('[AuthContext] Logout error:', error);
-      // Continue logout even if backend fails
     } finally {
-      // Clear tokens and user state (always executed)
+      // Clear tokens and user state
       console.log('[AuthContext] Clearing local state...');
       storeLogout();
 

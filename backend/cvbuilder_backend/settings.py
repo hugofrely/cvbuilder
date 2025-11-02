@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-from datetime import timedelta
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -43,33 +42,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',  # Required for allauth
 
     # Third party apps
     'rest_framework',
-    'rest_framework_simplejwt',
-    'rest_framework.authtoken',  # Required for dj-rest-auth
     'corsheaders',
     'django_filters',
     'storages',  # Django storages for GCS
-
-    # Authentication
-    'dj_rest_auth',
-    'dj_rest_auth.registration',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.linkedin_oauth2',
 
     # Local apps
     'users',
     'resumes',
     'payments',
 ]
-
-# Required for django-allauth
-SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -80,7 +64,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'cvbuilder_backend.urls'
@@ -166,8 +149,7 @@ AUTH_USER_MODEL = 'users.User'
 # REST Framework Configuration
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'cvbuilder_backend.authentication.CsrfExemptSessionAuthentication',  # For anonymous users
+        'cvbuilder_backend.authentication.SupabaseAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
@@ -179,19 +161,11 @@ REST_FRAMEWORK = {
     ),
 }
 
-# JWT Settings
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=int(os.getenv('JWT_ACCESS_TOKEN_LIFETIME_MINUTES', 15))),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=int(os.getenv('JWT_REFRESH_TOKEN_LIFETIME_DAYS', 7))),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
-    'UPDATE_LAST_LOGIN': True,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-}
+# Supabase Configuration
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_ANON_KEY = os.getenv('SUPABASE_ANON_KEY')
+SUPABASE_SERVICE_KEY = os.getenv('SUPABASE_SERVICE_KEY')
+SUPABASE_JWT_SECRET = os.getenv('SUPABASE_JWT_SECRET')
 
 # Frontend URL
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:3000')
@@ -215,9 +189,8 @@ STRIPE_SINGLE_CV_PRICE_ID = os.getenv('STRIPE_SINGLE_CV_PRICE_ID')
 STRIPE_SUBSCRIPTION_MONTHLY_PRICE_ID = os.getenv('STRIPE_SUBSCRIPTION_MONTHLY_PRICE_ID')
 STRIPE_SUBSCRIPTION_YEARLY_PRICE_ID = os.getenv('STRIPE_SUBSCRIPTION_YEARLY_PRICE_ID')
 
-# LinkedIn OAuth Settings
-LINKEDIN_CLIENT_ID = os.getenv('LINKEDIN_CLIENT_ID')
-LINKEDIN_CLIENT_SECRET = os.getenv('LINKEDIN_CLIENT_SECRET')
+# OAuth Settings (now handled by Supabase)
+# Configure OAuth providers in your Supabase dashboard
 
 # Static Files
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -273,77 +246,10 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'UTC'
 
-# Django Allauth Settings
+# Authentication Backends
 AUTHENTICATION_BACKENDS = [
-    # Django default
     'django.contrib.auth.backends.ModelBackend',
-    # Allauth specific authentication methods (social)
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
-# Allauth configuration
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'optional'  # 'mandatory' en production
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_ADAPTER = 'users.adapters.CustomAccountAdapter'
-SOCIALACCOUNT_ADAPTER = 'users.adapters.CustomSocialAccountAdapter'
-
-# Social account providers configuration
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'APP': {
-            'client_id': os.getenv('GOOGLE_CLIENT_ID'),
-            'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
-            'key': ''
-        }
-    },
-    'linkedin_oauth2': {
-        'SCOPE': [
-            'openid',
-            'profile',
-            'email',
-        ],
-        'PROFILE_FIELDS': [
-            'id',
-            'firstName',
-            'lastName',
-            'profilePicture',
-        ],
-        'APP': {
-            'client_id': os.getenv('LINKEDIN_CLIENT_ID'),
-            'secret': os.getenv('LINKEDIN_CLIENT_SECRET'),
-            'key': ''
-        }
-    }
-}
-
-# After social login, redirect to frontend
-SOCIALACCOUNT_LOGIN_ON_GET = True
-ACCOUNT_LOGOUT_ON_GET = True
-
-# dj-rest-auth settings
-REST_AUTH = {
-    'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'auth-token',
-    'JWT_AUTH_REFRESH_COOKIE': 'refresh-token',
-    'JWT_AUTH_HTTPONLY': True,
-    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer',
-    'REGISTER_SERIALIZER': 'users.serializers.UserRegistrationSerializer',
-}
-
-# Redirect URLs - Redirect to our custom callback that returns JWT tokens
-LOGIN_REDIRECT_URL = '/api/auth/social/callback/'
-ACCOUNT_LOGOUT_REDIRECT_URL = FRONTEND_URL
 
 # Stripe Configuration
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')

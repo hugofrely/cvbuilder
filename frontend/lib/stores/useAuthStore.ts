@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthStore>()(
         set({
           accessToken,
           refreshToken,
-          isAuthenticated: !!(accessToken && refreshToken),
+          isAuthenticated: !!accessToken, // With Supabase, only access token is needed
         }),
 
       logout: () => {

@@ -27,9 +27,6 @@ urlpatterns = [
     path('api/auth/', include('users.urls')),
     path('api/', include('resumes.urls')),
     path('api/payments/', include('payments.urls')),
-
-    # Social authentication (django-allauth)
-    path('accounts/', include('allauth.urls')),
 ]
 
 # Serve media files in development
