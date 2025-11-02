@@ -22,6 +22,7 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.3",
     "next": "16.0.1",
+    "pdfjs-dist": "^4.9.155",
     "puppeteer": "^24.27.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
