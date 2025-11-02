@@ -36,6 +36,7 @@ RUN apt-get update && apt-get install -y \
     libpango-1.0-0 \
     libcairo2 \
     libasound2 \
+    netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
@@ -49,8 +50,12 @@ RUN playwright install chromium
 # Copy project
 COPY . /app/
 
-# Collect static files
-RUN python manage.py collectstatic --noinput || true
+# Copy entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-# Run migrations and start server
+# Set entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Run server
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
