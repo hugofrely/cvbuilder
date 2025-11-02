@@ -62,6 +62,7 @@ function BuilderContent() {
   const [templateSelectorOpen, setTemplateSelectorOpen] = useState(false);
   const [resumeSelectorOpen, setResumeSelectorOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuAnchor, setMobileMenuAnchor] = useState<null | HTMLElement>(null);
 
   // Use resume hook
   const {
@@ -770,7 +771,10 @@ function BuilderContent() {
               {isMobile && (
                 <>
                   <IconButton
-                    onClick={(e) => setMobileMenuOpen(true)}
+                    onClick={(e) => {
+                      setMobileMenuAnchor(e.currentTarget);
+                      setMobileMenuOpen(true);
+                    }}
                     aria-label="Ouvrir le menu des actions"
                     aria-haspopup="true"
                     aria-expanded={mobileMenuOpen}
@@ -923,16 +927,22 @@ function BuilderContent() {
 
       {/* Mobile Menu */}
       <Menu
-        anchorEl={null}
+        anchorEl={mobileMenuAnchor}
         open={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
+        onClose={() => {
+          setMobileMenuOpen(false);
+          setMobileMenuAnchor(null);
+        }}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        PaperProps={{
-          sx: {
-            mt: -8,
-            width: 200,
-            borderRadius: 2,
+        slotProps={{
+          paper: {
+            sx: {
+              mt: -1,
+              width: 200,
+              borderRadius: 2,
+              boxShadow: 3,
+            },
           },
         }}
       >
