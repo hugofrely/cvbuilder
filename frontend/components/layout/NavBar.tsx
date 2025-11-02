@@ -121,7 +121,7 @@ export default function NavBar() {
           >
             <Typography
               variant="h6"
-              component="h1"
+              component="div"
               noWrap
               sx={{
                 mr: { xs: 2, md: 4 },
@@ -152,17 +152,17 @@ export default function NavBar() {
                   margin: 0,
                   padding: 0,
                 }}
-                role="menubar"
               >
                 {mainNavItems.map((item) => (
-                  <Box component="li" key={item.href} role="none">
-                    <Link href={item.href} style={{ textDecoration: 'none' }} passHref>
+                  <Box component="li" key={item.href}>
+                    <Link href={item.href} style={{ textDecoration: 'none' }} passHref tabIndex={-1}>
                       <Button
                         color="inherit"
-                        role="menuitem"
                         aria-label={item.ariaLabel || item.label}
                         startIcon={item.icon}
                         sx={{
+                          minHeight: 44,
+                          minWidth: 44,
                           '&:hover': {
                             backgroundColor: 'rgba(37, 99, 235, 0.04)',
                           },
@@ -174,14 +174,15 @@ export default function NavBar() {
                   </Box>
                 ))}
                 {userNavItems.map((item) => (
-                  <Box component="li" key={item.href} role="none">
-                    <Link href={item.href} style={{ textDecoration: 'none' }} passHref>
+                  <Box component="li" key={item.href}>
+                    <Link href={item.href} style={{ textDecoration: 'none' }} passHref tabIndex={-1}>
                       <Button
                         color="inherit"
-                        role="menuitem"
                         aria-label={item.ariaLabel || item.label}
                         startIcon={item.icon}
                         sx={{
+                          minHeight: 44,
+                          minWidth: 44,
                           '&:hover': {
                             backgroundColor: 'rgba(37, 99, 235, 0.04)',
                           },
@@ -195,8 +196,8 @@ export default function NavBar() {
               </Box>
 
               {/* Boutons d'authentification Desktop */}
-              <Box sx={{ display: 'flex', gap: 1 }} role="group" aria-label="Actions utilisateur">
-                <Link href="/builder" style={{ textDecoration: 'none' }}>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Link href="/builder" style={{ textDecoration: 'none' }} tabIndex={-1}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -204,6 +205,8 @@ export default function NavBar() {
                     aria-label="Créer mon CV"
                     sx={{
                       fontWeight: 600,
+                      minHeight: 44,
+                      minWidth: 44,
                     }}
                   >
                     Créer mon CV
@@ -216,27 +219,39 @@ export default function NavBar() {
                     onClick={handleLogout}
                     startIcon={<LogoutIcon />}
                     aria-label="Se déconnecter"
+                    sx={{
+                      minHeight: 44,
+                      minWidth: 44,
+                    }}
                   >
                     Déconnexion
                   </Button>
                 ) : (
                   <>
-                    <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+                    <Link href="/auth/login" style={{ textDecoration: 'none' }} tabIndex={-1}>
                       <Button
                         variant="outlined"
                         color="primary"
                         startIcon={<LoginIcon />}
                         aria-label="Se connecter à votre compte"
+                        sx={{
+                          minHeight: 44,
+                          minWidth: 44,
+                        }}
                       >
                         Se connecter
                       </Button>
                     </Link>
-                    <Link href="/auth/register" style={{ textDecoration: 'none' }}>
+                    <Link href="/auth/register" style={{ textDecoration: 'none' }} tabIndex={-1}>
                       <Button
                         variant="outlined"
                         color="primary"
                         startIcon={<PersonAddIcon />}
                         aria-label="Créer un nouveau compte"
+                        sx={{
+                          minHeight: 44,
+                          minWidth: 44,
+                        }}
                       >
                         S&apos;inscrire
                       </Button>
@@ -328,9 +343,9 @@ export default function NavBar() {
                 onClick={handleMobileMenuClose}
               >
                 <ListItemButton
-                  role="menuitem"
                   aria-label={item.ariaLabel || item.label}
                   sx={{
+                    minHeight: 48,
                     '&:hover': {
                       backgroundColor: 'rgba(37, 99, 235, 0.04)',
                     },
@@ -361,9 +376,9 @@ export default function NavBar() {
                     onClick={handleMobileMenuClose}
                   >
                     <ListItemButton
-                      role="menuitem"
                       aria-label={item.ariaLabel || item.label}
                       sx={{
+                        minHeight: 48,
                         '&:hover': {
                           backgroundColor: 'rgba(37, 99, 235, 0.04)',
                         },
