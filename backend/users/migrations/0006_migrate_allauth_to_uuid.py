@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             UPDATE socialaccount_socialaccount ssa
             SET user_id_uuid = u.id
             FROM users u
-            WHERE u.email = ssa.extra_data->>'email';
+            WHERE u.email = (ssa.extra_data::jsonb)->>'email';
 
             -- Update account_emailaddress by matching email with users table
             UPDATE account_emailaddress aea

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import {
   Box,
   Container,
@@ -35,7 +35,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/useAuthStore';
 import { paymentApi } from '@/lib/api/payment';
 
-export default function PaymentPage() {
+function PaymentContent() {
   const theme = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -534,5 +534,25 @@ export default function PaymentPage() {
         </Grid>
       </Container>
     </Box>
+  );
+}
+
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+        }}
+      >
+        <CircularProgress sx={{ color: 'white' }} size={60} />
+      </Box>
+    }>
+      <PaymentContent />
+    </Suspense>
   );
 }

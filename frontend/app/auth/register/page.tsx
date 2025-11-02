@@ -57,7 +57,12 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      await register(formData);
+      // Generate username from email (before @)
+      const username = formData.email.split('@')[0];
+      await register({
+        ...formData,
+        username,
+      });
       router.push('/builder');
     } catch (err: any) {
       console.error('Registration error:', err);

@@ -101,7 +101,7 @@ export default function BuilderStepper() {
           return (
             <Fade in key={step.id} timeout={300 + index * 50}>
               <Chip
-                icon={isPast ? <Check aria-hidden="true" /> : (React.cloneElement(step.icon as React.ReactElement, { 'aria-hidden': 'true' }))}
+                icon={isPast ? <Check /> : step.icon}
                 label={isSmall ? '' : step.label}
                 onClick={() => handleStepClick(step.id)}
                 aria-label={`${step.label}: ${step.description}${isActive ? ' (étape actuelle)' : ''}${isPast ? ' (complétée)' : ''}`}

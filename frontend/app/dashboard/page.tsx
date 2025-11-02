@@ -282,7 +282,7 @@ export default function DashboardPage() {
       ) : (
         <Grid container spacing={3} justifyContent="center">
           {resumes.map((resume) => (
-            <Grid item xs={12} sm={6} md={4} key={resume.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={resume.id}>
               <Card
                 elevation={0}
                 sx={{

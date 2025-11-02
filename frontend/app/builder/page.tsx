@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Box,
@@ -977,7 +977,18 @@ function BuilderContent() {
 export default function BuilderPage() {
   return (
     <CVProvider>
-      <BuilderContent />
+      <Suspense fallback={
+        <Box sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100vh'
+        }}>
+          <Box>Chargement...</Box>
+        </Box>
+      }>
+        <BuilderContent />
+      </Suspense>
     </CVProvider>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Box,
@@ -9,12 +9,12 @@ import {
   CircularProgress,
   Paper,
 } from '@mui/material';
-import { CheckCircle, Error } from '@mui/icons-material';
+import { CheckCircle, Error as ErrorIcon } from '@mui/icons-material';
 import { useAuth } from '@/context/AuthContext';
 import { authService } from '@/lib/api/auth';
 import { migrateAnonymousResume } from '@/lib/utils/resumeMigration';
 
-export default function AuthCallbackPage() {
+function AuthCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { refreshUser } = useAuth();
@@ -161,7 +161,7 @@ export default function AuthCallbackPage() {
 
           {status === 'error' && (
             <Box>
-              <Error
+              <ErrorIcon
                 sx={{
                   fontSize: 64,
                   color: 'error.main',
@@ -183,5 +183,25 @@ export default function AuthCallbackPage() {
         </Paper>
       </Container>
     </Box>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <Box
+        sx={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+        }}
+      >
+        <CircularProgress size={64} sx={{ color: 'white' }} />
+      </Box>
+    }>
+      <AuthCallbackContent />
+    </Suspense>
   );
 }

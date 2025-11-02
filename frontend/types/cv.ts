@@ -89,5 +89,5 @@ export interface StepConfig {
   id: BuilderStep;
   label: string;
   description: string;
-  icon: React.ReactNode;
+  icon: React.ReactElement;
 }
