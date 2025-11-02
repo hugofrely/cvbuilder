@@ -199,7 +199,7 @@ export default function PersonalInfoForm() {
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Prénom *"
+            label="Prénom"
             value={personalInfo.firstName}
             onChange={handleChange('firstName')}
             required
@@ -218,7 +218,7 @@ export default function PersonalInfoForm() {
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Nom *"
+            label="Nom"
             value={personalInfo.lastName}
             onChange={handleChange('lastName')}
             required
@@ -237,7 +237,7 @@ export default function PersonalInfoForm() {
         <Grid size={{ xs: 12 }}>
           <TextField
             fullWidth
-            label="Titre du poste *"
+            label="Titre du poste"
             value={personalInfo.jobTitle}
             onChange={handleChange('jobTitle')}
             required
@@ -257,7 +257,7 @@ export default function PersonalInfoForm() {
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Email *"
+            label="Email"
             type="email"
             value={personalInfo.email}
             onChange={handleChange('email')}
@@ -280,7 +280,7 @@ export default function PersonalInfoForm() {
         <Grid size={{ xs: 12, sm: 6 }}>
           <TextField
             fullWidth
-            label="Téléphone *"
+            label="Téléphone"
             type="tel"
             value={personalInfo.phone}
             onChange={handleChange('phone')}

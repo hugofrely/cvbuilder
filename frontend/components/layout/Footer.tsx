@@ -17,7 +17,7 @@ export default function Footer() {
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="h6" color="primary" gutterBottom>
-              CV Builder
+              moncv.xyz
             </Typography>
             <Typography variant="body2" color="text.secondary">
               Créez votre CV professionnel en quelques minutes.
@@ -65,7 +65,7 @@ export default function Footer() {
 
         <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: 'divider' }}>
           <Typography variant="body2" color="text.secondary" align="center">
-            © {new Date().getFullYear()} CV Builder. Tous droits réservés.
+            © {new Date().getFullYear()} moncv.xyz. Tous droits réservés.
           </Typography>
         </Box>
       </Container>

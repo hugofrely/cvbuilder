@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CV Builder - Créez votre CV professionnel en 5 minutes | Gratuit et Sans Inscription",
+  title: "moncv.xyz - Créez votre CV professionnel en 5 minutes | Gratuit et Sans Inscription",
   description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise. Interface intuitive et prévisualisation en temps réel. Démarquez-vous avec un CV professionnel.",
   keywords: [
     "cv en ligne",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     "cv moderne",
     "curriculum vitae",
   ],
-  authors: [{ name: "CV Builder" }],
-  creator: "CV Builder",
-  publisher: "CV Builder",
+  authors: [{ name: "moncv.xyz" }],
+  creator: "moncv.xyz",
+  publisher: "moncv.xyz",
   robots: {
     index: true,
     follow: true,
@@ -44,21 +44,21 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://cvbuilder.com",
-    title: "CV Builder - Créez votre CV professionnel en 5 minutes",
+    url: "https://moncv.xyz",
+    title: "moncv.xyz - Créez votre CV professionnel en 5 minutes",
     description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise.",
-    siteName: "CV Builder",
+    siteName: "moncv.xyz",
   },
   twitter: {
     card: "summary_large_image",
-    title: "CV Builder - Créez votre CV professionnel en 5 minutes",
+    title: "moncv.xyz - Créez votre CV professionnel en 5 minutes",
     description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs.",
   },
   verification: {
     google: "google-site-verification-code", // À remplacer par votre code
   },
   alternates: {
-    canonical: "https://cvbuilder.com",
+    canonical: "https://moncv.xyz",
   },
 };
 

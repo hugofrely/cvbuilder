@@ -337,7 +337,7 @@ export default function Home() {
       {/* Stats Section */}
       <Box
         component="section"
-        aria-label="Statistiques de CV Builder"
+        aria-label="Statistiques de moncv.xyz"
         role="region"
         sx={{
           bgcolor: 'white',
@@ -398,7 +398,7 @@ export default function Home() {
                 mb: 2,
               }}
             >
-              Pourquoi choisir CV Builder ?
+              Pourquoi choisir moncv.xyz ?
             </Typography>
             <Typography
               variant="h6"
@@ -727,7 +727,7 @@ export default function Home() {
                 textShadow: '0 1px 2px rgba(0,0,0,0.15)',
               }}
             >
-              Rejoignez plus de 10,000 utilisateurs qui ont déjà créé leur CV avec CV Builder.
+              Rejoignez plus de 10,000 utilisateurs qui ont déjà créé leur CV avec moncv.xyz.
               Commencez gratuitement dès maintenant, aucune carte de crédit requise.
             </Typography>
             <Stack

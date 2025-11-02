@@ -29,7 +29,7 @@ export default function Header() {
                 cursor: 'pointer',
               }}
             >
-              CV Builder
+              moncv.xyz
             </Typography>
           </Link>
 

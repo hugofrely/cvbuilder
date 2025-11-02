@@ -13,9 +13,9 @@ export interface CreateCheckoutSessionResponse {
 }
 
 export interface Payment {
-  id: number;
-  user: number;
-  resume: number | null;
+  id: string;
+  user: string;
+  resume: string | null;
   stripe_checkout_session_id: string;
   amount: string;
   currency: string;
@@ -26,8 +26,8 @@ export interface Payment {
 }
 
 export interface Subscription {
-  id: number;
-  user: number;
+  id: string;
+  user: string;
   stripe_subscription_id: string;
   subscription_type: 'lifetime' | 'monthly' | 'yearly';
   status: string;

@@ -117,7 +117,7 @@ export default function NavBar() {
           <Link
             href="/"
             style={{ textDecoration: 'none', color: 'inherit' }}
-            aria-label="CV Builder - Retour à l'accueil"
+            aria-label="MonCV.xyz - Retour à l'accueil"
           >
             <Typography
               variant="h6"
@@ -125,13 +125,17 @@ export default function NavBar() {
               noWrap
               sx={{
                 mr: { xs: 2, md: 4 },
-                fontWeight: 700,
-                color: 'primary.main',
+                fontWeight: 800,
                 cursor: 'pointer',
-                fontSize: { xs: '1.1rem', sm: '1.25rem' },
+                fontSize: { xs: '1.2rem', sm: '1.4rem' },
+                background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                letterSpacing: '-0.02em',
               }}
             >
-              CV Builder
+              <Box component="span" sx={{ fontWeight: 400 }}>Mon</Box>CV<Box component="span" sx={{ fontWeight: 400 }}>.xyz</Box>
             </Typography>
           </Link>
 
