@@ -37,7 +37,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser({
           id: userData.id.toString(),
           email: userData.email,
-          username: userData.username,
           isPremium: userData.is_premium,
           subscriptionType: userData.subscription_type as 'monthly' | 'yearly' | undefined,
           subscriptionEndDate: userData.subscription_end_date,
@@ -67,7 +66,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser({
           id: response.user.id.toString(),
           email: response.user.email,
-          username: response.user.username,
           isPremium: response.user.is_premium,
           subscriptionType: response.user.subscription_type as 'monthly' | 'yearly' | undefined,
           subscriptionEndDate: response.user.subscription_end_date,
@@ -91,7 +89,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setUser({
           id: response.user.id.toString(),
           email: response.user.email,
-          username: response.user.username,
           isPremium: response.user.is_premium,
           subscriptionType: response.user.subscription_type as 'monthly' | 'yearly' | undefined,
           subscriptionEndDate: response.user.subscription_end_date,

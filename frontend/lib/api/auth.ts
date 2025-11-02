@@ -12,7 +12,6 @@ export interface RegisterData {
   password2: string;
   first_name?: string;
   last_name?: string;
-  username: string;
 }
 
 export interface AuthTokens {
@@ -23,7 +22,6 @@ export interface AuthTokens {
 export interface User {
   id: string;
   email: string;
-  username: string;
   first_name: string;
   last_name: string;
   phone?: string;

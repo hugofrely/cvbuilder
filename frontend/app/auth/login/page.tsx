@@ -46,7 +46,7 @@ export default function LoginPage() {
 
     try {
       await login(formData);
-      router.push('/builder');
+      router.push('/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Email ou mot de passe invalide');

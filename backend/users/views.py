@@ -9,7 +9,8 @@ from django.utils.decorators import method_decorator
 from .serializers import (
     UserSerializer,
     UserRegistrationSerializer,
-    ChangePasswordSerializer
+    ChangePasswordSerializer,
+    CustomTokenObtainPairSerializer
 )
 
 User = get_user_model()
@@ -88,6 +89,7 @@ class ChangePasswordView(APIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     """Custom login view that returns user data along with tokens"""
+    serializer_class = CustomTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
