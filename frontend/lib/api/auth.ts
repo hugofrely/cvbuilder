@@ -30,7 +30,7 @@ export interface User {
 
 export interface AuthResponse {
   user?: User;
-  session?: Session;
+  session?: Session | null;
   error?: AuthError;
 }
 
