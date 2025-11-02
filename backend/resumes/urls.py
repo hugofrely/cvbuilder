@@ -11,13 +11,13 @@ from .views import (
 
 app_name = 'resumes'
 
-# Main router
-router = DefaultRouter()
+# Main router with trailing_slash=False to match APPEND_SLASH=False
+router = DefaultRouter(trailing_slash=False)
 router.register(r'templates', TemplateViewSet, basename='template')
 router.register(r'resumes', ResumeViewSet, basename='resume')
 
 # Nested routers for resume sub-resources
-resumes_router = routers.NestedDefaultRouter(router, r'resumes', lookup='resume')
+resumes_router = routers.NestedDefaultRouter(router, r'resumes', lookup='resume', trailing_slash=False)
 resumes_router.register(r'experiences', ExperienceViewSet, basename='resume-experiences')
 resumes_router.register(r'education', EducationViewSet, basename='resume-education')
 resumes_router.register(r'skills', SkillViewSet, basename='resume-skills')

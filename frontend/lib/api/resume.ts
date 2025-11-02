@@ -108,7 +108,7 @@ export const resumeApi = {
     const response = await apiClient.get<{
       resume: Resume;
       is_new: boolean;
-    }>('/api/resumes/get_or_create_draft/');
+    }>('/api/resumes/get_or_create_draft');
     return response.data;
   },
 
@@ -119,7 +119,7 @@ export const resumeApi = {
       migrated_count: number;
       resume_ids?: number[];
       action: string;
-    }>('/api/resumes/migrate_anonymous/');
+    }>('/api/resumes/migrate_anonymous');
     return response.data;
   },
 };
