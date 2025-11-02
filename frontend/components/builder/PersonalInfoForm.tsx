@@ -15,12 +15,14 @@ import {
 import { PhotoCamera, Delete } from '@mui/icons-material';
 import { useCVContext } from '@/context/CVContext';
 import { BuilderNavigation } from './BuilderStepper';
+import { useAuthStore } from '@/lib/stores/useAuthStore';
 
 export default function PersonalInfoForm() {
   const { cvData, updatePersonalInfo } = useCVContext();
   const { personalInfo } = cvData;
   const [photoLoading, setPhotoLoading] = useState(false);
   const [photoError, setPhotoError] = useState('');
+  const { accessToken } = useAuthStore();
 
   const handleChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
     updatePersonalInfo({ [field]: event.target.value });
@@ -60,10 +62,20 @@ export default function PersonalInfoForm() {
       const formData = new FormData();
       formData.append('photo', file);
 
+      const headers: HeadersInit = {
+        // Don't set Content-Type for FormData - browser will set it with boundary
+      };
+
+      // Add authorization header if user is authenticated
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/upload_photo`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
+        headers,
       });
 
       if (!response.ok) {
@@ -98,9 +110,17 @@ export default function PersonalInfoForm() {
       }
 
       // Delete photo from backend
+      const headers: HeadersInit = {};
+
+      // Add authorization header if user is authenticated
+      if (accessToken) {
+        headers['Authorization'] = `Bearer ${accessToken}`;
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/delete_photo`, {
         method: 'DELETE',
         credentials: 'include',
+        headers,
       });
 
       if (!response.ok) {
