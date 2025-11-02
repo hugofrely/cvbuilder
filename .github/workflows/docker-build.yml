@@ -8,8 +8,8 @@ on:
 env:
   REGISTRY: registry.frely.fr
   IMAGE_NAME: cvbuilder
-  NEXT_PUBLIC_API_URL=https://api.bidly.fr
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_51SNWHR2Vp7eF2jdKICcwrEgWMRhEI5e9SuhCXaWHW6S0wnGencnfd2GgtqVZbhhAeQEoFdRdbl7xaW9vF2V6YEMx00RdVWIBnZ
+  NEXT_PUBLIC_API_URL: https://api.bidly.fr
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51SNWHR2Vp7eF2jdKICcwrEgWMRhEI5e9SuhCXaWHW6S0wnGencnfd2GgtqVZbhhAeQEoFdRdbl7xaW9vF2V6YEMx00RdVWIBnZ
 
 jobs:
   build-backend:
