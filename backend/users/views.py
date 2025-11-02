@@ -1,51 +1,18 @@
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from .serializers import (
     UserSerializer,
-    UserRegistrationSerializer,
     ChangePasswordSerializer,
-    CustomTokenObtainPairSerializer
 )
 
 User = get_user_model()
 
-
-def get_tokens_for_user(user):
-    """Generate JWT tokens for a user"""
-    refresh = RefreshToken.for_user(user)
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
-
-
-class UserRegistrationView(generics.CreateAPIView):
-    """User registration endpoint"""
-
-    queryset = User.objects.all()
-    permission_classes = [permissions.AllowAny]
-    serializer_class = UserRegistrationSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-
-        # Generate tokens for the new user
-        tokens = get_tokens_for_user(user)
-
-        return Response({
-            'user': UserSerializer(user).data,
-            'access': tokens['access'],
-            'refresh': tokens['refresh'],
-            'message': 'User registered successfully'
-        }, status=status.HTTP_201_CREATED)
+# Note: With Supabase authentication, user registration is handled by Supabase.
+# UserRegistrationView is no longer needed.
 
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
@@ -87,38 +54,17 @@ class ChangePasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    """Custom login view that returns user data along with tokens"""
-    serializer_class = CustomTokenObtainPairSerializer
-
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-
-        if response.status_code == 200:
-            # Get the user from the email
-            email = request.data.get('email')
-            try:
-                user = User.objects.get(email=email)
-                response.data['user'] = UserSerializer(user).data
-            except User.DoesNotExist:
-                pass
-
-        return response
+# Note: With Supabase authentication, login is handled by Supabase.
+# CustomTokenObtainPairView is no longer needed.
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class LogoutView(APIView):
     """
-    Logout endpoint - handles both JWT and session cleanup.
+    Logout endpoint - handles session cleanup for Supabase authentication.
 
-    For authenticated users:
-    - Blacklists the JWT refresh token
-    - Destroys the current session
-    - Creates a new anonymous session
-
-    This ensures that after logout:
-    - JWT tokens can't be reused (blacklisted)
-    - User becomes truly anonymous with a fresh session
+    Note: With Supabase, JWT token management is handled client-side.
+    This endpoint only handles Django session cleanup for anonymous users.
     """
     permission_classes = [permissions.AllowAny]
 
@@ -133,17 +79,6 @@ class LogoutView(APIView):
             user_id = request.user.id
             user_email = request.user.email
             logger.info(f"Logout: User {user_id} ({user_email}) is logging out")
-
-            # Blacklist the refresh token if provided
-            refresh_token = request.data.get('refresh')
-            if refresh_token:
-                try:
-                    from rest_framework_simplejwt.tokens import RefreshToken
-                    token = RefreshToken(refresh_token)
-                    token.blacklist()
-                    logger.info(f"Logout: Refresh token blacklisted for user {user_id}")
-                except Exception as e:
-                    logger.warning(f"Logout: Failed to blacklist token: {e}")
 
             # Destroy the authenticated session and create a fresh anonymous one
             request.session.flush()

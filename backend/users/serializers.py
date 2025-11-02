@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
 
 
@@ -51,6 +50,5 @@ class ChangePasswordSerializer(serializers.Serializer):
         return attrs
 
 
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    """Custom token serializer that uses email instead of username"""
-    username_field = 'email'
+# Note: With Supabase authentication, JWT tokens are managed by Supabase.
+# CustomTokenObtainPairSerializer is no longer needed.
