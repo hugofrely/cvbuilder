@@ -231,6 +231,32 @@ class AuthService {
   clearTokens(): void {
     useAuthStore.getState().logout();
   }
+
+  /**
+   * Request password reset email
+   */
+  async resetPassword(email: string): Promise<void> {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset-password`,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  /**
+   * Update password (called after reset link is clicked)
+   */
+  async updatePassword(newPassword: string): Promise<void> {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 export const authService = new AuthService();

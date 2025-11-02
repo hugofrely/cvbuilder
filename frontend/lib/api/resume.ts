@@ -9,31 +9,31 @@ export const resumeApi = {
       next: string | null;
       previous: string | null;
       results: Resume[];
-    }>('/api/resumes/');
+    }>('/api/resumes');
     return response.data.results; // Return only the results array
   },
 
   // Get a single resume by ID
   getById: async (id: string) => {
-    const response = await apiClient.get<Resume>(`/api/resumes/${id}/`);
+    const response = await apiClient.get<Resume>(`/api/resumes/${id}`);
     return response.data;
   },
 
   // Create a new resume (works for anonymous users with session)
   create: async (resume: Partial<Resume>) => {
-    const response = await apiClient.post<Resume>('/api/resumes/', resume);
+    const response = await apiClient.post<Resume>('/api/resumes', resume);
     return response.data;
   },
 
   // Update an existing resume
   update: async (id: string, resume: Partial<Resume>) => {
-    const response = await apiClient.patch<Resume>(`/api/resumes/${id}/`, resume);
+    const response = await apiClient.patch<Resume>(`/api/resumes/${id}`, resume);
     return response.data;
   },
 
   // Delete a resume
   delete: async (id: string) => {
-    await apiClient.delete(`/api/resumes/${id}/`);
+    await apiClient.delete(`/api/resumes/${id}`);
   },
 
   // Export resume to PDF
@@ -88,7 +88,7 @@ export const resumeApi = {
   // Export resume to other formats
   exportFormat: async (id: string, format: 'google_docs' | 'docx' | 'odt') => {
     const response = await apiClient.post<{ url: string }>(
-      `/api/resumes/${id}/export_${format}/`
+      `/api/resumes/${id}/export_${format}`
     );
     return response.data;
   },

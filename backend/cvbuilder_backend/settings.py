@@ -32,6 +32,8 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# For API, disable automatic slash appending to avoid issues with DRF custom actions
+APPEND_SLASH = False
 
 # Application definition
 

@@ -4,37 +4,49 @@ export const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#2563eb', // Blue moderne
-      light: '#60a5fa',
-      dark: '#1e40af',
+      main: '#1e3a8a', // Bleu marine professionnel
+      light: '#3b82f6',
+      dark: '#1e293b',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#8b5cf6', // Purple moderne
-      light: '#a78bfa',
-      dark: '#6d28d9',
+      main: '#0ea5e9', // Bleu ciel élégant
+      light: '#38bdf8',
+      dark: '#0284c7',
+      contrastText: '#ffffff',
+    },
+    success: {
+      main: '#10b981', // Vert professionnel
+      light: '#34d399',
+      dark: '#059669',
+      contrastText: '#ffffff',
+    },
+    warning: {
+      main: '#f59e0b', // Or/Ambre pour premium
+      light: '#fbbf24',
+      dark: '#d97706',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#f8fafc',
+      default: '#f9fafb',
       paper: '#ffffff',
     },
     text: {
-      primary: '#0f172a',
-      secondary: '#64748b',
+      primary: '#111827',
+      secondary: '#6b7280',
     },
-    divider: '#e2e8f0',
+    divider: '#e5e7eb',
     grey: {
-      50: '#f8fafc',
-      100: '#f1f5f9',
-      200: '#e2e8f0',
-      300: '#cbd5e1',
-      400: '#94a3b8',
-      500: '#64748b',
-      600: '#475569',
-      700: '#334155',
-      800: '#1e293b',
-      900: '#0f172a',
+      50: '#f9fafb',
+      100: '#f3f4f6',
+      200: '#e5e7eb',
+      300: '#d1d5db',
+      400: '#9ca3af',
+      500: '#6b7280',
+      600: '#4b5563',
+      700: '#374151',
+      800: '#1f2937',
+      900: '#111827',
     },
   },
   typography: {
@@ -152,7 +164,7 @@ export const theme = createTheme({
         contained: {
           boxShadow: 'none',
           '&:hover': {
-            boxShadow: '0 4px 12px 0 rgba(37, 99, 235, 0.2)',
+            boxShadow: '0 4px 12px 0 rgba(30, 58, 138, 0.2)',
             transform: 'translateY(-1px)',
           },
         },
@@ -160,7 +172,7 @@ export const theme = createTheme({
           borderWidth: '1.5px',
           '&:hover': {
             borderWidth: '1.5px',
-            backgroundColor: 'rgba(37, 99, 235, 0.04)',
+            backgroundColor: 'rgba(30, 58, 138, 0.04)',
           },
         },
         sizeLarge: {
@@ -213,7 +225,7 @@ export const theme = createTheme({
             borderColor: '#cbd5e1',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#2563eb',
+            borderColor: '#1e3a8a',
             borderWidth: '2px',
           },
           '&.Mui-error .MuiOutlinedInput-notchedOutline': {
@@ -241,9 +253,9 @@ export const theme = createTheme({
         root: {
           fontSize: '0.9375rem',
           fontWeight: 500,
-          color: '#475569',
+          color: '#4b5563',
           '&.Mui-focused': {
-            color: '#2563eb',
+            color: '#1e3a8a',
             fontWeight: 600,
           },
           '&.Mui-error': {
@@ -348,7 +360,7 @@ export const theme = createTheme({
           borderRadius: 8,
           transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            backgroundColor: 'rgba(37, 99, 235, 0.08)',
+            backgroundColor: 'rgba(30, 58, 138, 0.08)',
           },
         },
       },

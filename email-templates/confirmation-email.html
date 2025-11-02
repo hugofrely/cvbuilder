@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmez votre email - moncv.xyz</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .email-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 48px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            margin-bottom: 24px;
+        }
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            color: white;
+        }
+        h1 {
+            color: #111827;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            text-align: center;
+            line-height: 1.3;
+        }
+        .subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 0 32px 0;
+            text-align: center;
+        }
+        .user-email {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 0 0 32px 0;
+            text-align: center;
+        }
+        .user-email-label {
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .user-email-value {
+            color: #111827;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+            margin-bottom: 24px;
+        }
+        .cta-button:hover {
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.3);
+        }
+        .alternative-link {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        .alternative-link p {
+            color: #6b7280;
+            font-size: 13px;
+            margin: 0 0 8px 0;
+        }
+        .alternative-link a {
+            color: #1e3a8a;
+            font-size: 13px;
+            word-break: break-all;
+            text-decoration: underline;
+        }
+        .info-box {
+            background: #f0f9ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 24px 0;
+        }
+        .info-box p {
+            color: #1e40af;
+            font-size: 14px;
+            margin: 0;
+            line-height: 1.6;
+        }
+        .divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 32px 0;
+        }
+        .features {
+            margin: 24px 0;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .feature-text {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 32px;
+        }
+        .footer p {
+            color: #f9fafb;
+            font-size: 13px;
+            line-height: 1.6;
+            margin: 0 0 8px 0;
+        }
+        .footer a {
+            color: #f9fafb;
+            text-decoration: underline;
+        }
+        .social-links {
+            margin-top: 24px;
+        }
+        .social-links a {
+            color: #f9fafb;
+            text-decoration: none;
+            margin: 0 12px;
+            font-size: 14px;
+        }
+        @media only screen and (max-width: 600px) {
+            .email-card {
+                padding: 32px 24px;
+            }
+            h1 {
+                font-size: 24px;
+            }
+            .cta-button {
+                padding: 16px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-card">
+            <!-- Logo -->
+            <div class="logo-container">
+                <div class="logo-circle">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <h1>Confirmez votre adresse email</h1>
+            <p class="subtitle">
+                Bienvenue sur <strong>moncv.xyz</strong> ! Nous sommes ravis de vous compter parmi nous.
+                Pour finaliser votre inscription, veuillez confirmer votre adresse email.
+            </p>
+
+            <!-- User Email -->
+            <div class="user-email">
+                <div class="user-email-label">Votre adresse email</div>
+                <div class="user-email-value">{{ .Email }}</div>
+            </div>
+
+            <!-- CTA Button -->
+            <a href="{{ .ConfirmationURL }}" class="cta-button">
+                ✓ Confirmer mon email
+            </a>
+
+            <!-- Info Box -->
+            <div class="info-box">
+                <p>
+                    <strong>🔒 Lien sécurisé :</strong> Ce lien est valable pendant 24 heures et ne peut être utilisé qu'une seule fois.
+                </p>
+            </div>
+
+            <!-- Alternative Link -->
+            <div class="alternative-link">
+                <p><strong>Le bouton ne fonctionne pas ?</strong></p>
+                <p>Copiez et collez ce lien dans votre navigateur :</p>
+                <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Features -->
+            <h2 style="color: #111827; font-size: 18px; font-weight: 700; margin: 0 0 16px 0;">
+                Ce qui vous attend sur moncv.xyz
+            </h2>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <p class="feature-text">
+                        <strong>Modèles professionnels</strong> - Accédez à une bibliothèque de templates conçus par des experts
+                    </p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <p class="feature-text">
+                        <strong>Export PDF instantané</strong> - Téléchargez votre CV en haute qualité
+                    </p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <p class="feature-text">
+                        <strong>Interface intuitive</strong> - Créez votre CV en moins de 5 minutes
+                    </p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">✓</div>
+                    <p class="feature-text">
+                        <strong>Sans engagement</strong> - Commencez gratuitement, sans carte de crédit
+                    </p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Support -->
+            <p style="color: #6b7280; font-size: 13px; text-align: center; margin: 16px 0;">
+                Vous n'avez pas créé de compte sur moncv.xyz ?<br>
+                Vous pouvez ignorer cet email en toute sécurité.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong style="color: #fff; font-size: 18px;">moncv.xyz</strong></p>
+            <p>Créez votre CV professionnel en quelques minutes</p>
+            <p>
+                Des questions ? <a href="mailto:support@moncv.xyz">Contactez-nous</a>
+            </p>
+            <div class="social-links">
+                <a href="https://moncv.xyz">Site web</a>
+                <a href="https://moncv.xyz/pricing">Tarifs</a>
+                <a href="https://moncv.xyz/templates">Templates</a>
+            </div>
+            <p style="margin-top: 24px; opacity: 0.8;">
+                © 2025 moncv.xyz. Tous droits réservés.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

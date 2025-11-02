@@ -135,7 +135,7 @@ function PaymentContent() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
         }}
       >
         <CircularProgress sx={{ color: 'white' }} size={60} />
@@ -149,7 +149,7 @@ function PaymentContent() {
     <Box
       sx={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
         pt: { xs: 10, md: 12 },
         pb: 8,
         position: 'relative',
@@ -338,7 +338,7 @@ function PaymentContent() {
                     textTransform: 'none',
                     fontWeight: 700,
                     fontSize: '1.125rem',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                    background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                     boxShadow: 3,
                     '&:hover': {
                       boxShadow: 6,
@@ -546,7 +546,7 @@ export default function PaymentPage() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
         }}
       >
         <CircularProgress sx={{ color: 'white' }} size={60} />

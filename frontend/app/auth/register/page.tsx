@@ -74,7 +74,7 @@ export default function RegisterPage() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
         py: { xs: 4, md: 8 },
         px: 2,
         position: 'relative',
@@ -111,7 +111,7 @@ export default function RegisterPage() {
                 width: 64,
                 height: 64,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                 mb: 2,
               }}
             >
@@ -234,7 +234,7 @@ export default function RegisterPage() {
                 textTransform: 'none',
                 borderRadius: 2,
                 boxShadow: 3,
-                background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                 '&:hover': {
                   boxShadow: 6,
                   transform: 'translateY(-2px)',

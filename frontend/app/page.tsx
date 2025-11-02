@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import {
-  Description,
   Palette,
   CloudDownload,
   CheckCircle,
@@ -27,20 +26,20 @@ import {
 // Couleurs du thème extraites pour éviter useTheme() et garder le Server Component
 const themeColors = {
   primary: {
-    main: '#2563eb',
-    light: '#60a5fa',
-    dark: '#1e40af',
+    main: '#1e3a8a',
+    light: '#3b82f6',
+    dark: '#1e293b',
   },
   secondary: {
-    main: '#8b5cf6',
-    light: '#a78bfa',
-    dark: '#6d28d9',
+    main: '#0ea5e9',
+    light: '#38bdf8',
+    dark: '#0284c7',
   },
   grey: {
-    50: '#f8fafc',
+    50: '#f9fafb',
   },
   background: {
-    default: '#f8fafc',
+    default: '#f9fafb',
   },
 };
 
@@ -314,19 +313,40 @@ export default function Home() {
                 <Box
                   sx={{
                     width: '100%',
-                    height: 400,
-                    background: 'rgba(255,255,255,0.1)',
-                    borderRadius: 4,
-                    backdropFilter: 'blur(10px)',
-                    border: '2px solid rgba(255,255,255,0.2)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+                    maxWidth: 400,
+                    position: 'relative',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '110%',
+                      height: '110%',
+                      background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)',
+                      borderRadius: 4,
+                      zIndex: 0,
+                    },
                   }}
-                  role="img"
-                  aria-label="Illustration d'un document de CV"
                 >
-                  <Description sx={{ fontSize: 120, opacity: 0.3 }} aria-hidden="true" />
+                  <Box
+                    component="img"
+                    src="/2-moderne.png"
+                    alt="Exemple de CV professionnel moderne"
+                    sx={{
+                      width: '100%',
+                      height: 'auto',
+                      borderRadius: 3,
+                      boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+                      border: '3px solid rgba(255,255,255,0.3)',
+                      position: 'relative',
+                      zIndex: 1,
+                      transition: 'transform 0.3s ease',
+                      '&:hover': {
+                        transform: 'scale(1.02)',
+                      },
+                    }}
+                  />
                 </Box>
               </Box>
             </Grid>
@@ -356,7 +376,7 @@ export default function Home() {
                     component="p"
                     sx={{
                       fontWeight: 800,
-                      background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.secondary.main} 100%)`,
+                      background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.light} 100%)`,
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -434,7 +454,7 @@ export default function Home() {
                         width: 80,
                         height: 80,
                         borderRadius: 2,
-                        background: `linear-gradient(135deg, ${themeColors.primary.light} 0%, ${themeColors.secondary.light} 100%)`,
+                        background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.light} 100%)`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -528,14 +548,14 @@ export default function Home() {
                       width: 120,
                       height: 120,
                       borderRadius: '50%',
-                      background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.secondary.main} 100%)`,
+                      background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.light} 100%)`,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       margin: '0 auto',
                       mb: 3,
                       position: 'relative',
-                      boxShadow: '0 8px 24px rgba(37, 99, 235, 0.3)',
+                      boxShadow: '0 8px 24px rgba(30, 58, 138, 0.3)',
                     }}
                   >
                     <Typography

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   Box,
@@ -11,45 +10,30 @@ import {
   Typography,
   Paper,
   Alert,
-  Checkbox,
-  FormControlLabel,
-  Divider,
   CircularProgress,
 } from '@mui/material';
-import { Login as LoginIcon } from '@mui/icons-material';
-import { useAuth } from '@/context/AuthContext';
-import OAuthButtons from '@/components/auth/OAuthButtons';
+import { Email as EmailIcon, ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import { authService } from '@/lib/api/auth';
 
-export default function LoginPage() {
-  const router = useRouter();
-  const { login } = useAuth();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+export default function ForgotPasswordPage() {
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess(false);
     setLoading(true);
 
     try {
-      await login(formData);
-      router.push('/dashboard');
+      await authService.resetPassword(email);
+      setSuccess(true);
+      setEmail('');
     } catch (err: any) {
-      console.error('Login error:', err);
-      setError(err.message || 'Email ou mot de passe invalide');
+      console.error('Password reset error:', err);
+      setError(err.message || 'Une erreur est survenue. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
@@ -103,7 +87,7 @@ export default function LoginPage() {
                 mb: 2,
               }}
             >
-              <LoginIcon sx={{ fontSize: 32, color: 'white' }} />
+              <EmailIcon sx={{ fontSize: 32, color: 'white' }} />
             </Box>
             <Typography
               variant="h4"
@@ -111,12 +95,19 @@ export default function LoginPage() {
               gutterBottom
               sx={{ fontWeight: 700, color: 'text.primary' }}
             >
-              Connexion
+              Mot de passe oublié ?
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Connectez-vous pour accéder à vos CV
+              Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe
             </Typography>
           </Box>
+
+          {/* Success Alert */}
+          {success && (
+            <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
+              Un email de réinitialisation a été envoyé à votre adresse. Veuillez vérifier votre boîte de réception.
+            </Alert>
+          )}
 
           {/* Error Alert */}
           {error && (
@@ -125,19 +116,7 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          {/* OAuth Buttons */}
-          <Box sx={{ mb: 3 }}>
-            <OAuthButtons mode="login" />
-          </Box>
-
-          {/* Divider */}
-          <Divider sx={{ my: 3 }}>
-            <Typography variant="body2" color="text.secondary">
-              Ou continuez avec votre email
-            </Typography>
-          </Divider>
-
-          {/* Login Form */}
+          {/* Reset Password Form */}
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <TextField
               fullWidth
@@ -147,64 +126,12 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               sx={{ mb: 3 }}
               placeholder="votre@email.com"
+              disabled={loading || success}
             />
-
-            <TextField
-              fullWidth
-              id="password"
-              name="password"
-              label="Mot de passe"
-              type="password"
-              autoComplete="current-password"
-              required
-              value={formData.password}
-              onChange={handleChange}
-              sx={{ mb: 2 }}
-              placeholder="Votre mot de passe"
-            />
-
-            {/* Remember Me & Forgot Password */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                mb: 3,
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label={
-                  <Typography variant="body2" color="text.secondary">
-                    Se souvenir de moi
-                  </Typography>
-                }
-              />
-              <Link href="/auth/forgot-password" style={{ textDecoration: 'none' }}>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'primary.main',
-                    fontWeight: 600,
-                    '&:hover': {
-                      textDecoration: 'underline',
-                    },
-                  }}
-                >
-                  Mot de passe oublié ?
-                </Typography>
-              </Link>
-            </Box>
 
             {/* Submit Button */}
             <Button
@@ -212,7 +139,7 @@ export default function LoginPage() {
               fullWidth
               variant="contained"
               size="large"
-              disabled={loading}
+              disabled={loading || success}
               sx={{
                 py: 1.5,
                 fontSize: '1rem',
@@ -231,33 +158,32 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <CircularProgress size={20} sx={{ color: 'white', mr: 1 }} />
-                  Connexion en cours...
+                  Envoi en cours...
                 </>
+              ) : success ? (
+                'Email envoyé !'
               ) : (
-                'Se connecter'
+                'Envoyer le lien de réinitialisation'
               )}
             </Button>
 
-            {/* Register Link */}
+            {/* Back to Login Link */}
             <Box sx={{ textAlign: 'center', mt: 3 }}>
-              <Typography variant="body2" color="text.secondary">
-                Vous n&apos;avez pas de compte ?{' '}
-                <Link href="/auth/register" style={{ textDecoration: 'none' }}>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    sx={{
-                      color: 'primary.main',
-                      fontWeight: 600,
-                      '&:hover': {
-                        textDecoration: 'underline',
-                      },
-                    }}
-                  >
-                    Créer un compte
-                  </Typography>
-                </Link>
-              </Typography>
+              <Link href="/auth/login" style={{ textDecoration: 'none' }}>
+                <Button
+                  startIcon={<ArrowBackIcon />}
+                  sx={{
+                    color: 'primary.main',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: 'rgba(30, 58, 138, 0.04)',
+                    },
+                  }}
+                >
+                  Retour à la connexion
+                </Button>
+              </Link>
             </Box>
           </Box>
         </Paper>

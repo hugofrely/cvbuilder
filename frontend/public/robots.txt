@@ -1,0 +1,10 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow API routes and private pages
+Disallow: /api/
+Disallow: /dashboard
+
+# Sitemap
+Sitemap: /sitemap.xml
