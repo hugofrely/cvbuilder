@@ -202,9 +202,28 @@ USE_GCS = os.getenv('USE_GCS', 'False') == 'True'
 GS_BUCKET_NAME = os.getenv('GCS_BUCKET_NAME', 'cvbuilder-images')
 GS_PROJECT_ID = os.getenv('GCS_PROJECT_ID', 'cvbuilder-476609')
 
-# Set credentials path for google-cloud-storage library
-credentials_path = os.getenv('GCS_CREDENTIALS')
-if credentials_path:
+# GCS Credentials handling
+# Supports both file path (local dev) and JSON string (Docker/production)
+import json
+import tempfile
+
+credentials_path = os.getenv('GCS_CREDENTIALS_PATH')
+credentials_json = os.getenv('GCS_CREDENTIALS_JSON')
+
+if credentials_json:
+    # For Docker Swarm/secrets: create a temporary file with the JSON credentials
+    try:
+        credentials_data = json.loads(credentials_json)
+        # Create a temporary file that will persist for the application lifetime
+        temp_creds_file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json')
+        json.dump(credentials_data, temp_creds_file)
+        temp_creds_file.close()
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_creds_file.name
+    except json.JSONDecodeError as e:
+        import logging
+        logging.error(f"Failed to parse GCS_CREDENTIALS_JSON: {e}")
+elif credentials_path:
+    # For local development: use file path directly
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
 
 if USE_GCS:

@@ -59,6 +59,22 @@ services:
       DEBUG: ${DEBUG:-False}
       ALLOWED_HOSTS: api.bidly.fr
       CORS_ALLOWED_ORIGINS: https://bidly.fr,https://www.bidly.fr
+      # Supabase
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      # Google Cloud Storage
+      USE_GCS: ${USE_GCS:-True}
+      GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+      GCS_PROJECT_ID: ${GCS_PROJECT_ID}
+      GCS_CREDENTIALS_JSON: ${GCS_CREDENTIALS_JSON}
+      # Stripe
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      STRIPE_SINGLE_CV_PRICE_ID: ${STRIPE_SINGLE_CV_PRICE_ID}
+      STRIPE_LIFETIME_PREMIUM_PRICE_ID: ${STRIPE_LIFETIME_PREMIUM_PRICE_ID}
     networks:
       - cvbuilder_network
       - traefik_public
@@ -95,6 +111,16 @@ services:
       REDIS_URL: redis://redis:6379/0
       DJANGO_SETTINGS_MODULE: cvbuilder_backend.settings
       SECRET_KEY: ${SECRET_KEY}
+      # Supabase
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY}
+      SUPABASE_JWT_SECRET: ${SUPABASE_JWT_SECRET}
+      # Google Cloud Storage
+      USE_GCS: ${USE_GCS:-True}
+      GCS_BUCKET_NAME: ${GCS_BUCKET_NAME}
+      GCS_PROJECT_ID: ${GCS_PROJECT_ID}
+      GCS_CREDENTIALS_JSON: ${GCS_CREDENTIALS_JSON}
     networks:
       - cvbuilder_network
     deploy:
