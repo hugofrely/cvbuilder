@@ -60,7 +60,7 @@ export default function PersonalInfoForm() {
       const formData = new FormData();
       formData.append('photo', file);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/upload_photo/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/upload_photo`, {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -98,7 +98,7 @@ export default function PersonalInfoForm() {
       }
 
       // Delete photo from backend
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/delete_photo/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/resumes/${resumeId}/delete_photo`, {
         method: 'DELETE',
         credentials: 'include',
       });

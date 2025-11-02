@@ -39,7 +39,7 @@ export const resumeApi = {
   // Export resume to PDF
   exportPdf: async (id: string) => {
     try {
-      const response = await apiClient.post(`/api/resumes/${id}/export_pdf/`, null, {
+      const response = await apiClient.post(`/api/resumes/${id}/export_pdf`, null, {
         responseType: 'blob',
       });
 
@@ -99,7 +99,7 @@ export const resumeApi = {
       html: string;
       css: string;
       template_name: string;
-    }>(`/api/resumes/${id}/render_html/`);
+    }>(`/api/resumes/${id}/render_html`);
     return response.data;
   },
 
