@@ -6,8 +6,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.template import Context, Template as DjangoTemplate
+from django.db import models
 from pybars import Compiler
-from .models import Template, Resume, Experience, Education, Skill
+from .models import Template, Resume, Experience, Education, Skill, TemplateCategory
 from .serializers import (
     TemplateSerializer,
     TemplateDetailSerializer,
@@ -44,14 +45,29 @@ class TemplateViewSet(viewsets.ReadOnlyModelViewSet):
     retrieve: Get a specific template with HTML/CSS
     free: List only free templates (without pagination)
     premium: List only premium templates (without pagination)
+    categories: Get all available categories
     """
-    queryset = Template.objects.filter(is_active=True)
+    queryset = Template.objects.filter(is_active=True).prefetch_related('categories')
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['is_premium']
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at']
     ordering = ['name']
+
+    def get_queryset(self):
+        """
+        Filter templates by category if provided.
+        Supports filtering by category slug in query params.
+        """
+        queryset = super().get_queryset()
+
+        # Filter by category if provided
+        category_slug = self.request.query_params.get('category', None)
+        if category_slug and category_slug != 'all':
+            queryset = queryset.filter(categories__slug=category_slug).distinct()
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -71,6 +87,37 @@ class TemplateViewSet(viewsets.ReadOnlyModelViewSet):
         templates = self.get_queryset().filter(is_premium=True)
         serializer = self.get_serializer(templates, many=True)
         return Response({'count': len(templates), 'results': serializer.data})
+
+    @action(detail=False, methods=['get'])
+    def categories(self, request):
+        """Get all available template categories with their counts"""
+        from django.db.models import Count
+        from .models import TemplateCategory
+        from .serializers import TemplateCategorySerializer
+
+        # Get all categories with their template counts
+        # Only include categories that have active templates
+        categories = TemplateCategory.objects.annotate(
+            template_count=Count(
+                'templates',
+                filter=models.Q(templates__is_active=True)
+            )
+        ).filter(template_count__gt=0).order_by('order', 'name')
+
+        # Serialize the categories
+        serializer = TemplateCategorySerializer(categories, many=True)
+
+        # Add template count to each category
+        result = []
+        for i, category in enumerate(categories):
+            cat_data = serializer.data[i].copy()
+            cat_data['count'] = category.template_count
+            result.append(cat_data)
+
+        return Response({
+            'categories': result,
+            'total_count': len(result)
+        })
 
 
 class ResumeViewSet(viewsets.ModelViewSet):
@@ -206,8 +253,20 @@ class ResumeViewSet(viewsets.ModelViewSet):
                     return str(value)[:int(count)]
                 return ''
 
+            def translate_work_mode_helper(this, value):
+                """Helper to translate work_mode to French"""
+                translations = {
+                    'remote': 'Télétravail',
+                    'onsite': 'Sur site',
+                    'hybrid': 'Hybride',
+                }
+                return translations.get(value, value)
+
             handlebars_template = compiler.compile(template.template_html)
-            rendered_html = handlebars_template(context_data, helpers={'first': first_helper})
+            rendered_html = handlebars_template(context_data, helpers={
+                'first': first_helper,
+                'translate_work_mode': translate_work_mode_helper
+            })
 
             return Response({
                 'html': rendered_html,

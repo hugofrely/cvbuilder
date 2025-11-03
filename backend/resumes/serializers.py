@@ -1,5 +1,14 @@
 from rest_framework import serializers
-from .models import Template, Resume, Experience, Education, Skill
+from .models import Template, Resume, Experience, Education, Skill, TemplateCategory
+
+
+class TemplateCategorySerializer(serializers.ModelSerializer):
+    """Template Category serializer"""
+
+    class Meta:
+        model = TemplateCategory
+        fields = ['id', 'slug', 'name', 'description', 'order']
+        read_only_fields = ['id']
 
 
 class TemplateSerializer(serializers.ModelSerializer):
@@ -7,12 +16,18 @@ class TemplateSerializer(serializers.ModelSerializer):
 
     # Override thumbnail field to return raw value instead of full URL
     thumbnail = serializers.CharField(read_only=True)
+    # Return category data as nested objects
+    categories = TemplateCategorySerializer(many=True, read_only=True)
+    # Also provide category slugs and names for convenience
+    category_slugs = serializers.ReadOnlyField()
+    category_names = serializers.ReadOnlyField()
 
     class Meta:
         model = Template
         fields = [
-            'id', 'name', 'description', 'thumbnail', 'is_premium',
-            'is_active', 'created_at'
+            'id', 'name', 'description', 'thumbnail', 'categories',
+            'category_slugs', 'category_names',
+            'is_premium', 'is_active', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
 
@@ -22,12 +37,16 @@ class TemplateDetailSerializer(serializers.ModelSerializer):
 
     # Override thumbnail field to return raw value instead of full URL
     thumbnail = serializers.CharField(read_only=True)
+    categories = TemplateCategorySerializer(many=True, read_only=True)
+    category_slugs = serializers.ReadOnlyField()
+    category_names = serializers.ReadOnlyField()
 
     class Meta:
         model = Template
         fields = [
-            'id', 'name', 'description', 'thumbnail', 'is_premium',
-            'is_active', 'template_html', 'template_css', 'created_at'
+            'id', 'name', 'description', 'thumbnail', 'categories',
+            'category_slugs', 'category_names',
+            'is_premium', 'is_active', 'template_html', 'template_css', 'created_at'
         ]
         read_only_fields = ['id', 'created_at']
 

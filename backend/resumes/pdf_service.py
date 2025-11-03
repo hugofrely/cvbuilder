@@ -74,6 +74,23 @@ class PDFGenerationService:
 
                     <!-- Compile and render -->
                     <script>
+                        // Register Handlebars helpers
+                        Handlebars.registerHelper('first', function(value, count) {{
+                            if (value) {{
+                                return String(value).substring(0, count);
+                            }}
+                            return '';
+                        }});
+
+                        Handlebars.registerHelper('translate_work_mode', function(value) {{
+                            const translations = {{
+                                'remote': 'Télétravail',
+                                'onsite': 'Sur site',
+                                'hybrid': 'Hybride'
+                            }};
+                            return translations[value] || value;
+                        }});
+
                         // CV data
                         var cvData = {json.dumps(cv_data)};
 

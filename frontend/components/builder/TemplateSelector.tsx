@@ -23,6 +23,10 @@ import {
   Stack,
   Divider,
   IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import {
   CheckCircle,
@@ -34,7 +38,7 @@ import {
   Close,
 } from '@mui/icons-material';
 import { templateApi } from '@/lib/api/template';
-import { Template } from '@/types/resume';
+import { Template, TemplateCategory } from '@/types/resume';
 
 interface TemplateSelectorProps {
   open: boolean;
@@ -76,6 +80,8 @@ export default function TemplateSelector({
   const [selectedId, setSelectedId] = useState<string | null>(currentTemplateId || null);
   const [filter, setFilter] = useState<FilterType>('all');
   const [page, setPage] = useState(1);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [categories, setCategories] = useState<TemplateCategory[]>([]);
 
   // Preview modal
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -90,7 +96,7 @@ export default function TemplateSelector({
       setLoading(true);
       setError(null);
 
-      const params: Record<string, number | boolean> = {
+      const params: Record<string, number | boolean | string> = {
         page: page,
         page_size: ITEMS_PER_PAGE,
       };
@@ -99,6 +105,10 @@ export default function TemplateSelector({
         params.is_premium = false;
       } else if (filter === 'premium') {
         params.is_premium = true;
+      }
+
+      if (categoryFilter !== 'all') {
+        params.category = categoryFilter;
       }
 
       const data = await templateApi.getAll(params);
@@ -110,7 +120,7 @@ export default function TemplateSelector({
     } finally {
       setLoading(false);
     }
-  }, [page, filter]);
+  }, [page, filter, categoryFilter]);
 
   // Load templates when dialog opens, or when page/filter changes
   useEffect(() => {
@@ -119,6 +129,21 @@ export default function TemplateSelector({
     }
   }, [open, loadTemplates]);
 
+  // Load categories when dialog opens
+  useEffect(() => {
+    if (open) {
+      const loadCategories = async () => {
+        try {
+          const data = await templateApi.getCategories();
+          setCategories(data.categories);
+        } catch (err) {
+          console.error('Error loading categories:', err);
+        }
+      };
+      loadCategories();
+    }
+  }, [open]);
+
   // Reset page to 1 when dialog opens
   useEffect(() => {
     if (open) {
@@ -126,10 +151,10 @@ export default function TemplateSelector({
     }
   }, [open]);
 
-  // Reset page to 1 when filter changes
+  // Reset page to 1 when filter or category changes
   useEffect(() => {
     setPage(1);
-  }, [filter]);
+  }, [filter, categoryFilter]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -232,31 +257,52 @@ export default function TemplateSelector({
           <>
             {/* Header with filter and stats */}
             <Box sx={{ mb: 3 }}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2} sx={{ mb: 2 }}>
                 <Typography variant="body2" color="text.secondary" aria-live="polite">
                   {totalCount} template{totalCount > 1 ? 's' : ''} disponible{totalCount > 1 ? 's' : ''}
                 </Typography>
 
-                <ToggleButtonGroup
-                  value={filter}
-                  exclusive
-                  onChange={handleFilterChange}
-                  size="small"
-                  aria-label="Filtrer les templates"
-                >
-                  <ToggleButton value="all" aria-label="Afficher tous les templates">
-                    <AllInclusive sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
-                    Tous
-                  </ToggleButton>
-                  <ToggleButton value="free" aria-label="Afficher uniquement les templates gratuits">
-                    <CardGiftcard sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
-                    Gratuits
-                  </ToggleButton>
-                  <ToggleButton value="premium" aria-label="Afficher uniquement les templates premium">
-                    <Star sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
-                    Premium
-                  </ToggleButton>
-                </ToggleButtonGroup>
+                <Stack direction="row" spacing={2}>
+                  <FormControl size="small" sx={{ minWidth: 150 }}>
+                    <InputLabel id="category-filter-label">Catégorie</InputLabel>
+                    <Select
+                      labelId="category-filter-label"
+                      id="category-filter"
+                      value={categoryFilter}
+                      label="Catégorie"
+                      onChange={(e) => setCategoryFilter(e.target.value)}
+                      aria-label="Filtrer par catégorie"
+                    >
+                      <MenuItem value="all">Toutes</MenuItem>
+                      {categories.map((cat) => (
+                        <MenuItem key={cat.slug} value={cat.slug}>
+                          {cat.name} ({cat.count})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <ToggleButtonGroup
+                    value={filter}
+                    exclusive
+                    onChange={handleFilterChange}
+                    size="small"
+                    aria-label="Filtrer les templates"
+                  >
+                    <ToggleButton value="all" aria-label="Afficher tous les templates">
+                      <AllInclusive sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
+                      Tous
+                    </ToggleButton>
+                    <ToggleButton value="free" aria-label="Afficher uniquement les templates gratuits">
+                      <CardGiftcard sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
+                      Gratuits
+                    </ToggleButton>
+                    <ToggleButton value="premium" aria-label="Afficher uniquement les templates premium">
+                      <Star sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
+                      Premium
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Stack>
               </Stack>
               <Divider />
             </Box>

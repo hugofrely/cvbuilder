@@ -125,6 +125,15 @@ export interface Resume {
   lastAccessed?: string;
 }
 
+export interface TemplateCategory {
+  id?: string;
+  slug: string;
+  name: string;
+  description?: string;
+  order?: number;
+  count?: number; // For API response with counts
+}
+
 export interface Template {
   id?: string | null; // Changed to string (UUID)
   name: string;
@@ -133,6 +142,12 @@ export interface Template {
   thumbnail?: string | null;
   thumbnailUrl?: string; // Deprecated - use thumbnail
   description: string;
+  // New: Multiple categories support
+  categories?: TemplateCategory[]; // Backend format - full objects
+  category_slugs?: string[]; // Backend format - slugs only
+  category_names?: string[]; // Backend format - names only
+  categoryNames?: string[]; // Frontend format
+  categorySlugs?: string[]; // Frontend format
   templateHtml?: string;
   template_html?: string; // Backend format
   templateCss?: string;

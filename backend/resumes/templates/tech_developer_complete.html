@@ -1,3 +1,6 @@
+<!--
+Template Categories: tech, modern
+-->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -33,11 +36,22 @@
                 </div>
 
                 <!-- Additional Info -->
-                {{#if date_of_birth}}{{#if nationality}}{{#if driving_license}}
+                {{#if date_of_birth}}
                 <div class="additional-info">
                     {{#if date_of_birth}}<span class="info-item">📅 {{date_of_birth}}</span>{{/if}}
                     {{#if nationality}}<span class="info-item">🌍 {{nationality}}</span>{{/if}}
                     {{#if driving_license}}<span class="info-item">🚗 {{driving_license}}</span>{{/if}}
+                </div>
+                {{else}}{{#if nationality}}
+                <div style="margin-bottom: 35px;">
+                    <h3>Informations</h3>
+                    <div>🌍 {{nationality}}</div>
+                    {{#if driving_license}}<div>🚗 {{driving_license}}</div>{{/if}}
+                </div>
+                {{else}}{{#if driving_license}}
+                <div style="margin-bottom: 35px;">
+                    <h3>Informations</h3>
+                    <div>🚗 {{driving_license}}</div>
                 </div>
                 {{/if}}{{/if}}{{/if}}
             </div>
@@ -70,10 +84,10 @@
                     </div>
                 </div>
                 {{#if this.location}}
-                <div class="exp-location">📍 {{this.location}}{{#if this.work_mode}} • {{this.work_mode}}{{/if}}</div>
+                <div class="exp-location">📍 {{this.location}}{{#if this.work_mode}} • {{translate_work_mode this.work_mode}}{{/if}}</div>
                 {{else}}
                 {{#if this.work_mode}}
-                <div class="exp-location">💼 {{this.work_mode}}</div>
+                <div class="exp-location">💼 {{translate_work_mode this.work_mode}}</div>
                 {{/if}}
                 {{/if}}
                 {{#if this.description}}
@@ -147,7 +161,7 @@
                 <div class="edu-meta">
                     {{this.institution}}
                     {{#if this.location}} • {{this.location}}{{/if}}
-                    {{#if this.work_mode}} • {{this.work_mode}}{{/if}}
+                    {{#if this.work_mode}} • {{translate_work_mode this.work_mode}}{{/if}}
                 </div>
                 {{#if this.grade}}
                 <div class="edu-grade">🏆 {{this.grade}}</div>

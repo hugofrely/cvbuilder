@@ -21,6 +21,10 @@ import {
   ToggleButton,
   Stack,
   Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,7 +34,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AllInclusiveIcon from '@mui/icons-material/AllInclusive';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import { templateApi } from '@/lib/api/template';
-import { Template } from '@/types/resume';
+import { Template, TemplateCategory } from '@/types/resume';
 
 type FilterType = 'all' | 'free' | 'premium';
 
@@ -57,6 +61,8 @@ export default function TemplatesPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterType>('all');
   const [page, setPage] = useState(1);
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [categories, setCategories] = useState<TemplateCategory[]>([]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -66,7 +72,7 @@ export default function TemplatesPage() {
       setLoading(true);
       setError(null);
 
-      const params: Record<string, number | boolean> = {
+      const params: Record<string, number | boolean | string> = {
         page: page,
         page_size: ITEMS_PER_PAGE,
       };
@@ -75,6 +81,10 @@ export default function TemplatesPage() {
         params.is_premium = false;
       } else if (filter === 'premium') {
         params.is_premium = true;
+      }
+
+      if (categoryFilter !== 'all') {
+        params.category = categoryFilter;
       }
 
       const data = await templateApi.getAll(params);
@@ -86,16 +96,29 @@ export default function TemplatesPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, filter]);
+  }, [page, filter, categoryFilter]);
 
   useEffect(() => {
     loadTemplates();
   }, [loadTemplates]);
 
-  // Reset page to 1 when filter changes
+  // Load categories on mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await templateApi.getCategories();
+        setCategories(data.categories);
+      } catch (err) {
+        console.error('Error loading categories:', err);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  // Reset page to 1 when filter or category changes
   useEffect(() => {
     setPage(1);
-  }, [filter]);
+  }, [filter, categoryFilter]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
@@ -211,27 +234,48 @@ export default function TemplatesPage() {
                 )}
               </Typography>
 
-              <ToggleButtonGroup
-                value={filter}
-                exclusive
-                onChange={handleFilterChange}
-                size="small"
-                aria-label="Filtrer les templates"
-                fullWidth={isMobile}
-              >
-                <ToggleButton value="all" aria-label="Afficher tous les templates">
-                  <AllInclusiveIcon sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
-                  Tous
-                </ToggleButton>
-                <ToggleButton value="free" aria-label="Afficher uniquement les templates gratuits">
-                  <CardGiftcardIcon sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
-                  Gratuits
-                </ToggleButton>
-                <ToggleButton value="premium" aria-label="Afficher uniquement les templates premium">
-                  <StarIcon sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
-                  Premium
-                </ToggleButton>
-              </ToggleButtonGroup>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ width: { xs: '100%', sm: 'auto' } }}>
+                <FormControl size="small" sx={{ minWidth: 150 }}>
+                  <InputLabel id="category-filter-label">Catégorie</InputLabel>
+                  <Select
+                    labelId="category-filter-label"
+                    id="category-filter"
+                    value={categoryFilter}
+                    label="Catégorie"
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    aria-label="Filtrer par catégorie"
+                  >
+                    <MenuItem value="all">Toutes les catégories</MenuItem>
+                    {categories.map((cat) => (
+                      <MenuItem key={cat.slug} value={cat.slug}>
+                        {cat.name} ({cat.count})
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <ToggleButtonGroup
+                  value={filter}
+                  exclusive
+                  onChange={handleFilterChange}
+                  size="small"
+                  aria-label="Filtrer les templates"
+                  fullWidth={isMobile}
+                >
+                  <ToggleButton value="all" aria-label="Afficher tous les templates">
+                    <AllInclusiveIcon sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
+                    Tous
+                  </ToggleButton>
+                  <ToggleButton value="free" aria-label="Afficher uniquement les templates gratuits">
+                    <CardGiftcardIcon sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
+                    Gratuits
+                  </ToggleButton>
+                  <ToggleButton value="premium" aria-label="Afficher uniquement les templates premium">
+                    <StarIcon sx={{ mr: 0.5, fontSize: 18 }} aria-hidden="true" />
+                    Premium
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Stack>
             </Stack>
             <Divider />
           </Box>

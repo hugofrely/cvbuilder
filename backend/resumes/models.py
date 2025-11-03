@@ -24,6 +24,48 @@ def resume_photo_upload_path(instance, filename):
     return os.path.join('resumes', 'photos', new_filename)
 
 
+class TemplateCategory(models.Model):
+    """Template Category model for organizing templates"""
+
+    CATEGORY_CHOICES = [
+        ('tech', 'Technology'),
+        ('business', 'Business'),
+        ('creative', 'Creative'),
+        ('education', 'Education'),
+        ('medical', 'Medical'),
+        ('legal', 'Legal'),
+        ('sales', 'Sales & Marketing'),
+        ('hospitality', 'Hospitality'),
+        ('engineering', 'Engineering'),
+        ('minimalist', 'Minimalist'),
+        ('sidebar', 'Sidebar'),
+        ('startup', 'Startup'),
+        ('other', 'Other'),
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    slug = models.CharField(
+        max_length=50,
+        unique=True,
+        choices=CATEGORY_CHOICES,
+        help_text="Unique identifier for the category"
+    )
+    name = models.CharField(max_length=100, help_text="Display name for the category")
+    description = models.TextField(blank=True, help_text="Description of the category")
+    order = models.IntegerField(default=0, help_text="Display order")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'template_categories'
+        ordering = ['order', 'name']
+        verbose_name_plural = 'Template Categories'
+
+    def __str__(self):
+        return self.name
+
+
 class Template(models.Model):
     """CV Template model"""
 
@@ -32,6 +74,12 @@ class Template(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     thumbnail = models.ImageField(upload_to='templates/', blank=True, null=True)
+    categories = models.ManyToManyField(
+        TemplateCategory,
+        related_name='templates',
+        blank=True,
+        help_text="Template categories for filtering (can have multiple)"
+    )
     is_premium = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     template_html = models.TextField(help_text="HTML template with placeholders")
@@ -46,6 +94,16 @@ class Template(models.Model):
 
     def __str__(self):
         return f"{self.name} ({'Premium' if self.is_premium else 'Free'})"
+
+    @property
+    def category_slugs(self):
+        """Return list of category slugs"""
+        return list(self.categories.values_list('slug', flat=True))
+
+    @property
+    def category_names(self):
+        """Return list of category names"""
+        return list(self.categories.values_list('name', flat=True))
 
 
 class Resume(models.Model):

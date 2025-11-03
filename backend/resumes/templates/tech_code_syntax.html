@@ -1,0 +1,283 @@
+<!--
+Template Categories: tech, minimalist
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Fira Code', 'Source Code Pro', monospace;
+            background: #282c34;
+            color: #abb2bf;
+            padding: 30px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #1e2127;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .code-editor-header {
+            background: #21252b;
+            padding: 10px 20px;
+            border-bottom: 1px solid #181a1f;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .editor-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27c93f; }
+        .editor-title {
+            margin-left: 15px;
+            color: #5c6370;
+            font-size: 13px;
+        }
+        .line-numbers {
+            float: left;
+            width: 50px;
+            padding: 20px 10px;
+            background: #282c34;
+            color: #5c6370;
+            text-align: right;
+            user-select: none;
+            border-right: 1px solid #181a1f;
+        }
+        .line-number {
+            display: block;
+            height: 20px;
+            font-size: 13px;
+        }
+        .code-content {
+            padding: 20px 20px 20px 70px;
+            min-height: 100vh;
+        }
+        .keyword { color: #c678dd; }
+        .function { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .variable { color: #e06c75; }
+        .number { color: #d19a66; }
+        .class-name { color: #e5c07b; }
+
+        .code-line {
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-header {
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #2c313a;
+        }
+        .object-key {
+            color: #e06c75;
+        }
+        .object-value {
+            color: #98c379;
+        }
+        .indent-1 { padding-left: 20px; }
+        .indent-2 { padding-left: 40px; }
+        .indent-3 { padding-left: 60px; }
+        .profile-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #61afef;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        a {
+            color: #61afef;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .badge {
+            display: inline-block;
+            background: #2c313a;
+            color: #61afef;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="code-editor-header">
+            <div class="editor-dot dot-red"></div>
+            <div class="editor-dot dot-yellow"></div>
+            <div class="editor-dot dot-green"></div>
+            <div class="editor-title">cv.json - {{full_name}}</div>
+        </div>
+
+        <div class="code-content">
+            <div class="code-line"><span class="keyword">const</span> <span class="variable">resume</span> = {</div>
+
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">personal</span>: {</div>
+                <div class="indent-2">
+                    {{#if photo}}<div class="code-line"><span class="comment">// Profile Photo</span></div>
+                    <div class="code-line"><img src="{{photo}}" alt="{{full_name}}" class="profile-photo"></div>{{/if}}
+                    <div class="code-line"><span class="object-key">name</span>: <span class="string">"{{full_name}}"</span>,</div>
+                    {{#if title}}<div class="code-line"><span class="object-key">title</span>: <span class="string">"{{title}}"</span>,</div>{{/if}}
+                    {{#if email}}<div class="code-line"><span class="object-key">email</span>: <span class="string">"<a href="mailto:{{email}}">{{email}}</a>"</span>,</div>{{/if}}
+                    {{#if phone}}<div class="code-line"><span class="object-key">phone</span>: <span class="string">"{{phone}}"</span>,</div>{{/if}}
+                    {{#if address}}<div class="code-line"><span class="object-key">address</span>: <span class="string">"{{address}}"</span>,</div>{{/if}}
+                    {{#if city}}<div class="code-line"><span class="object-key">city</span>: <span class="string">"{{#if postal_code}}{{postal_code}} {{/if}}{{city}}"</span>,</div>{{/if}}
+                    {{#if linkedin_url}}<div class="code-line"><span class="object-key">linkedin</span>: <span class="string">"<a href="{{linkedin_url}}">{{linkedin_url}}</a>"</span>,</div>{{/if}}
+                    {{#if github_url}}<div class="code-line"><span class="object-key">github</span>: <span class="string">"<a href="{{github_url}}">{{github_url}}</a>"</span>,</div>{{/if}}
+                    {{#if website}}<div class="code-line"><span class="object-key">website</span>: <span class="string">"<a href="{{website}}">{{website}}</a>"</span>,</div>{{/if}}
+                    {{#if date_of_birth}}<div class="code-line"><span class="object-key">birthDate</span>: <span class="string">"{{date_of_birth}}"</span>,</div>{{/if}}
+                    {{#if nationality}}<div class="code-line"><span class="object-key">nationality</span>: <span class="string">"{{nationality}}"</span>,</div>{{/if}}
+                    {{#if driving_license}}<div class="code-line"><span class="object-key">license</span>: <span class="string">"{{driving_license}}"</span>,</div>{{/if}}
+                </div>
+                <div class="code-line indent-1">},</div>
+            </div>
+
+            {{#if summary}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">summary</span>: <span class="string">`</span></div>
+                <div class="indent-2 string" style="white-space: pre-wrap;">{{summary}}</div>
+                <div class="code-line indent-1"><span class="string">`</span>,</div>
+            </div>
+            {{/if}}
+
+            {{#if experience_data}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">experience</span>: [</div>
+                {{#each experience_data}}
+                <div class="indent-2">
+                    <div class="code-line">{</div>
+                    <div class="indent-3">
+                        <div class="code-line"><span class="object-key">position</span>: <span class="string">"{{this.position}}"</span>,</div>
+                        {{#if this.company}}<div class="code-line"><span class="object-key">company</span>: <span class="string">"{{this.company}}"</span>,</div>{{/if}}
+                        {{#if this.location}}<div class="code-line"><span class="object-key">location</span>: <span class="string">"{{this.location}}"</span>,</div>{{/if}}
+                        {{#if this.work_mode}}<div class="code-line"><span class="object-key">workMode</span>: <span class="string">"{{translate_work_mode this.work_mode}}"</span>,</div>{{/if}}
+                        <div class="code-line"><span class="object-key">period</span>: <span class="string">"{{first this.start_date 4}} - {{#if this.is_current}}Present{{else}}{{first this.end_date 4}}{{/if}}"</span>,</div>
+                        {{#if this.description}}<div class="code-line"><span class="object-key">description</span>: <span class="string">`</span></div>
+                        <div class="string" style="white-space: pre-wrap; padding-left: 80px;">{{this.description}}</div>
+                        <div class="code-line indent-3"><span class="string">`</span>,</div>{{/if}}
+                    </div>
+                    <div class="code-line indent-2">},</div>
+                </div>
+                {{/each}}
+                <div class="code-line indent-1">],</div>
+            </div>
+            {{/if}}
+
+            {{#if skills_data}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">skills</span>: [</div>
+                {{#each skills_data}}
+                <div class="code-line indent-2">
+                    { <span class="object-key">name</span>: <span class="string">"{{this.name}}"</span>{{#if this.level}}, <span class="object-key">level</span>: <span class="string">"{{this.level}}"</span>{{/if}}{{#if this.level_percentage}}, <span class="object-key">proficiency</span>: <span class="number">{{this.level_percentage}}</span>{{/if}} },
+                </div>
+                {{/each}}
+                <div class="code-line indent-1">],</div>
+            </div>
+            {{/if}}
+
+            {{#if projects_data}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">projects</span>: [</div>
+                {{#each projects_data}}
+                <div class="indent-2">
+                    <div class="code-line">{</div>
+                    <div class="indent-3">
+                        <div class="code-line"><span class="object-key">name</span>: <span class="string">"{{this.name}}"</span>,</div>
+                        {{#if this.date}}<div class="code-line"><span class="object-key">date</span>: <span class="string">"{{this.date}}"</span>,</div>{{/if}}
+                        {{#if this.url}}<div class="code-line"><span class="object-key">url</span>: <span class="string">"<a href="{{this.url}}">{{this.url}}</a>"</span>,</div>{{/if}}
+                        {{#if this.description}}<div class="code-line"><span class="object-key">description</span>: <span class="string">`</span></div>
+                        <div class="string" style="white-space: pre-wrap; padding-left: 80px;">{{this.description}}</div>
+                        <div class="code-line indent-3"><span class="string">`</span>,</div>{{/if}}
+                        {{#if this.technologies}}<div class="code-line"><span class="object-key">tech</span>: [{{#each this.technologies}}<span class="string">"{{this}}"</span>{{#unless @last}}, {{/unless}}{{/each}}],</div>{{/if}}
+                    </div>
+                    <div class="code-line indent-2">},</div>
+                </div>
+                {{/each}}
+                <div class="code-line indent-1">],</div>
+            </div>
+            {{/if}}
+
+            {{#if education_data}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">education</span>: [</div>
+                {{#each education_data}}
+                <div class="indent-2">
+                    <div class="code-line">{</div>
+                    <div class="indent-3">
+                        <div class="code-line"><span class="object-key">degree</span>: <span class="string">"{{this.degree}}{{#if this.field_of_study}} - {{this.field_of_study}}{{/if}}"</span>,</div>
+                        <div class="code-line"><span class="object-key">institution</span>: <span class="string">"{{this.institution}}"</span>,</div>
+                        {{#if this.location}}<div class="code-line"><span class="object-key">location</span>: <span class="string">"{{this.location}}"</span>,</div>{{/if}}
+                        {{#if this.work_mode}}<div class="code-line"><span class="object-key">mode</span>: <span class="string">"{{translate_work_mode this.work_mode}}"</span>,</div>{{/if}}
+                        <div class="code-line"><span class="object-key">period</span>: <span class="string">"{{first this.start_date 4}} - {{#if this.is_current}}En cours{{else}}{{first this.end_date 4}}{{/if}}"</span>,</div>
+                        {{#if this.grade}}<div class="code-line"><span class="object-key">grade</span>: <span class="string">"{{this.grade}}"</span>,</div>{{/if}}
+                        {{#if this.description}}<div class="code-line"><span class="object-key">details</span>: <span class="string">`</span></div>
+                        <div class="string" style="white-space: pre-wrap; padding-left: 80px;">{{this.description}}</div>
+                        <div class="code-line indent-3"><span class="string">`</span>,</div>{{/if}}
+                    </div>
+                    <div class="code-line indent-2">},</div>
+                </div>
+                {{/each}}
+                <div class="code-line indent-1">],</div>
+            </div>
+            {{/if}}
+
+            {{#if certifications_data}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">certifications</span>: [</div>
+                {{#each certifications_data}}
+                <div class="code-line indent-2">
+                    { <span class="object-key">name</span>: <span class="string">"{{this.name}}"</span>{{#if this.issuer}}, <span class="object-key">issuer</span>: <span class="string">"{{this.issuer}}"</span>{{/if}}{{#if this.date}}, <span class="object-key">date</span>: <span class="string">"{{this.date}}"</span>{{/if}}{{#if this.credential_id}}, <span class="object-key">id</span>: <span class="string">"{{this.credential_id}}"</span>{{/if}}{{#if this.url}}, <span class="object-key">url</span>: <span class="string">"<a href="{{this.url}}">verify</a>"</span>{{/if}} },
+                </div>
+                {{/each}}
+                <div class="code-line indent-1">],</div>
+            </div>
+            {{/if}}
+
+            {{#if languages_data}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">languages</span>: [</div>
+                {{#each languages_data}}
+                <div class="code-line indent-2">
+                    { <span class="object-key">name</span>: <span class="string">"{{this.name}}"</span>{{#if this.level}}, <span class="object-key">level</span>: <span class="string">"{{this.level}}"</span>{{/if}}{{#if this.level_percentage}}, <span class="object-key">proficiency</span>: <span class="number">{{this.level_percentage}}</span>{{/if}} },
+                </div>
+                {{/each}}
+                <div class="code-line indent-1">],</div>
+            </div>
+            {{/if}}
+
+            {{#each custom_sections}}
+            <div class="section indent-1">
+                <div class="code-line"><span class="object-key">{{this.title}}</span>: <span class="string">`</span></div>
+                <div class="indent-2 string" style="white-space: pre-wrap;">{{this.content}}</div>
+                <div class="code-line indent-1"><span class="string">`</span>,</div>
+            </div>
+            {{/each}}
+
+            <div class="code-line">};</div>
+            <div class="code-line"><span class="keyword">export default</span> <span class="variable">resume</span>;</div>
+        </div>
+    </div>
+</body>
+</html>

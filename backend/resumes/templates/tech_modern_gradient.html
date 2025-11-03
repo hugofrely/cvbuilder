@@ -1,0 +1,436 @@
+<!--
+Template Categories: tech, modern
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px 40px;
+            position: relative;
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        .profile-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-bottom: 20px;
+            object-fit: cover;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 18px;
+            opacity: 0.95;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+        .contact-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .contact-item a {
+            color: white;
+            text-decoration: none;
+        }
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .social-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        .social-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .content {
+            padding: 40px;
+        }
+        .section {
+            margin-bottom: 35px;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+        .summary {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .exp-item, .edu-item, .project-item {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .exp-item:last-child, .edu-item:last-child, .project-item:last-child {
+            border-bottom: none;
+        }
+        .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .exp-position {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .exp-company {
+            color: #764ba2;
+            font-weight: 500;
+        }
+        .exp-date {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .exp-meta {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .exp-desc {
+            color: #444;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .skill-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #f0f0f0;
+        }
+        .skill-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .skill-level {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .tech-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .cert-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        .cert-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .cert-issuer {
+            color: #666;
+            font-size: 13px;
+        }
+        .cert-date {
+            color: #764ba2;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .additional-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .info-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                {{#if photo}}
+                <img src="{{photo}}" alt="{{full_name}}" class="profile-photo">
+                {{/if}}
+                <h1>{{full_name}}</h1>
+                {{#if title}}<div class="title">{{title}}</div>{{/if}}
+
+                <div class="contact-info">
+                    {{#if email}}<div class="contact-item"><a href="mailto:{{email}}">{{email}}</a></div>{{/if}}
+                    {{#if phone}}<div class="contact-item">{{phone}}</div>{{/if}}
+                    {{#if city}}{{#if postal_code}}<div class="contact-item">{{postal_code}} {{city}}</div>{{else}}<div class="contact-item">{{city}}</div>{{/if}}{{/if}}
+                    {{#if address}}<div class="contact-item">{{address}}</div>{{/if}}
+                </div>
+
+                <div class="social-links">
+                    {{#if linkedin_url}}<a href="{{linkedin_url}}" class="social-link">LinkedIn</a>{{/if}}
+                    {{#if github_url}}<a href="{{github_url}}" class="social-link">GitHub</a>{{/if}}
+                    {{#if website}}<a href="{{website}}" class="social-link">Portfolio</a>{{/if}}
+                </div>
+
+                {{#if date_of_birth}}
+                <div class="additional-info">
+                    {{#if date_of_birth}}<div class="info-badge">{{date_of_birth}}</div>{{/if}}
+                    {{#if nationality}}<div class="info-badge">{{nationality}}</div>{{/if}}
+                    {{#if driving_license}}<div class="info-badge">{{driving_license}}</div>{{/if}}
+                </div>
+                {{else}}{{#if nationality}}
+                <div style="margin-bottom: 35px;">
+                    <h3>Informations</h3>
+                    <div>🌍 {{nationality}}</div>
+                    {{#if driving_license}}<div>🚗 {{driving_license}}</div>{{/if}}
+                </div>
+                {{else}}{{#if driving_license}}
+                <div style="margin-bottom: 35px;">
+                    <h3>Informations</h3>
+                    <div>🚗 {{driving_license}}</div>
+                </div>
+                {{/if}}{{/if}}{{/if}}
+            </div>
+        </div>
+
+        <div class="content">
+            {{#if summary}}
+            <div class="section">
+                <div class="summary" style="white-space: pre-wrap;">{{summary}}</div>
+            </div>
+            {{/if}}
+
+            {{#if experience_data}}
+            <div class="section">
+                <div class="section-title">Expérience Professionnelle</div>
+                {{#each experience_data}}
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-position">{{this.position}}</div>
+                            {{#if this.company}}<div class="exp-company">{{this.company}}</div>{{/if}}
+                        </div>
+                        <div class="exp-date">{{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+                    </div>
+                    {{#if this.location}}{{#if this.work_mode}}
+                    <div class="exp-meta">{{this.location}} • {{translate_work_mode this.work_mode}}</div>
+                    {{else}}
+                    <div class="exp-meta">{{this.location}}</div>
+                    {{/if}}{{else}}{{#if this.work_mode}}
+                    <div class="exp-meta">{{translate_work_mode this.work_mode}}</div>
+                    {{/if}}{{/if}}
+                    {{#if this.description}}
+                    <div class="exp-desc" style="white-space: pre-wrap;">{{this.description}}</div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if skills_data}}
+            <div class="section">
+                <div class="section-title">Compétences</div>
+                <div class="skills-container">
+                    {{#each skills_data}}
+                    <div class="skill-card">
+                        <span class="skill-name">{{this.name}}</span>
+                        {{#if this.level}}<span class="skill-level">{{this.level}}</span>{{/if}}
+                        {{#if this.level_percentage}}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{this.level_percentage}}%;"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+            {{#if projects_data}}
+            <div class="section">
+                <div class="section-title">Projets</div>
+                {{#each projects_data}}
+                <div class="project-item">
+                    <div class="exp-header">
+                        <div class="exp-position">{{this.name}}</div>
+                        {{#if this.date}}<div class="exp-date">{{this.date}}</div>{{/if}}
+                    </div>
+                    {{#if this.url}}<div class="exp-meta"><a href="{{this.url}}" style="color: #667eea;">{{this.url}}</a></div>{{/if}}
+                    {{#if this.description}}
+                    <div class="exp-desc" style="white-space: pre-wrap;">{{this.description}}</div>
+                    {{/if}}
+                    {{#if this.technologies}}
+                    <div class="tech-tags">
+                        {{#each this.technologies}}
+                        <span class="tech-tag">{{this}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if education_data}}
+            <div class="section">
+                <div class="section-title">Formation</div>
+                {{#each education_data}}
+                <div class="edu-item">
+                    <div class="exp-header">
+                        <div>
+                            <div class="exp-position">{{this.degree}}{{#if this.field_of_study}} - {{this.field_of_study}}{{/if}}</div>
+                            <div class="exp-company">{{this.institution}}</div>
+                        </div>
+                        <div class="exp-date">{{first this.start_date 4}} - {{#if this.is_current}}En cours{{else}}{{first this.end_date 4}}{{/if}}</div>
+                    </div>
+                    <div class="exp-meta">
+                        {{#if this.location}}{{this.location}}{{/if}}
+                        {{#if this.work_mode}} • {{translate_work_mode this.work_mode}}{{/if}}
+                        {{#if this.grade}} • {{this.grade}}{{/if}}
+                    </div>
+                    {{#if this.description}}
+                    <div class="exp-desc" style="white-space: pre-wrap;">{{this.description}}</div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if certifications_data}}
+            <div class="section">
+                <div class="section-title">Certifications</div>
+                <div class="cert-grid">
+                    {{#each certifications_data}}
+                    <div class="cert-card">
+                        <div class="cert-name">{{this.name}}</div>
+                        {{#if this.issuer}}<div class="cert-issuer">{{this.issuer}}</div>{{/if}}
+                        {{#if this.date}}<div class="cert-date">{{this.date}}</div>{{/if}}
+                        {{#if this.credential_id}}<div class="cert-issuer" style="font-size: 11px; margin-top: 5px;">ID: {{this.credential_id}}</div>{{/if}}
+                        {{#if this.url}}<div style="margin-top: 5px;"><a href="{{this.url}}" style="color: #667eea; font-size: 12px;">Vérifier</a></div>{{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+            {{#if languages_data}}
+            <div class="section">
+                <div class="section-title">Langues</div>
+                <div class="languages-grid">
+                    {{#each languages_data}}
+                    <div class="skill-card">
+                        <span class="skill-name">{{this.name}}</span>
+                        {{#if this.level}}<span class="skill-level">{{this.level}}</span>{{/if}}
+                        {{#if this.level_percentage}}
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{this.level_percentage}}%;"></div>
+                        </div>
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+
+            {{#each custom_sections}}
+            <div class="section">
+                <div class="section-title">{{this.title}}</div>
+                <div style="white-space: pre-wrap;">{{this.content}}</div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+</html>

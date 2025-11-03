@@ -69,6 +69,16 @@ export class TemplateRenderer {
       return match ? match[1] : dateStr;
     });
 
+    // Register helper to translate work_mode to French
+    Handlebars.registerHelper('translate_work_mode', function(value: string) {
+      const translations: { [key: string]: string } = {
+        'remote': 'Télétravail',
+        'onsite': 'Sur site',
+        'hybrid': 'Hybride',
+      };
+      return translations[value] || value;
+    });
+
     this.isInitialized = true;
   }
 
@@ -176,6 +186,7 @@ export class TemplateRenderer {
         end_date: exp.currentJob ? '' : exp.endDate,
         is_current: exp.currentJob,
         description: exp.description,
+        work_mode: exp.workMode,
       })),
 
       education_data: cvData.education.map(edu => ({
@@ -186,6 +197,7 @@ export class TemplateRenderer {
         end_date: edu.currentStudy ? '' : edu.endDate,
         is_current: edu.currentStudy,
         description: edu.description,
+        work_mode: edu.workMode,
       })),
 
       skills_data: cvData.skills.map(skill => ({

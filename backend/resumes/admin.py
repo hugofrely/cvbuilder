@@ -1,13 +1,28 @@
 from django.contrib import admin
-from .models import Template, Resume, Experience, Education, Skill
+from .models import Template, Resume, Experience, Education, Skill, TemplateCategory
+
+
+@admin.register(TemplateCategory)
+class TemplateCategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'order', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['name', 'slug', 'description']
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['order', 'name']
 
 
 @admin.register(Template)
 class TemplateAdmin(admin.ModelAdmin):
-    list_display = ['name', 'is_premium', 'is_active', 'created_at']
-    list_filter = ['is_premium', 'is_active']
+    list_display = ['name', 'is_premium', 'is_active', 'get_categories', 'created_at']
+    list_filter = ['is_premium', 'is_active', 'categories']
     search_fields = ['name', 'description']
     readonly_fields = ['created_at', 'updated_at']
+    filter_horizontal = ['categories']  # Nice UI for ManyToMany
+
+    def get_categories(self, obj):
+        """Display categories as comma-separated list"""
+        return ", ".join([cat.name for cat in obj.categories.all()])
+    get_categories.short_description = 'Categories'
 
 
 @admin.register(Resume)
