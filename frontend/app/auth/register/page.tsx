@@ -126,7 +126,7 @@ export default function RegisterPage() {
               Créer un compte
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Rejoignez moncv.xyz et créez votre CV professionnel
+              Rejoignez uncvpro.fr et créez votre CV professionnel
             </Typography>
           </Box>
 

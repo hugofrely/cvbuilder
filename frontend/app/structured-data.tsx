@@ -2,7 +2,7 @@ export function StructuredData() {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'moncv.xyz',
+    name: 'uncvpro.fr',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
     offers: {
@@ -19,28 +19,28 @@ export function StructuredData() {
     },
     description:
       'Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise.',
-    url: 'https://moncv.xyz',
+    url: 'https://uncvpro.fr',
     creator: {
       '@type': 'Organization',
-      name: 'moncv.xyz',
+      name: 'uncvpro.fr',
     },
     browserRequirements: 'Requires JavaScript. Requires HTML5.',
     softwareVersion: '1.0',
-    screenshot: 'https://moncv.xyz/screenshot.png',
+    screenshot: 'https://uncvpro.fr/screenshot.png',
   };
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'moncv.xyz',
-    url: 'https://moncv.xyz',
-    logo: 'https://moncv.xyz/logo.png',
+    name: 'uncvpro.fr',
+    url: 'https://uncvpro.fr',
+    logo: 'https://uncvpro.fr/logo.png',
     description:
-      'moncv.xyz aide les professionnels à créer des CV modernes et professionnels en quelques minutes.',
+      'uncvpro.fr aide les professionnels à créer des CV modernes et professionnels en quelques minutes.',
     sameAs: [
-      'https://www.facebook.com/moncv.xyz',
-      'https://twitter.com/moncv.xyz',
-      'https://www.linkedin.com/company/moncv.xyz',
+      'https://www.facebook.com/uncvpro.fr',
+      'https://twitter.com/uncvpro.fr',
+      'https://www.linkedin.com/company/uncvpro.fr',
     ],
   };
 
@@ -52,7 +52,7 @@ export function StructuredData() {
         '@type': 'ListItem',
         position: 1,
         name: 'Accueil',
-        item: 'https://moncv.xyz',
+        item: 'https://uncvpro.fr',
       },
     ],
   };
@@ -63,15 +63,15 @@ export function StructuredData() {
     mainEntity: [
       {
         '@type': 'Question',
-        name: 'Est-ce que moncv.xyz est gratuit ?',
+        name: 'Est-ce que uncvpro.fr est gratuit ?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Oui, moncv.xyz propose un template gratuit sans inscription. Des templates premium supplémentaires sont disponibles à l\'achat.',
+          text: 'Oui, uncvpro.fr propose un template gratuit sans inscription. Des templates premium supplémentaires sont disponibles à l\'achat.',
         },
       },
       {
         '@type': 'Question',
-        name: 'Dois-je créer un compte pour utiliser moncv.xyz ?',
+        name: 'Dois-je créer un compte pour utiliser uncvpro.fr ?',
         acceptedAnswer: {
           '@type': 'Answer',
           text: 'Non, vous pouvez commencer à créer votre CV immédiatement sans créer de compte. L\'inscription est optionnelle pour sauvegarder vos CV.',
@@ -90,7 +90,7 @@ export function StructuredData() {
         name: 'Combien de temps faut-il pour créer un CV ?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Avec moncv.xyz, vous pouvez créer un CV professionnel en moins de 5 minutes grâce à notre interface intuitive et nos templates modernes.',
+          text: 'Avec uncvpro.fr, vous pouvez créer un CV professionnel en moins de 5 minutes grâce à notre interface intuitive et nos templates modernes.',
         },
       },
     ],

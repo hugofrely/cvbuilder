@@ -1,0 +1,98 @@
+<!--
+Template Categories: professional, business, minimalist
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Georgia', serif; color: #2c3e50; line-height: 1.7;">
+    <div style="max-width: 800px; margin: 0 auto; padding: 50px 60px; background: #fff;">
+        <div style="text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #2c3e50;">
+            <h1 style="font-size: 36px; margin: 0 0 10px 0; font-weight: 600; color: #2c3e50; letter-spacing: 1px;">{{full_name}}</h1>
+            {{#if title}}<div style="font-size: 18px; color: #555; font-style: italic; margin-bottom: 20px;">{{title}}</div>{{/if}}
+            <div style="font-size: 14px; color: #666;">
+                {{#if email}}{{email}}{{/if}}{{#if phone}} • {{phone}}{{/if}}{{#if city}} • {{city}}{{/if}}
+            </div>
+            {{#if linkedin_url}}{{#if website}}
+            <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                {{#if linkedin_url}}LinkedIn{{/if}}{{#if website}} • Site Web{{/if}}{{#if github_url}} • GitHub{{/if}}
+            </div>
+            {{/if}}{{/if}}
+        </div>
+
+        {{#if summary}}
+        <div style="margin-bottom: 35px;">
+            <h2 style="font-size: 20px; color: #2c3e50; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Résumé Professionnel</h2>
+            <div style="font-size: 15px; color: #555; line-height: 1.8; text-align: justify; white-space: pre-wrap;">{{summary}}</div>
+        </div>
+        {{/if}}
+
+        {{#if experience_data}}
+        <div style="margin-bottom: 35px;">
+            <h2 style="font-size: 20px; color: #2c3e50; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Expérience Professionnelle</h2>
+            {{#each experience_data}}
+            <div style="margin-bottom: 25px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <div>
+                        <div style="font-size: 17px; font-weight: 600; color: #2c3e50;">{{this.position}}</div>
+                        <div style="font-size: 15px; color: #555; font-style: italic;">{{this.company}}</div>
+                    </div>
+                    <div style="font-size: 14px; color: #777; white-space: nowrap; font-style: italic;">{{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+                </div>
+                {{#if this.location}}<div style="font-size: 13px; color: #666; margin-bottom: 8px;">{{this.location}}{{#if this.work_mode}} • {{translate_work_mode this.work_mode}}{{/if}}</div>{{/if}}
+                {{#if this.description}}<div style="font-size: 14px; color: #555; line-height: 1.7; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if education_data}}
+        <div style="margin-bottom: 35px;">
+            <h2 style="font-size: 20px; color: #2c3e50; margin: 0 0 20px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Formation</h2>
+            {{#each education_data}}
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <div>
+                        <div style="font-size: 16px; font-weight: 600; color: #2c3e50;">{{this.degree}}</div>
+                        <div style="font-size: 14px; color: #555; font-style: italic;">{{this.institution}}</div>
+                    </div>
+                    <div style="font-size: 14px; color: #777; white-space: nowrap; font-style: italic;">{{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+
+        <div style="display: flex; gap: 40px;">
+            {{#if skills_data}}
+            <div style="flex: 1;">
+                <h2 style="font-size: 20px; color: #2c3e50; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Compétences</h2>
+                <div style="font-size: 14px; color: #555; line-height: 1.8;">
+                    {{#each skills_data}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}
+                </div>
+            </div>
+            {{/if}}
+            {{#if languages_data}}
+            <div style="flex: 1;">
+                <h2 style="font-size: 20px; color: #2c3e50; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Langues</h2>
+                {{#each languages_data}}
+                <div style="font-size: 14px; color: #555; margin-bottom: 5px;">{{this.name}}{{#if this.level}} - {{this.level}}{{/if}}</div>
+                {{/each}}
+            </div>
+            {{/if}}
+        </div>
+
+        {{#if certifications_data}}
+        <div style="margin-top: 35px;">
+            <h2 style="font-size: 20px; color: #2c3e50; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Certifications</h2>
+            {{#each certifications_data}}
+            <div style="font-size: 14px; color: #555; margin-bottom: 8px;">• {{this.name}}{{#if this.issuer}} - {{this.issuer}}{{/if}}</div>
+            {{/each}}
+        </div>
+        {{/if}}
+    </div>
+</body>
+</html>

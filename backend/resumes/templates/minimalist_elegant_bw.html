@@ -34,43 +34,42 @@ Template Categories: minimalist, professional
                 {{/if}}{{/if}}
             </div>
 
-            {{#if linkedin_url}}{{#if website}}{{#if github_url}}
+            {{#if linkedin_url}}
             <div style="margin-top: 20px; font-size: 12px;">
-                {{#if linkedin_url}}<a href="{{linkedin_url}}" style="color: #1a1a1a; margin: 0 12px; text-decoration: none; border-bottom: 1px solid #1a1a1a;">LinkedIn</a>{{/if}}
-                {{#if website}}<a href="{{website}}" style="color: #1a1a1a; margin: 0 12px; text-decoration: none; border-bottom: 1px solid #1a1a1a;">Site Web</a>{{/if}}
-                {{#if github_url}}<a href="{{github_url}}" style="color: #1a1a1a; margin: 0 12px; text-decoration: none; border-bottom: 1px solid #1a1a1a;">GitHub</a>{{/if}}
+                <a href="{{linkedin_url}}" style="color: #1a1a1a; margin: 0 12px; text-decoration: none; border-bottom: 1px solid #1a1a1a;">LinkedIn</a>
             </div>
-            {{else}}{{#if nationality}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🌍 {{nationality}}</div>
-                    {{#if driving_license}}<div>🚗 {{driving_license}}</div>{{/if}}
-                </div>
-                {{else}}{{#if driving_license}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🚗 {{driving_license}}</div>
-                </div>
-                {{/if}}{{/if}}{{/if}}
+            {{/if}}
+            {{#if website}}
+            <div style="margin-top: 20px; font-size: 12px;">
+                <a href="{{website}}" style="color: #1a1a1a; margin: 0 12px; text-decoration: none; border-bottom: 1px solid #1a1a1a;">Site Web</a>
+            </div>
+            {{/if}}
+            {{#if github_url}}
+            <div style="margin-top: 20px; font-size: 12px;">
+                <a href="{{github_url}}" style="color: #1a1a1a; margin: 0 12px; text-decoration: none; border-bottom: 1px solid #1a1a1a;">GitHub</a>
+            </div>
+            {{/if}}
 
             {{#if date_of_birth}}
             <div style="margin-top: 15px; font-size: 11px; color: #999;">
-                {{#if date_of_birth}}<span style="margin: 0 10px;">{{date_of_birth}}</span>{{/if}}
+                <span style="margin: 0 10px;">{{date_of_birth}}</span>
                 {{#if nationality}}<span style="margin: 0 10px;">{{nationality}}</span>{{/if}}
                 {{#if driving_license}}<span style="margin: 0 10px;">{{driving_license}}</span>{{/if}}
             </div>
-            {{else}}{{#if nationality}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🌍 {{nationality}}</div>
-                    {{#if driving_license}}<div>🚗 {{driving_license}}</div>{{/if}}
+            {{else}}
+                {{#if nationality}}
+                <div style="margin-top: 15px; font-size: 11px; color: #999;">
+                    <span style="margin: 0 10px;">🌍 {{nationality}}</span>
+                    {{#if driving_license}}<span style="margin: 0 10px;">🚗 {{driving_license}}</span>{{/if}}
                 </div>
-                {{else}}{{#if driving_license}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🚗 {{driving_license}}</div>
-                </div>
-                {{/if}}{{/if}}{{/if}}
+                {{else}}
+                    {{#if driving_license}}
+                    <div style="margin-top: 15px; font-size: 11px; color: #999;">
+                        <span style="margin: 0 10px;">🚗 {{driving_license}}</span>
+                    </div>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
         </div>
 
         {{#if summary}}

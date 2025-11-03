@@ -18,7 +18,11 @@ const Handlebars = require('handlebars');
 
 // Django backend URL
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
-const OUTPUT_DIR = path.join(__dirname, '../backend/media/templates');
+const OUTPUT_DIR = path.join(__dirname, '../public');
+
+// Fake profile photo (placeholder avatar in base64)
+// This is a simple square avatar placeholder
+const FAKE_PROFILE_PHOTO = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM0QTkwRTIiLz4KICA8Y2lyY2xlIGN4PSIxMDAiIGN5PSI3NSIgcj0iMzUiIGZpbGw9IndoaXRlIi8+CiAgPHBhdGggZD0iTTYwIDE1MCBRNjAgMTIwIDEwMCAxMjAgUTE0MCAxMjAgMTQwIDE1MCBMMTQwIDE4MCBRMTQwIDIwMCAxMDAgMjAwIFE2MCAyMDAgNjAgMTgwIFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPg==';
 
 // Fake data to fill templates
 const FAKE_CV_DATA = {
@@ -36,6 +40,7 @@ const FAKE_CV_DATA = {
   driving_license: 'Permis B',
   title: 'Développeur Full Stack Senior',
   summary: 'Développeur passionné avec plus de 8 ans d\'expérience dans le développement d\'applications web modernes. Expert en React, Node.js et Python. Capacité démontrée à diriger des équipes techniques et à livrer des projets complexes dans les délais impartis.',
+  photo: FAKE_PROFILE_PHOTO,
 
   experience_data: [
     {
@@ -45,6 +50,7 @@ const FAKE_CV_DATA = {
       start_date: '2020-03',
       end_date: '',
       is_current: true,
+      work_mode: 'hybrid',
       description: '• Direction technique d\'une équipe de 5 développeurs\n• Architecture et développement d\'une plateforme SaaS (React, Node.js, PostgreSQL)\n• Mise en place de CI/CD et bonnes pratiques DevOps\n• Amélioration des performances de 40%'
     },
     {
@@ -54,6 +60,7 @@ const FAKE_CV_DATA = {
       start_date: '2017-06',
       end_date: '2020-02',
       is_current: false,
+      work_mode: 'onsite',
       description: '• Développement de features front-end avec React et Redux\n• Création d\'APIs RESTful avec Node.js et Express\n• Intégration de services tiers (Stripe, SendGrid)\n• Participation active aux code reviews'
     },
     {
@@ -63,6 +70,7 @@ const FAKE_CV_DATA = {
       start_date: '2015-09',
       end_date: '2017-05',
       is_current: false,
+      work_mode: 'onsite',
       description: '• Développement de sites web responsive\n• Maintenance et évolution d\'applications existantes\n• Collaboration avec les équipes design et marketing'
     }
   ],
@@ -76,6 +84,7 @@ const FAKE_CV_DATA = {
       start_date: '2013-09',
       end_date: '2015-06',
       is_current: false,
+      work_mode: 'onsite',
       grade: 'Mention Bien',
       description: 'Spécialisation en développement web et architecture logicielle'
     },
@@ -87,6 +96,7 @@ const FAKE_CV_DATA = {
       start_date: '2010-09',
       end_date: '2013-06',
       is_current: false,
+      work_mode: 'onsite',
       grade: 'Mention Assez Bien',
       description: 'Fondamentaux en programmation et systèmes'
     }
@@ -189,6 +199,24 @@ function initializeHandlebars() {
   Handlebars.registerHelper('equal', function(a, b) {
     return a === b;
   });
+
+  // Register helper to translate work_mode to French
+  Handlebars.registerHelper('translate_work_mode', function(value) {
+    const translations = {
+      'remote': 'Télétravail',
+      'onsite': 'Sur site',
+      'hybrid': 'Hybride',
+    };
+    return translations[value] || value;
+  });
+
+  // Register helper for greater than comparison
+  Handlebars.registerHelper('ifgt', function(a, b, options) {
+    if (a > b) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
+  });
 }
 
 // Convert Django template syntax to Handlebars
@@ -226,15 +254,37 @@ function convertDjangoToHandlebars(templateString) {
   return converted;
 }
 
-// Fetch all templates from Django backend
+// Fetch all templates from Django backend (all pages)
 async function fetchTemplates() {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/templates/?page=2`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch templates: ${response.statusText}`);
+    let allTemplates = [];
+    let page = 1;
+    let hasMorePages = true;
+
+    while (hasMorePages) {
+      console.log(`  Fetching page ${page}...`);
+      const response = await fetch(`${BACKEND_URL}/api/templates?page=${page}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch templates: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Handle both paginated and non-paginated responses
+      if (data.results) {
+        allTemplates = allTemplates.concat(data.results);
+        hasMorePages = data.next !== null;
+      } else {
+        // Non-paginated response
+        allTemplates = data;
+        hasMorePages = false;
+      }
+
+      page++;
     }
-    const data = await response.json();
-    return data.results || data;
+
+    return allTemplates;
   } catch (error) {
     console.error('Error fetching templates:', error);
     throw error;
@@ -244,7 +294,7 @@ async function fetchTemplates() {
 // Fetch a single template with full details (including HTML and CSS)
 async function fetchTemplateDetails(templateId) {
   try {
-    const response = await fetch(`${BACKEND_URL}/api/templates/${templateId}/`);
+    const response = await fetch(`${BACKEND_URL}/api/templates/${templateId}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch template ${templateId}: ${response.statusText}`);
     }

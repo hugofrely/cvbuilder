@@ -12,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "moncv.xyz - Créez votre CV professionnel en 5 minutes | Gratuit et Sans Inscription",
+  title: "uncvpro.fr - Créez votre CV professionnel en 5 minutes | Gratuit et Sans Inscription",
   description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise. Interface intuitive et prévisualisation en temps réel. Démarquez-vous avec un CV professionnel.",
   keywords: [
     "cv en ligne",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     "cv moderne",
     "curriculum vitae",
   ],
-  authors: [{ name: "moncv.xyz" }],
-  creator: "moncv.xyz",
-  publisher: "moncv.xyz",
+  authors: [{ name: "uncvpro.fr" }],
+  creator: "uncvpro.fr",
+  publisher: "uncvpro.fr",
   robots: {
     index: true,
     follow: true,
@@ -44,21 +44,21 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_FR",
-    url: "https://moncv.xyz",
-    title: "moncv.xyz - Créez votre CV professionnel en 5 minutes",
+    url: "https://uncvpro.fr",
+    title: "uncvpro.fr - Créez votre CV professionnel en 5 minutes",
     description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise.",
-    siteName: "moncv.xyz",
+    siteName: "uncvpro.fr",
   },
   twitter: {
     card: "summary_large_image",
-    title: "moncv.xyz - Créez votre CV professionnel en 5 minutes",
+    title: "uncvpro.fr - Créez votre CV professionnel en 5 minutes",
     description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs.",
   },
   verification: {
     google: "google-site-verification-code", // À remplacer par votre code
   },
   alternates: {
-    canonical: "https://moncv.xyz",
+    canonical: "https://uncvpro.fr",
   },
 };
 

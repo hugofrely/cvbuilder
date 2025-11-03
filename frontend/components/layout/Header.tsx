@@ -29,7 +29,7 @@ export default function Header() {
                 cursor: 'pointer',
               }}
             >
-              moncv.xyz
+              uncvpro.fr
             </Typography>
           </Link>
 

@@ -22,6 +22,7 @@ import {
   Star,
   ArrowForward,
 } from '@mui/icons-material';
+import HeroCarousel from '@/components/HeroCarousel';
 
 // Couleurs du thème extraites pour éviter useTheme() et garder le Server Component
 const themeColors = {
@@ -310,44 +311,7 @@ export default function Home() {
                   alignItems: 'center',
                 }}
               >
-                <Box
-                  sx={{
-                    width: '100%',
-                    maxWidth: 400,
-                    position: 'relative',
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      width: '110%',
-                      height: '110%',
-                      background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)',
-                      borderRadius: 4,
-                      zIndex: 0,
-                    },
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src="/2-moderne.png"
-                    alt="Exemple de CV professionnel moderne"
-                    sx={{
-                      width: '100%',
-                      height: 'auto',
-                      borderRadius: 3,
-                      boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-                      border: '3px solid rgba(255,255,255,0.3)',
-                      position: 'relative',
-                      zIndex: 1,
-                      transition: 'transform 0.3s ease',
-                      '&:hover': {
-                        transform: 'scale(1.02)',
-                      },
-                    }}
-                  />
-                </Box>
+                <HeroCarousel />
               </Box>
             </Grid>
           </Grid>
@@ -357,7 +321,7 @@ export default function Home() {
       {/* Stats Section */}
       <Box
         component="section"
-        aria-label="Statistiques de moncv.xyz"
+        aria-label="Statistiques de uncvpro.fr"
         role="region"
         sx={{
           bgcolor: 'white',
@@ -395,6 +359,256 @@ export default function Home() {
         </Container>
       </Box>
 
+      {/* CV Templates Showcase - Infinite Scroll Animation */}
+      <Box
+        component="section"
+        aria-label="Exemples de CV disponibles"
+        sx={{
+          bgcolor: 'background.default',
+          py: { xs: 6, md: 10 },
+          overflow: 'hidden',
+          position: 'relative',
+        }}
+      >
+        <Container maxWidth="lg" sx={{ mb: 4 }}>
+          <Typography
+            variant="h2"
+            component="h2"
+            sx={{
+              fontSize: { xs: '1.75rem', md: '2.25rem' },
+              fontWeight: 700,
+              textAlign: 'center',
+              mb: 2,
+            }}
+          >
+            Des modèles pour chaque profil
+          </Typography>
+          <Typography
+            variant="body1"
+            color="text.secondary"
+            sx={{
+              textAlign: 'center',
+              maxWidth: 700,
+              mx: 'auto',
+              mb: 4,
+            }}
+          >
+            Découvrez notre collection de CV professionnels adaptés à tous les secteurs
+          </Typography>
+        </Container>
+
+        {/* Infinite Scroll Container */}
+        <Box
+          sx={{
+            '@keyframes scroll': {
+              '0%': {
+                transform: 'translateX(0)',
+              },
+              '100%': {
+                transform: 'translateX(-50%)',
+              },
+            },
+            display: 'flex',
+            gap: 3,
+            animation: 'scroll 60s linear infinite',
+            '&:hover': {
+              animationPlayState: 'paused',
+            },
+          }}
+        >
+          {/* First set of images */}
+          {[
+            '023f0553-baf8-4bab-9a4e-d80801426bb6-two-column-elegant.png',
+            '0409cbb6-6560-4724-b8d3-b4e06ef9097c-compact-modern-lines.png',
+            '20d3d25d-83c9-4469-8455-1fed061e42ad-classic-professional-clean.png',
+            '2428410e-a8d5-477a-92b8-097c28a9f925-sidebar-purple-creative.png',
+            '370d995b-4524-4622-9ce5-24a1d138dba4-magazine-style-columns.png',
+            '4182b7a6-17c2-44b5-aa60-3e3b5de41659-minimalist-japanese-zen.png',
+            '499d5c7a-7af5-46a3-b1b8-b40f9805f236-elegant-bordeaux-classic.png',
+            '595ef688-5ad8-44a1-ab41-ac4c47fac5d8-asymmetric-creative-split.png',
+            '688aa843-74a8-4359-b1ac-bfd0788a9b52-creative-colorful-modern.png',
+            '7735f95e-ee66-4e12-91d6-b7aa21790934-sales-marketing-dynamic.png',
+          ].map((img, index) => (
+            <Box
+              key={`first-${index}`}
+              sx={{
+                minWidth: 280,
+                height: 400,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                },
+              }}
+            >
+              <Box
+                component="img"
+                src={`/${img}`}
+                alt={`Exemple de CV ${index + 1}`}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                }}
+                loading="lazy"
+              />
+            </Box>
+          ))}
+          {/* Duplicate set for seamless loop */}
+          {[
+            '023f0553-baf8-4bab-9a4e-d80801426bb6-two-column-elegant.png',
+            '0409cbb6-6560-4724-b8d3-b4e06ef9097c-compact-modern-lines.png',
+            '20d3d25d-83c9-4469-8455-1fed061e42ad-classic-professional-clean.png',
+            '2428410e-a8d5-477a-92b8-097c28a9f925-sidebar-purple-creative.png',
+            '370d995b-4524-4622-9ce5-24a1d138dba4-magazine-style-columns.png',
+            '4182b7a6-17c2-44b5-aa60-3e3b5de41659-minimalist-japanese-zen.png',
+            '499d5c7a-7af5-46a3-b1b8-b40f9805f236-elegant-bordeaux-classic.png',
+            '595ef688-5ad8-44a1-ab41-ac4c47fac5d8-asymmetric-creative-split.png',
+            '688aa843-74a8-4359-b1ac-bfd0788a9b52-creative-colorful-modern.png',
+            '7735f95e-ee66-4e12-91d6-b7aa21790934-sales-marketing-dynamic.png',
+          ].map((img, index) => (
+            <Box
+              key={`second-${index}`}
+              sx={{
+                minWidth: 280,
+                height: 400,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                },
+              }}
+            >
+              <Box
+                component="img"
+                src={`/${img}`}
+                alt={`Exemple de CV ${index + 1}`}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                }}
+                loading="lazy"
+              />
+            </Box>
+          ))}
+        </Box>
+
+        {/* Second Row - Scrolling in opposite direction */}
+        <Box
+          sx={{
+            '@keyframes scrollReverse': {
+              '0%': {
+                transform: 'translateX(-50%)',
+              },
+              '100%': {
+                transform: 'translateX(0)',
+              },
+            },
+            display: 'flex',
+            gap: 3,
+            mt: 3,
+            animation: 'scrollReverse 60s linear infinite',
+            '&:hover': {
+              animationPlayState: 'paused',
+            },
+          }}
+        >
+          {/* First set of images */}
+          {[
+            '5f6dabaa-19ca-4b4e-9e2d-9d5cf0b31916-hospitality-warm-friendly.png',
+            '6561ea40-d99b-418e-a4a6-17a490317850-sidebar-teal-elegant.png',
+            '6f78f3b3-e60a-4cdf-b053-9fa3a6ad77a0-sidebar-navy-corporate.png',
+            '721ada55-d1a6-4786-bae5-93eda108f00e-education-sidebar-professional.png',
+            '7b150f69-2593-480a-832b-4e287c65c395-medical-classic-formal.png',
+            '7cec8b01-75e7-47da-a61c-2414171f0743-bold-contrast-modern.png',
+            '8138105c-3543-43a7-8da9-593c45ce03f5-medical-clean-modern.png',
+            '822cb0d9-dda6-4ea2-96b0-16f056740ff6-sidebar-red-dynamic.png',
+            '83aa0e06-e4e4-4b85-8bd5-c08a49859413-education-academic-formal.png',
+            '8e2f5a75-f8b5-49b0-833b-79aa61d55e05-business-card-extended.png',
+          ].map((img, index) => (
+            <Box
+              key={`third-${index}`}
+              sx={{
+                minWidth: 280,
+                height: 400,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                },
+              }}
+            >
+              <Box
+                component="img"
+                src={`/${img}`}
+                alt={`Exemple de CV ${index + 11}`}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                }}
+                loading="lazy"
+              />
+            </Box>
+          ))}
+          {/* Duplicate set for seamless loop */}
+          {[
+            '5f6dabaa-19ca-4b4e-9e2d-9d5cf0b31916-hospitality-warm-friendly.png',
+            '6561ea40-d99b-418e-a4a6-17a490317850-sidebar-teal-elegant.png',
+            '6f78f3b3-e60a-4cdf-b053-9fa3a6ad77a0-sidebar-navy-corporate.png',
+            '721ada55-d1a6-4786-bae5-93eda108f00e-education-sidebar-professional.png',
+            '7b150f69-2593-480a-832b-4e287c65c395-medical-classic-formal.png',
+            '7cec8b01-75e7-47da-a61c-2414171f0743-bold-contrast-modern.png',
+            '8138105c-3543-43a7-8da9-593c45ce03f5-medical-clean-modern.png',
+            '822cb0d9-dda6-4ea2-96b0-16f056740ff6-sidebar-red-dynamic.png',
+            '83aa0e06-e4e4-4b85-8bd5-c08a49859413-education-academic-formal.png',
+            '8e2f5a75-f8b5-49b0-833b-79aa61d55e05-business-card-extended.png',
+          ].map((img, index) => (
+            <Box
+              key={`fourth-${index}`}
+              sx={{
+                minWidth: 280,
+                height: 400,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
+                },
+              }}
+            >
+              <Box
+                component="img"
+                src={`/${img}`}
+                alt={`Exemple de CV ${index + 11}`}
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                }}
+                loading="lazy"
+              />
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
       {/* Features Section */}
       <Box
         component="section"
@@ -418,7 +632,7 @@ export default function Home() {
                 mb: 2,
               }}
             >
-              Pourquoi choisir moncv.xyz ?
+              Pourquoi choisir uncvpro.fr ?
             </Typography>
             <Typography
               variant="h6"
@@ -747,7 +961,7 @@ export default function Home() {
                 textShadow: '0 1px 2px rgba(0,0,0,0.15)',
               }}
             >
-              Rejoignez plus de 10,000 utilisateurs qui ont déjà créé leur CV avec moncv.xyz.
+              Rejoignez plus de 10,000 utilisateurs qui ont déjà créé leur CV avec uncvpro.fr.
               Commencez gratuitement dès maintenant, aucune carte de crédit requise.
             </Typography>
             <Stack

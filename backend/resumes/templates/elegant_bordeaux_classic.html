@@ -1,0 +1,73 @@
+<!--
+Template Categories: professional, elegant
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Garamond', serif; color: #3a1f1f; line-height: 1.7;">
+    <div style="max-width: 750px; margin: 0 auto; padding: 50px; background: #fff; border: 1px solid #e5d5d5;">
+        <div style="text-align: center; margin-bottom: 35px; padding-bottom: 25px; border-bottom: 3px double #8b2e2e;">
+            <h1 style="font-size: 36px; margin: 0 0 8px 0; color: #8b2e2e; font-weight: 600; letter-spacing: 2px;">{{full_name}}</h1>
+            {{#if title}}<div style="font-size: 16px; color: #5a3636; font-style: italic; margin-bottom: 15px;">{{title}}</div>{{/if}}
+            <div style="font-size: 13px; color: #6b4444;">
+                {{#if email}}{{email}}{{/if}}{{#if phone}} • {{phone}}{{/if}}{{#if city}} • {{city}}{{/if}}
+            </div>
+        </div>
+
+        {{#if summary}}
+        <div style="margin-bottom: 30px; padding: 20px; background: #faf8f5; border-left: 4px solid #8b2e2e;">
+            <div style="font-size: 14px; color: #4a3333; line-height: 1.8; font-style: italic; white-space: pre-wrap;">{{summary}}</div>
+        </div>
+        {{/if}}
+
+        {{#if experience_data}}
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 22px; color: #8b2e2e; margin: 0 0 18px 0; font-weight: 600; border-bottom: 2px solid #d5b5b5; padding-bottom: 8px;">Parcours Professionnel</h2>
+            {{#each experience_data}}
+            <div style="margin-bottom: 22px;">
+                <div style="font-size: 16px; font-weight: 600; color: #3a1f1f; margin-bottom: 4px;">{{this.position}}</div>
+                <div style="font-size: 14px; color: #8b2e2e; font-style: italic; margin-bottom: 4px;">{{this.company}}</div>
+                <div style="font-size: 12px; color: #7a5555; margin-bottom: 8px;">{{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+                {{#if this.description}}<div style="font-size: 13px; color: #4a3333; line-height: 1.7; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+
+        {{#if education_data}}
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 22px; color: #8b2e2e; margin: 0 0 18px 0; font-weight: 600; border-bottom: 2px solid #d5b5b5; padding-bottom: 8px;">Formation</h2>
+            {{#each education_data}}
+            <div style="margin-bottom: 15px;">
+                <div style="font-size: 15px; font-weight: 600; color: #3a1f1f;">{{this.degree}}</div>
+                <div style="font-size: 13px; color: #6b4444; font-style: italic;">{{this.institution}} | {{first this.start_date 4}}-{{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
+
+        <div style="display: flex; gap: 30px;">
+            {{#if skills_data}}
+            <div style="flex: 1;">
+                <h2 style="font-size: 22px; color: #8b2e2e; margin: 0 0 12px 0; font-weight: 600; border-bottom: 2px solid #d5b5b5; padding-bottom: 8px;">Compétences</h2>
+                <div style="font-size: 13px; color: #4a3333;">
+                    {{#each skills_data}}• {{this.name}}<br>{{/each}}
+                </div>
+            </div>
+            {{/if}}
+            {{#if languages_data}}
+            <div style="flex: 1;">
+                <h2 style="font-size: 22px; color: #8b2e2e; margin: 0 0 12px 0; font-weight: 600; border-bottom: 2px solid #d5b5b5; padding-bottom: 8px;">Langues</h2>
+                {{#each languages_data}}
+                <div style="font-size: 13px; color: #4a3333; margin-bottom: 6px;">{{this.name}}{{#if this.level}} - {{this.level}}{{/if}}</div>
+                {{/each}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</body>
+</html>

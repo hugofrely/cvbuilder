@@ -1,0 +1,101 @@
+<!--
+Template Categories: creative, modern
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Georgia', serif; color: #1a1a1a; line-height: 1.7;">
+    <div style="max-width: 900px; margin: 0 auto; background: #fff;">
+        <div style="background: #1a1a1a; color: #fff; padding: 50px 40px; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 1;">
+                <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 3px; opacity: 0.7; margin-bottom: 10px;">Curriculum Vitae</div>
+                <h1 style="font-size: 48px; margin: 0 0 8px 0; font-weight: 700; letter-spacing: -2px;">{{full_name}}</h1>
+                {{#if title}}<div style="font-size: 22px; opacity: 0.9; font-weight: 300; font-style: italic;">{{title}}</div>{{/if}}
+            </div>
+        </div>
+
+        <div style="padding: 50px 40px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px;">
+                <div>
+                    {{#if summary}}
+                    <div style="margin-bottom: 35px;">
+                        <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-bottom: 15px; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; font-weight: 600;">À Propos</div>
+                        <div style="font-size: 15px; color: #444; line-height: 1.8; white-space: pre-wrap;">{{summary}}</div>
+                    </div>
+                    {{/if}}
+
+                    {{#if skills_data}}
+                    <div style="margin-bottom: 35px;">
+                        <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-bottom: 15px; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; font-weight: 600;">Expertise</div>
+                        <div style="font-size: 14px; color: #444; line-height: 2;">
+                            {{#each skills_data}}• {{this.name}}<br>{{/each}}
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{#if languages_data}}
+                    <div>
+                        <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-bottom: 15px; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; font-weight: 600;">Langues</div>
+                        {{#each languages_data}}
+                        <div style="font-size: 14px; color: #444; margin-bottom: 8px;">{{this.name}}{{#if this.level}} — {{this.level}}{{/if}}</div>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+
+                <div>
+                    <div style="background: #f5f5f5; padding: 25px; border-radius: 8px;">
+                        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 15px; font-weight: 600;">Contact</div>
+                        <div style="font-size: 14px; color: #444; line-height: 2;">
+                            {{#if email}}{{email}}<br>{{/if}}
+                            {{#if phone}}{{phone}}<br>{{/if}}
+                            {{#if city}}{{city}}<br>{{/if}}
+                            {{#if linkedin_url}}LinkedIn<br>{{/if}}
+                            {{#if website}}{{website}}{{/if}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{#if experience_data}}
+            <div style="margin-bottom: 40px;">
+                <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-bottom: 25px; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; font-weight: 600;">Parcours Professionnel</div>
+                {{#each experience_data}}
+                <div style="margin-bottom: 30px; padding-bottom: 30px; border-bottom: 1px solid #e5e5e5;">
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 25px;">
+                        <div>
+                            <div style="font-size: 13px; color: #999; font-weight: 600;">{{first this.start_date 4}} — {{#if this.is_current}}Now{{else}}{{first this.end_date 4}}{{/if}}</div>
+                            {{#if this.location}}<div style="font-size: 12px; color: #bbb; margin-top: 4px;">{{this.location}}</div>{{/if}}
+                        </div>
+                        <div>
+                            <div style="font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 5px;">{{this.position}}</div>
+                            <div style="font-size: 16px; color: #666; font-style: italic; margin-bottom: 12px;">{{this.company}}</div>
+                            {{#if this.description}}<div style="font-size: 14px; color: #555; line-height: 1.7; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if education_data}}
+            <div>
+                <div style="font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #999; margin-bottom: 25px; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; font-weight: 600;">Formation</div>
+                {{#each education_data}}
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #1a1a1a;">{{this.degree}}</div>
+                    <div style="font-size: 15px; color: #666; font-style: italic;">{{this.institution}}</div>
+                    <div style="font-size: 13px; color: #999; margin-top: 4px;">{{first this.start_date 4}} — {{#if this.is_current}}Present{{else}}{{first this.end_date 4}}{{/if}}</div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</body>
+</html>

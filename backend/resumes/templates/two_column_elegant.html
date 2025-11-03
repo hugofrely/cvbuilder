@@ -1,0 +1,103 @@
+<!--
+Template Categories: professional, modern
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Helvetica', Arial, sans-serif; color: #333; line-height: 1.6;">
+    <div style="max-width: 900px; margin: 0 auto; padding: 40px; background: #fff;">
+        <div style="text-align: center; margin-bottom: 40px;">
+            {{#if photo}}<img src="{{photo}}" alt="{{full_name}}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-bottom: 15px;">{{/if}}
+            <h1 style="font-size: 32px; margin: 0 0 8px 0; color: #1a1a1a;">{{full_name}}</h1>
+            {{#if title}}<div style="font-size: 16px; color: #666; margin-bottom: 15px;">{{title}}</div>{{/if}}
+            <div style="font-size: 14px; color: #777;">
+                {{#if email}}{{email}}{{/if}}{{#if phone}} • {{phone}}{{/if}}{{#if city}} • {{city}}{{/if}}
+            </div>
+        </div>
+
+        {{#if summary}}
+        <div style="margin-bottom: 30px; padding: 20px; background: #f9fafb; border-radius: 8px;">
+            <div style="font-size: 15px; color: #555; line-height: 1.8; white-space: pre-wrap;">{{summary}}</div>
+        </div>
+        {{/if}}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+            <div>
+                {{#if experience_data}}
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 20px; color: #1a1a1a; margin: 0 0 15px 0; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Expérience</h2>
+                    {{#each experience_data}}
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-size: 16px; font-weight: 600; color: #1a1a1a;">{{this.position}}</div>
+                        <div style="font-size: 14px; color: #666; font-style: italic;">{{this.company}}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 3px;">{{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+                        {{#if this.description}}<div style="font-size: 13px; color: #555; margin-top: 6px; line-height: 1.6; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if projects_data}}
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 20px; color: #1a1a1a; margin: 0 0 15px 0; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Projets</h2>
+                    {{#each projects_data}}
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 14px; font-weight: 600; color: #1a1a1a;">{{this.name}}</div>
+                        {{#if this.description}}<div style="font-size: 13px; color: #555; margin-top: 4px; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+
+            <div>
+                {{#if education_data}}
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 20px; color: #1a1a1a; margin: 0 0 15px 0; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Formation</h2>
+                    {{#each education_data}}
+                    <div style="margin-bottom: 15px;">
+                        <div style="font-size: 15px; font-weight: 600; color: #1a1a1a;">{{this.degree}}</div>
+                        <div style="font-size: 13px; color: #666;">{{this.institution}}</div>
+                        <div style="font-size: 12px; color: #999; margin-top: 2px;">{{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if skills_data}}
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 20px; color: #1a1a1a; margin: 0 0 15px 0; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Compétences</h2>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        {{#each skills_data}}
+                        <span style="background: #f3f4f6; padding: 5px 12px; border-radius: 4px; font-size: 13px; color: #374151;">{{this.name}}</span>
+                        {{/each}}
+                    </div>
+                </div>
+                {{/if}}
+
+                {{#if languages_data}}
+                <div style="margin-bottom: 30px;">
+                    <h2 style="font-size: 20px; color: #1a1a1a; margin: 0 0 15px 0; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Langues</h2>
+                    {{#each languages_data}}
+                    <div style="font-size: 14px; color: #555; margin-bottom: 6px;">{{this.name}}{{#if this.level}} - {{this.level}}{{/if}}</div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                {{#if certifications_data}}
+                <div>
+                    <h2 style="font-size: 20px; color: #1a1a1a; margin: 0 0 15px 0; font-weight: 600; border-bottom: 2px solid #e5e7eb; padding-bottom: 8px;">Certifications</h2>
+                    {{#each certifications_data}}
+                    <div style="font-size: 13px; color: #555; margin-bottom: 6px;">• {{this.name}}</div>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

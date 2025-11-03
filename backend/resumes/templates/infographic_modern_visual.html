@@ -1,0 +1,98 @@
+<!--
+Template Categories: creative, modern
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Arial', sans-serif; color: #2d3748; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); line-height: 1.6;">
+    <div style="max-width: 900px; margin: 40px auto; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 50px; text-align: center; position: relative;">
+            {{#if photo}}<img src="{{photo}}" alt="{{full_name}}" style="width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 6px solid #fff; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">{{/if}}
+            <h1 style="font-size: 40px; margin: 0 0 10px 0; font-weight: 900;">{{full_name}}</h1>
+            {{#if title}}<div style="font-size: 20px; opacity: 0.95; font-weight: 300;">{{title}}</div>{{/if}}
+        </div>
+
+        <div style="padding: 40px;">
+            {{#if summary}}
+            <div style="margin-bottom: 35px; padding: 25px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-radius: 15px; border-left: 5px solid #667eea;">
+                <div style="font-size: 15px; color: #4a5568; line-height: 1.8; white-space: pre-wrap;">{{summary}}</div>
+            </div>
+            {{/if}}
+
+            {{#if experience_data}}
+            <div style="margin-bottom: 35px;">
+                <h2 style="font-size: 26px; color: #667eea; margin: 0 0 25px 0; font-weight: 800; display: flex; align-items: center; gap: 12px;">
+                    <span style="display: inline-block; width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">💼</span>
+                    Expérience Professionnelle
+                </h2>
+                {{#each experience_data}}
+                <div style="margin-bottom: 25px; padding: 25px; background: #f7fafc; border-radius: 12px; border-left: 5px solid #667eea; position: relative;">
+                    <div style="position: absolute; top: 25px; right: 25px; background: #667eea; color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase;">
+                        {{first this.start_date 4}}-{{#if this.is_current}}Now{{else}}{{first this.end_date 4}}{{/if}}
+                    </div>
+                    <div style="font-size: 20px; font-weight: 700; color: #2d3748; margin-bottom: 6px; padding-right: 120px;">{{this.position}}</div>
+                    <div style="font-size: 16px; color: #667eea; font-weight: 600; margin-bottom: 10px;">{{this.company}}</div>
+                    {{#if this.location}}<div style="font-size: 13px; color: #a0aec0; margin-bottom: 12px;">📍 {{this.location}}</div>{{/if}}
+                    {{#if this.description}}<div style="font-size: 14px; color: #4a5568; line-height: 1.7; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 35px;">
+                {{#if education_data}}
+                <div>
+                    <h2 style="font-size: 22px; color: #667eea; margin: 0 0 20px 0; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                        <span style="display: inline-block; width: 35px; height: 35px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">🎓</span>
+                        Formation
+                    </h2>
+                    {{#each education_data}}
+                    <div style="margin-bottom: 18px; padding: 18px; background: #f7fafc; border-radius: 10px;">
+                        <div style="font-size: 16px; font-weight: 700; color: #2d3748; margin-bottom: 5px;">{{this.degree}}</div>
+                        <div style="font-size: 14px; color: #667eea; margin-bottom: 5px;">{{this.institution}}</div>
+                        <div style="font-size: 12px; color: #a0aec0;">{{first this.start_date 4}}-{{#if this.is_current}}Now{{else}}{{first this.end_date 4}}{{/if}}</div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                <div>
+                    {{#if skills_data}}
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="font-size: 22px; color: #667eea; margin: 0 0 20px 0; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                            <span style="display: inline-block; width: 35px; height: 35px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">⚡</span>
+                            Compétences
+                        </h2>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            {{#each skills_data}}
+                            <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 8px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;">{{this.name}}</span>
+                            {{/each}}
+                        </div>
+                    </div>
+                    {{/if}}
+
+                    {{#if languages_data}}
+                    <div>
+                        <h2 style="font-size: 22px; color: #667eea; margin: 0 0 20px 0; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                            <span style="display: inline-block; width: 35px; height: 35px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px;">🌍</span>
+                            Langues
+                        </h2>
+                        {{#each languages_data}}
+                        <div style="font-size: 14px; color: #4a5568; margin-bottom: 10px; padding: 10px; background: #f7fafc; border-radius: 8px;">{{this.name}}{{#if this.level}} • {{this.level}}{{/if}}</div>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            <div style="text-align: center; padding: 20px; background: #f7fafc; border-radius: 12px; font-size: 13px; color: #718096;">
+                {{#if email}}✉️ {{email}}{{/if}}{{#if phone}} • 📱 {{phone}}{{/if}}{{#if city}} • 📍 {{city}}{{/if}}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -357,6 +357,7 @@ class ResumeViewSet(viewsets.ModelViewSet):
                 'website': resume.website or '',
                 'linkedin_url': resume.linkedin_url or '',
                 'github_url': resume.github_url or '',
+                'photo': resume.photo.url if resume.photo else None,
                 'title': resume.title or '',
                 'date_of_birth': str(resume.date_of_birth) if resume.date_of_birth else '',
                 'nationality': resume.nationality or '',
@@ -364,14 +365,27 @@ class ResumeViewSet(viewsets.ModelViewSet):
 
                 # Professional content
                 'summary': resume.summary or '',
+
+                # Template naming conventions (matching the templates in backend/resumes/templates/)
+                'experience_data': resume.experience_data or [],
+                'education_data': resume.education_data or [],
+                'skills_data': resume.skills_data or [],
+                'languages_data': resume.languages_data or [],
+                'certifications_data': resume.certifications_data or [],
+                'projects_data': resume.projects_data or [],
+                'custom_sections': resume.custom_sections or [],
+
+                # Alternative naming conventions (for compatibility with other templates)
                 'experience': resume.experience_data or [],
                 'education': resume.education_data or [],
                 'skills': resume.skills_data or [],
                 'languages': resume.languages_data or [],
+                'certifications': resume.certifications_data or [],
+                'projects': resume.projects_data or [],
                 'hobbies': [],
                 'references': [],
 
-                # Alternative naming conventions (for compatibility)
+                # Short forms
                 'experiences': resume.experience_data or [],
                 'educations': resume.education_data or [],
             }

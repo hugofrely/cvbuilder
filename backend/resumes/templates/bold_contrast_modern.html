@@ -1,0 +1,67 @@
+<!--
+Template Categories: creative, modern
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Arial Black', Arial, sans-serif; color: #000; line-height: 1.5;">
+    <div style="max-width: 850px; margin: 0 auto; background: #fff;">
+        <div style="background: #000; color: #fff; padding: 40px; clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);">
+            <h1 style="font-size: 42px; margin: 0 0 8px 0; font-weight: 900; letter-spacing: -1px;">{{full_name}}</h1>
+            {{#if title}}<div style="font-size: 20px; font-weight: 300; opacity: 0.9;">{{title}}</div>{{/if}}
+        </div>
+
+        <div style="padding: 40px;">
+            <div style="margin-bottom: 30px; font-size: 13px; color: #666;">
+                {{#if email}}{{email}}{{/if}}{{#if phone}} • {{phone}}{{/if}}{{#if city}} • {{city}}{{/if}}
+            </div>
+
+            {{#if summary}}
+            <div style="margin-bottom: 30px; padding: 20px; background: #f5f5f5; border-left: 6px solid #000;">
+                <div style="font-size: 14px; line-height: 1.7; white-space: pre-wrap;">{{summary}}</div>
+            </div>
+            {{/if}}
+
+            {{#if experience_data}}
+            <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 28px; margin: 0 0 20px 0; font-weight: 900;">EXPÉRIENCE</h2>
+                {{#each experience_data}}
+                <div style="margin-bottom: 22px;">
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">{{this.position}}</div>
+                    <div style="font-size: 15px; color: #666; margin-bottom: 4px;">{{this.company}} • {{first this.start_date 4}}-{{#if this.is_current}}Now{{else}}{{first this.end_date 4}}{{/if}}</div>
+                    {{#if this.description}}<div style="font-size: 13px; color: #444; line-height: 1.6; white-space: pre-wrap;">{{this.description}}</div>{{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if education_data}}
+            <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 28px; margin: 0 0 20px 0; font-weight: 900;">FORMATION</h2>
+                {{#each education_data}}
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size: 16px; font-weight: 700;">{{this.degree}}</div>
+                    <div style="font-size: 14px; color: #666;">{{this.institution}} • {{first this.start_date 4}}-{{#if this.is_current}}Now{{else}}{{first this.end_date 4}}{{/if}}</div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if skills_data}}
+            <div style="margin-bottom: 30px;">
+                <h2 style="font-size: 28px; margin: 0 0 15px 0; font-weight: 900;">COMPÉTENCES</h2>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    {{#each skills_data}}
+                    <span style="background: #000; color: #fff; padding: 8px 16px; font-size: 13px; font-weight: 700;">{{this.name}}</span>
+                    {{/each}}
+                </div>
+            </div>
+            {{/if}}
+        </div>
+    </div>
+</body>
+</html>

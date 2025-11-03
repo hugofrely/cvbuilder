@@ -2,8 +2,8 @@ import { Container, Box, Typography, Divider, List, ListItem, ListItemText } fro
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Conditions d\'utilisation | moncv.xyz',
-  description: 'Conditions d\'utilisation du service moncv.xyz pour la création de CV en ligne.',
+  title: 'Conditions d\'utilisation | uncvpro.fr',
+  description: 'Conditions d\'utilisation du service uncvpro.fr pour la création de CV en ligne.',
   robots: {
     index: true,
     follow: true,
@@ -52,7 +52,7 @@ export default function TermsPage() {
               1. Acceptation des conditions
             </Typography>
             <Typography variant="body1" paragraph>
-              En accédant et en utilisant moncv.xyz (ci-après &ldquo;le Service&rdquo;), vous acceptez d&apos;être lié par ces Conditions d&apos;utilisation. Si vous n&apos;acceptez pas ces conditions, veuillez ne pas utiliser notre service.
+              En accédant et en utilisant uncvpro.fr (ci-après &ldquo;le Service&rdquo;), vous acceptez d&apos;être lié par ces Conditions d&apos;utilisation. Si vous n&apos;acceptez pas ces conditions, veuillez ne pas utiliser notre service.
             </Typography>
           </Box>
 
@@ -62,7 +62,7 @@ export default function TermsPage() {
               2. Description du service
             </Typography>
             <Typography variant="body1" paragraph>
-              moncv.xyz est un service en ligne qui permet aux utilisateurs de créer, personnaliser et télécharger des CV professionnels. Le service propose :
+              uncvpro.fr est un service en ligne qui permet aux utilisateurs de créer, personnaliser et télécharger des CV professionnels. Le service propose :
             </Typography>
             <List sx={{ pl: 2 }}>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 0 }}>
@@ -101,7 +101,7 @@ export default function TermsPage() {
               3.1 Conditions d&apos;accès
             </Typography>
             <Typography variant="body1" paragraph>
-              Vous devez avoir au moins 16 ans pour utiliser ce service. En utilisant moncv.xyz, vous déclarez avoir l&apos;âge légal requis.
+              Vous devez avoir au moins 16 ans pour utiliser ce service. En utilisant uncvpro.fr, vous déclarez avoir l&apos;âge légal requis.
             </Typography>
 
             <Typography variant="h3" sx={{ fontSize: '1.2rem', fontWeight: 600, mb: 1, mt: 2 }}>
@@ -177,7 +177,7 @@ export default function TermsPage() {
               5.1 Contenu du service
             </Typography>
             <Typography variant="body1" paragraph>
-              Tous les éléments du service (design, templates, logos, textes, code) sont la propriété exclusive de moncv.xyz ou de ses concédants de licence et sont protégés par les lois sur la propriété intellectuelle.
+              Tous les éléments du service (design, templates, logos, textes, code) sont la propriété exclusive de uncvpro.fr ou de ses concédants de licence et sont protégés par les lois sur la propriété intellectuelle.
             </Typography>
 
             <Typography variant="h3" sx={{ fontSize: '1.2rem', fontWeight: 600, mb: 1, mt: 2 }}>
@@ -303,7 +303,7 @@ export default function TermsPage() {
               Pour toute question concernant ces Conditions d&apos;utilisation, veuillez nous contacter à :
             </Typography>
             <Typography variant="body1" paragraph sx={{ pl: 2 }}>
-              Email : contact@moncv.xyz
+              Email : contact@uncvpro.fr
             </Typography>
           </Box>
         </Box>
@@ -312,7 +312,7 @@ export default function TermsPage() {
 
         <Box sx={{ textAlign: 'center', py: 2 }}>
           <Typography variant="body2" color="text.secondary">
-            En utilisant moncv.xyz, vous acceptez ces conditions d&apos;utilisation dans leur intégralité.
+            En utilisant uncvpro.fr, vous acceptez ces conditions d&apos;utilisation dans leur intégralité.
           </Typography>
         </Box>
       </Container>

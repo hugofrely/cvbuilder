@@ -19,7 +19,7 @@ export default function Footer() {
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="h6" color="primary.light" gutterBottom sx={{ fontWeight: 700 }}>
-              moncv.xyz
+              uncvpro.fr
             </Typography>
             <Typography variant="body2" sx={{ color: '#d1d5db', lineHeight: 1.7 }}>
               Créez votre CV professionnel en quelques minutes.
@@ -182,7 +182,7 @@ export default function Footer() {
 
         <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid', borderColor: '#374151' }}>
           <Typography variant="body2" sx={{ color: '#9ca3af' }} align="center">
-            © {new Date().getFullYear()} moncv.xyz. Tous droits réservés.
+            © {new Date().getFullYear()} uncvpro.fr. Tous droits réservés.
           </Typography>
         </Box>
       </Container>

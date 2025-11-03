@@ -159,7 +159,7 @@ export default function TemplatesPage() {
         component="section"
         aria-labelledby="templates-hero-title"
         sx={{
-          background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+          background: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%)',
           color: 'white',
           py: { xs: 6, md: 10 },
           mb: { xs: 4, md: 8 },

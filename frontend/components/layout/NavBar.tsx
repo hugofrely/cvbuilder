@@ -117,7 +117,7 @@ export default function NavBar() {
           <Link
             href="/"
             style={{ textDecoration: 'none', color: 'inherit' }}
-            aria-label="MonCV.xyz - Retour à l'accueil"
+            aria-label="UnCVpro.fr - Retour à l'accueil"
           >
             <Typography
               variant="h6"
@@ -128,14 +128,14 @@ export default function NavBar() {
                 fontWeight: 800,
                 cursor: 'pointer',
                 fontSize: { xs: '1.2rem', sm: '1.4rem' },
-                background: 'linear-gradient(135deg, #2563eb 0%, #8b5cf6 100%)',
+                background: 'linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
                 letterSpacing: '-0.02em',
               }}
             >
-              <Box component="span" sx={{ fontWeight: 400 }}>Mon</Box>CV<Box component="span" sx={{ fontWeight: 400 }}>.xyz</Box>
+              <Box component="span" sx={{ fontWeight: 400 }}>Un</Box>CVpro<Box component="span" sx={{ fontWeight: 400 }}>.fr</Box>
             </Typography>
           </Link>
 

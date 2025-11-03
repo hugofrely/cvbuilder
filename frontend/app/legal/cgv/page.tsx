@@ -2,8 +2,8 @@ import { Container, Box, Typography, Divider, List, ListItem, ListItemText, Aler
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Conditions Générales de Vente | moncv.xyz',
-  description: 'Conditions Générales de Vente (CGV) des services premium de moncv.xyz.',
+  title: 'Conditions Générales de Vente | uncvpro.fr',
+  description: 'Conditions Générales de Vente (CGV) des services premium de uncvpro.fr.',
   robots: {
     index: true,
     follow: true,
@@ -52,7 +52,7 @@ export default function CGVPage() {
               1. Objet et champ d&apos;application
             </Typography>
             <Typography variant="body1" paragraph>
-              Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles entre moncv.xyz (ci-après &ldquo;le Vendeur&rdquo; ou &ldquo;nous&rdquo;) et toute personne physique ou morale (ci-après &ldquo;le Client&rdquo; ou &ldquo;vous&rdquo;) souhaitant souscrire aux services payants proposés sur le site moncv.xyz.
+              Les présentes Conditions Générales de Vente (CGV) régissent les relations contractuelles entre uncvpro.fr (ci-après &ldquo;le Vendeur&rdquo; ou &ldquo;nous&rdquo;) et toute personne physique ou morale (ci-après &ldquo;le Client&rdquo; ou &ldquo;vous&rdquo;) souhaitant souscrire aux services payants proposés sur le site uncvpro.fr.
             </Typography>
             <Typography variant="body1" paragraph>
               Ces CGV s&apos;appliquent exclusivement aux services payants (abonnements premium). L&apos;utilisation des services gratuits est régie par les Conditions d&apos;utilisation.
@@ -65,7 +65,7 @@ export default function CGVPage() {
               2. Description des services
             </Typography>
             <Typography variant="body1" paragraph>
-              moncv.xyz propose différentes formules d&apos;abonnement donnant accès à des services premium, notamment :
+              uncvpro.fr propose différentes formules d&apos;abonnement donnant accès à des services premium, notamment :
             </Typography>
             <List sx={{ pl: 2 }}>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 0 }}>
@@ -305,7 +305,7 @@ export default function CGVPage() {
               6.1 Exercice du droit de rétractation
             </Typography>
             <Typography variant="body1" paragraph>
-              Pour exercer ce droit, le Client doit nous notifier sa décision de rétractation par email à : contact@moncv.xyz, en indiquant clairement :
+              Pour exercer ce droit, le Client doit nous notifier sa décision de rétractation par email à : contact@uncvpro.fr, en indiquant clairement :
             </Typography>
             <List sx={{ pl: 2 }}>
               <ListItem sx={{ display: 'list-item', listStyleType: 'disc', pl: 0 }}>
@@ -486,7 +486,7 @@ export default function CGVPage() {
               11. Propriété intellectuelle
             </Typography>
             <Typography variant="body1" paragraph>
-              Tous les éléments du service (templates, designs, code, logos, textes) sont protégés par le droit d&apos;auteur et demeurent la propriété exclusive de moncv.xyz.
+              Tous les éléments du service (templates, designs, code, logos, textes) sont protégés par le droit d&apos;auteur et demeurent la propriété exclusive de uncvpro.fr.
             </Typography>
             <Typography variant="body1" paragraph>
               L&apos;abonnement vous confère uniquement un droit d&apos;utilisation personnel et non exclusif des services, sans transfert de propriété. Toute reproduction, représentation, modification ou exploitation commerciale est strictement interdite sans autorisation préalable.
@@ -516,7 +516,7 @@ export default function CGVPage() {
               13.1 Réclamations
             </Typography>
             <Typography variant="body1" paragraph>
-              Pour toute réclamation, contactez notre service client à : contact@moncv.xyz
+              Pour toute réclamation, contactez notre service client à : contact@uncvpro.fr
             </Typography>
             <Typography variant="body1" paragraph>
               Nous nous engageons à répondre dans un délai de 7 jours ouvrables et à apporter une solution dans un délai de 30 jours.
@@ -560,8 +560,8 @@ export default function CGVPage() {
             </Typography>
             <Box sx={{ pl: 2 }}>
               <Typography variant="body1" paragraph>
-                <strong>Raison sociale :</strong> moncv.xyz<br />
-                <strong>Email :</strong> contact@moncv.xyz<br />
+                <strong>Raison sociale :</strong> uncvpro.fr<br />
+                <strong>Email :</strong> contact@uncvpro.fr<br />
                 <strong>Hébergeur :</strong> [À compléter avec les informations de l&apos;hébergeur]
               </Typography>
             </Box>
@@ -575,7 +575,7 @@ export default function CGVPage() {
             En souscrivant à un abonnement premium, vous acceptez les présentes Conditions Générales de Vente dans leur intégralité.
           </Alert>
           <Typography variant="body2" color="text.secondary">
-            Pour toute question, contactez-nous à : contact@moncv.xyz
+            Pour toute question, contactez-nous à : contact@uncvpro.fr
           </Typography>
         </Box>
       </Container>

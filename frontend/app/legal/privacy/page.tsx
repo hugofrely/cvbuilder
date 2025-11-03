@@ -2,8 +2,8 @@ import { Container, Box, Typography, Divider, List, ListItem, ListItemText, Aler
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Politique de confidentialité | moncv.xyz',
-  description: 'Politique de confidentialité et protection des données personnelles de moncv.xyz conforme au RGPD.',
+  title: 'Politique de confidentialité | uncvpro.fr',
+  description: 'Politique de confidentialité et protection des données personnelles de uncvpro.fr conforme au RGPD.',
   robots: {
     index: true,
     follow: true,
@@ -56,10 +56,10 @@ export default function PrivacyPage() {
               1. Introduction
             </Typography>
             <Typography variant="body1" paragraph>
-              Chez moncv.xyz, nous accordons une grande importance à la protection de vos données personnelles. Cette Politique de confidentialité décrit comment nous collectons, utilisons, stockons et protégeons vos informations personnelles lorsque vous utilisez notre service de création de CV en ligne.
+              Chez uncvpro.fr, nous accordons une grande importance à la protection de vos données personnelles. Cette Politique de confidentialité décrit comment nous collectons, utilisons, stockons et protégeons vos informations personnelles lorsque vous utilisez notre service de création de CV en ligne.
             </Typography>
             <Typography variant="body1" paragraph>
-              En utilisant moncv.xyz, vous acceptez les pratiques décrites dans cette politique.
+              En utilisant uncvpro.fr, vous acceptez les pratiques décrites dans cette politique.
             </Typography>
           </Box>
 
@@ -73,8 +73,8 @@ export default function PrivacyPage() {
             </Typography>
             <Box sx={{ pl: 2 }}>
               <Typography variant="body1" paragraph>
-                <strong>moncv.xyz</strong><br />
-                Email : contact@moncv.xyz
+                <strong>uncvpro.fr</strong><br />
+                Email : contact@uncvpro.fr
               </Typography>
             </Box>
           </Box>
@@ -482,7 +482,7 @@ export default function PrivacyPage() {
               8.8 Exercice de vos droits
             </Typography>
             <Typography variant="body1" paragraph>
-              Pour exercer vos droits, contactez-nous à : contact@moncv.xyz
+              Pour exercer vos droits, contactez-nous à : contact@uncvpro.fr
             </Typography>
             <Typography variant="body1" paragraph>
               Nous répondrons à votre demande dans un délai d&apos;un mois. Si vous n&apos;êtes pas satisfait de notre réponse, vous avez le droit de déposer une plainte auprès de la CNIL (Commission Nationale de l&apos;Informatique et des Libertés).
@@ -587,7 +587,7 @@ export default function PrivacyPage() {
             </Typography>
             <Box sx={{ pl: 2 }}>
               <Typography variant="body1" paragraph>
-                <strong>Email :</strong> contact@moncv.xyz<br />
+                <strong>Email :</strong> contact@uncvpro.fr<br />
                 <strong>Objet :</strong> Protection des données / RGPD
               </Typography>
             </Box>

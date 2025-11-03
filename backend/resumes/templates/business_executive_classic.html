@@ -34,43 +34,42 @@ Template Categories: business, professional
                 {{/if}}{{/if}}
             </div>
 
-            {{#if linkedin_url}}{{#if website}}{{#if github_url}}
+            {{#if linkedin_url}}
             <div style="margin-top: 15px; font-size: 13px;">
-                {{#if linkedin_url}}<a href="{{linkedin_url}}" style="color: #fff; margin: 0 10px; text-decoration: none; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.3);">LinkedIn</a>{{/if}}
-                {{#if website}}<a href="{{website}}" style="color: #fff; margin: 0 10px; text-decoration: none; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.3);">Site Web</a>{{/if}}
-                {{#if github_url}}<a href="{{github_url}}" style="color: #fff; margin: 0 10px; text-decoration: none; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.3);">GitHub</a>{{/if}}
+                <a href="{{linkedin_url}}" style="color: #fff; margin: 0 10px; text-decoration: none; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.3);">LinkedIn</a>
             </div>
-            {{else}}{{#if nationality}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🌍 {{nationality}}</div>
-                    {{#if driving_license}}<div>🚗 {{driving_license}}</div>{{/if}}
-                </div>
-                {{else}}{{#if driving_license}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🚗 {{driving_license}}</div>
-                </div>
-                {{/if}}{{/if}}{{/if}}
+            {{/if}}
+            {{#if website}}
+            <div style="margin-top: 15px; font-size: 13px;">
+                <a href="{{website}}" style="color: #fff; margin: 0 10px; text-decoration: none; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.3);">Site Web</a>
+            </div>
+            {{/if}}
+            {{#if github_url}}
+            <div style="margin-top: 15px; font-size: 13px;">
+                <a href="{{github_url}}" style="color: #fff; margin: 0 10px; text-decoration: none; opacity: 0.9; border-bottom: 1px solid rgba(255,255,255,0.3);">GitHub</a>
+            </div>
+            {{/if}}
 
             {{#if date_of_birth}}
             <div style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
-                {{#if date_of_birth}}<span style="margin: 0 10px;">{{date_of_birth}}</span>{{/if}}
+                <span style="margin: 0 10px;">{{date_of_birth}}</span>
                 {{#if nationality}}<span style="margin: 0 10px;">{{nationality}}</span>{{/if}}
                 {{#if driving_license}}<span style="margin: 0 10px;">{{driving_license}}</span>{{/if}}
             </div>
-            {{else}}{{#if nationality}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🌍 {{nationality}}</div>
-                    {{#if driving_license}}<div>🚗 {{driving_license}}</div>{{/if}}
+            {{else}}
+                {{#if nationality}}
+                <div style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                    <span style="margin: 0 10px;">🌍 {{nationality}}</span>
+                    {{#if driving_license}}<span style="margin: 0 10px;">🚗 {{driving_license}}</span>{{/if}}
                 </div>
-                {{else}}{{#if driving_license}}
-                <div style="margin-bottom: 35px;">
-                    <h3>Informations</h3>
-                    <div>🚗 {{driving_license}}</div>
-                </div>
-                {{/if}}{{/if}}{{/if}}
+                {{else}}
+                    {{#if driving_license}}
+                    <div style="margin-top: 15px; font-size: 12px; opacity: 0.8;">
+                        <span style="margin: 0 10px;">🚗 {{driving_license}}</span>
+                    </div>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
         </div>
 
         <div style="padding: 50px 60px;">

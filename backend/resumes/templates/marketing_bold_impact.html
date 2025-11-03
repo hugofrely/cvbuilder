@@ -1,0 +1,230 @@
+<!--
+Template Categories: marketing, business, modern
+-->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{full_name}} - CV</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Arial', 'Helvetica', sans-serif; background: #fff; color: #333; line-height: 1.6;">
+    <div style="max-width: 900px; margin: 0 auto; display: flex;">
+        <!-- Sidebar gauche -->
+        <div style="width: 280px; background: linear-gradient(180deg, #FF6B35 0%, #F7931E 100%); padding: 40px 30px; color: #fff;">
+            {{#if photo}}
+            <div style="text-align: center; margin-bottom: 30px;">
+                <img src="{{photo}}" alt="{{full_name}}" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 5px solid #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            </div>
+            {{/if}}
+
+            <div style="margin-bottom: 35px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Contact</h3>
+                {{#if email}}<div style="font-size: 13px; margin: 10px 0; word-break: break-word;">✉ {{email}}</div>{{/if}}
+                {{#if phone}}<div style="font-size: 13px; margin: 10px 0;">📞 {{phone}}</div>{{/if}}
+                {{#if address}}{{#if city}}{{#if postal_code}}
+                <div style="font-size: 13px; margin: 10px 0;">📍 {{address}}, {{postal_code}} {{city}}</div>
+                {{else}}
+                <div style="font-size: 13px; margin: 10px 0;">📍 {{address}}, {{city}}</div>
+                {{/if}}{{else}}
+                <div style="font-size: 13px; margin: 10px 0;">📍 {{address}}</div>
+                {{/if}}{{else}}{{#if city}}
+                <div style="font-size: 13px; margin: 10px 0;">📍 {{#if postal_code}}{{postal_code}} {{/if}}{{city}}</div>
+                {{/if}}{{/if}}
+            </div>
+
+            {{#if linkedin_url}}
+            <div style="margin-bottom: 35px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">LinkedIn</h3>
+                <a href="{{linkedin_url}}" style="color: #fff; font-size: 13px; text-decoration: underline; word-break: break-all;">Profil LinkedIn</a>
+            </div>
+            {{/if}}
+
+            {{#if website}}
+            <div style="margin-bottom: 35px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Portfolio</h3>
+                <a href="{{website}}" style="color: #fff; font-size: 13px; text-decoration: underline; word-break: break-all;">{{website}}</a>
+            </div>
+            {{/if}}
+
+            {{#if github_url}}
+            <div style="margin-bottom: 35px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">GitHub</h3>
+                <a href="{{github_url}}" style="color: #fff; font-size: 13px; text-decoration: underline; word-break: break-all;">{{github_url}}</a>
+            </div>
+            {{/if}}
+
+            {{#if skills_data}}
+            <div style="margin-bottom: 35px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Compétences</h3>
+                {{#each skills_data}}
+                <div style="margin-bottom: 18px;">
+                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">{{this.name}}</div>
+                    {{#if this.level}}<div style="font-size: 11px; opacity: 0.9; margin-bottom: 6px;">{{this.level}}</div>{{/if}}
+                    {{#if this.level_percentage}}
+                    <div style="height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; overflow: hidden;">
+                        <div style="height: 100%; background: #fff; width: {{this.level_percentage}}%;"></div>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if languages_data}}
+            <div style="margin-bottom: 35px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Langues</h3>
+                {{#each languages_data}}
+                <div style="margin-bottom: 15px;">
+                    <div style="font-size: 13px; font-weight: 700; margin-bottom: 6px;">{{this.name}}</div>
+                    {{#if this.level}}<div style="font-size: 11px; opacity: 0.9; margin-bottom: 6px;">{{this.level}}</div>{{/if}}
+                    {{#if this.level_percentage}}
+                    <div style="height: 5px; background: rgba(255,255,255,0.3); border-radius: 10px; overflow: hidden;">
+                        <div style="height: 100%; background: #fff; width: {{this.level_percentage}}%;"></div>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if date_of_birth}}
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Infos</h3>
+                <div style="font-size: 12px; line-height: 1.8;">
+                    <div>{{date_of_birth}}</div>
+                    {{#if nationality}}<div>{{nationality}}</div>{{/if}}
+                    {{#if driving_license}}<div>{{driving_license}}</div>{{/if}}
+                </div>
+            </div>
+            {{else}}
+                {{#if nationality}}
+                <div style="margin-bottom: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Infos</h3>
+                    <div style="font-size: 12px; line-height: 1.8;">
+                        <div>{{nationality}}</div>
+                        {{#if driving_license}}<div>{{driving_license}}</div>{{/if}}
+                    </div>
+                </div>
+                {{else}}
+                    {{#if driving_license}}
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="font-size: 14px; font-weight: 800; letter-spacing: 2px; margin: 0 0 15px 0; text-transform: uppercase; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px;">Infos</h3>
+                        <div style="font-size: 12px; line-height: 1.8;">
+                            <div>{{driving_license}}</div>
+                        </div>
+                    </div>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        </div>
+
+        <!-- Contenu principal -->
+        <div style="flex: 1; padding: 40px 45px; background: #fff;">
+            <div style="margin-bottom: 40px;">
+                <h1 style="font-size: 42px; font-weight: 900; margin: 0 0 8px 0; color: #FF6B35; letter-spacing: -1px;">{{full_name}}</h1>
+                {{#if title}}<div style="font-size: 20px; font-weight: 600; color: #333; margin-bottom: 5px;">{{title}}</div>{{/if}}
+            </div>
+
+            {{#if summary}}
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 16px; font-weight: 900; color: #FF6B35; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #FF6B35; padding-bottom: 8px; display: inline-block;">Profil</h2>
+                <div style="font-size: 15px; line-height: 1.8; color: #444; white-space: pre-wrap;">{{summary}}</div>
+            </div>
+            {{/if}}
+
+            {{#if experience_data}}
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 16px; font-weight: 900; color: #FF6B35; margin: 0 0 25px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #FF6B35; padding-bottom: 8px; display: inline-block;">Expérience</h2>
+                {{#each experience_data}}
+                <div style="margin-bottom: 30px; padding-left: 25px; border-left: 3px solid #F7931E; position: relative;">
+                    <div style="position: absolute; left: -8px; top: 5px; width: 12px; height: 12px; background: #FF6B35; border-radius: 50%; border: 2px solid #fff;"></div>
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 18px; font-weight: 800; color: #333; margin-bottom: 5px;">{{this.position}}</div>
+                        {{#if this.company}}<div style="font-size: 15px; font-weight: 600; color: #FF6B35; margin-bottom: 5px;">{{this.company}}</div>{{/if}}
+                        <div style="font-size: 13px; color: #888;">
+                            {{first this.start_date 4}} - {{#if this.is_current}}Présent{{else}}{{first this.end_date 4}}{{/if}}
+                            {{#if this.location}} • {{this.location}}{{/if}}
+                            {{#if this.work_mode}} • {{translate_work_mode this.work_mode}}{{/if}}
+                        </div>
+                    </div>
+                    {{#if this.description}}
+                    <div style="font-size: 14px; line-height: 1.7; color: #555; white-space: pre-wrap;">{{this.description}}</div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if projects_data}}
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 16px; font-weight: 900; color: #FF6B35; margin: 0 0 25px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #FF6B35; padding-bottom: 8px; display: inline-block;">Projets</h2>
+                {{#each projects_data}}
+                <div style="margin-bottom: 25px; padding: 20px; background: #FFF5F0; border-radius: 8px; border-left: 4px solid #FF6B35;">
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-size: 17px; font-weight: 700; color: #333;">{{this.name}}</span>
+                        {{#if this.date}}<span style="font-size: 12px; color: #888; margin-left: 10px;">{{this.date}}</span>{{/if}}
+                    </div>
+                    {{#if this.url}}<div style="margin-bottom: 10px;"><a href="{{this.url}}" style="color: #FF6B35; font-size: 13px; text-decoration: none; font-weight: 600;">→ Voir le projet</a></div>{{/if}}
+                    {{#if this.description}}
+                    <div style="font-size: 14px; line-height: 1.7; color: #555; margin-bottom: 10px; white-space: pre-wrap;">{{this.description}}</div>
+                    {{/if}}
+                    {{#if this.technologies}}
+                    <div>
+                        {{#each this.technologies}}
+                        <span style="display: inline-block; background: #FF6B35; color: #fff; padding: 4px 10px; margin: 3px 3px 3px 0; border-radius: 12px; font-size: 11px; font-weight: 600;">{{this}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if education_data}}
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 16px; font-weight: 900; color: #FF6B35; margin: 0 0 25px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #FF6B35; padding-bottom: 8px; display: inline-block;">Formation</h2>
+                {{#each education_data}}
+                <div style="margin-bottom: 25px; padding-left: 25px; border-left: 3px solid #F7931E; position: relative;">
+                    <div style="position: absolute; left: -8px; top: 5px; width: 12px; height: 12px; background: #FF6B35; border-radius: 50%; border: 2px solid #fff;"></div>
+                    <div style="font-size: 17px; font-weight: 700; color: #333; margin-bottom: 5px;">{{this.degree}}{{#if this.field_of_study}} - {{this.field_of_study}}{{/if}}</div>
+                    <div style="font-size: 15px; font-weight: 600; color: #FF6B35; margin-bottom: 5px;">{{this.institution}}</div>
+                    <div style="font-size: 13px; color: #888;">
+                        {{first this.start_date 4}} - {{#if this.is_current}}En cours{{else}}{{first this.end_date 4}}{{/if}}
+                        {{#if this.location}} • {{this.location}}{{/if}}
+                        {{#if this.work_mode}} • {{translate_work_mode this.work_mode}}{{/if}}
+                        {{#if this.grade}} • {{this.grade}}{{/if}}
+                    </div>
+                    {{#if this.description}}
+                    <div style="font-size: 14px; line-height: 1.7; color: #555; margin-top: 10px; white-space: pre-wrap;">{{this.description}}</div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#if certifications_data}}
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 16px; font-weight: 900; color: #FF6B35; margin: 0 0 25px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #FF6B35; padding-bottom: 8px; display: inline-block;">Certifications</h2>
+                {{#each certifications_data}}
+                <div style="margin-bottom: 15px; padding: 15px; background: #FFF5F0; border-radius: 6px;">
+                    <div style="font-size: 15px; font-weight: 700; color: #333; margin-bottom: 5px;">{{this.name}}</div>
+                    {{#if this.issuer}}<div style="font-size: 13px; color: #FF6B35; margin-bottom: 3px;">{{this.issuer}}</div>{{/if}}
+                    {{#if this.date}}<div style="font-size: 12px; color: #888;">{{this.date}}</div>{{/if}}
+                    {{#if this.credential_id}}<div style="font-size: 11px; color: #999; margin-top: 5px;">ID: {{this.credential_id}}</div>{{/if}}
+                    {{#if this.url}}<div style="margin-top: 8px;"><a href="{{this.url}}" style="color: #FF6B35; font-size: 12px; text-decoration: none; font-weight: 600;">→ Vérifier</a></div>{{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{#each custom_sections}}
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 16px; font-weight: 900; color: #FF6B35; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 3px solid #FF6B35; padding-bottom: 8px; display: inline-block;">{{this.title}}</h2>
+                <div style="font-size: 15px; line-height: 1.7; color: #555; white-space: pre-wrap;">{{this.content}}</div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+</body>
+</html>
