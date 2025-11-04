@@ -97,15 +97,6 @@ function BuilderContent() {
     }
   };
 
-  // Set template from URL parameter on mount
-  useEffect(() => {
-    const templateParam = searchParams.get('template');
-    if (templateParam) {
-      // Template IDs are now UUIDs (strings), no need to parse as int
-      setSelectedTemplateId(templateParam);
-    }
-  }, [searchParams, setSelectedTemplateId]);
-
   // Sync isPaid status from hook to context
   useEffect(() => {
     setIsPaidResume(isPaid);
@@ -114,6 +105,9 @@ function BuilderContent() {
   // Load existing resume on mount or show selector
   useEffect(() => {
     const initializeResume = async () => {
+      // Get template param from URL (will be applied after loading resume)
+      const templateParam = searchParams.get('template');
+
       // First check if there's a resumeId in the URL
       const urlResumeId = searchParams.get('resumeId');
 
@@ -124,11 +118,16 @@ function BuilderContent() {
           loadCVData(result.cvData);
           setIsPaidResume(result.isPaid);
           // Only set template from resume if no template param in URL
-          if (result.templateId && !searchParams.get('template')) {
+          if (result.templateId && !templateParam) {
             setSelectedTemplateId(result.templateId);
           }
           // Store the resume ID for future use
           localStorage.setItem('currentResumeId', urlResumeId);
+
+          // Apply template from URL if present (PRIORITY)
+          if (templateParam) {
+            setSelectedTemplateId(templateParam);
+          }
           return; // Successfully loaded, exit
         }
       }
@@ -143,13 +142,23 @@ function BuilderContent() {
           loadCVData(result.cvData);
           setIsPaidResume(result.isPaid);
           // Only set template from resume if no template param in URL
-          if (result.templateId && !searchParams.get('template')) {
+          if (result.templateId && !templateParam) {
             setSelectedTemplateId(result.templateId);
+          }
+
+          // Apply template from URL if present (PRIORITY)
+          if (templateParam) {
+            setSelectedTemplateId(templateParam);
           }
           return; // Successfully loaded, exit
         }
         // If load failed, clear invalid ID
         localStorage.removeItem('currentResumeId');
+      }
+
+      // Apply template from URL even if no resume is loaded
+      if (templateParam) {
+        setSelectedTemplateId(templateParam);
       }
 
       // IMPROVED: Check if user has existing resumes before showing selector

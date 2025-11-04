@@ -5,6 +5,8 @@ import ThemeRegistry from "@/components/common/ThemeRegistry";
 import { StructuredData } from "./structured-data";
 import { AuthProvider } from "@/context/AuthContext";
 import LayoutContent from "./LayoutContent";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import Contentsquare from "@/components/analytics/Contentsquare";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -78,6 +80,12 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className={`${inter.variable} antialiased`}>
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
+        {process.env.NEXT_PUBLIC_CONTENTSQUARE_ID && (
+          <Contentsquare CONTENTSQUARE_ID={process.env.NEXT_PUBLIC_CONTENTSQUARE_ID} />
+        )}
         <AuthProvider>
           <ThemeRegistry>
             <LayoutContent>{children}</LayoutContent>

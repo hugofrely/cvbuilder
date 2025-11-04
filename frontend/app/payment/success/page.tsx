@@ -311,7 +311,7 @@ function PaymentSuccessContent() {
                   fontWeight: 600,
                 }}
               >
-                Accéder au Builder
+                Retourner à l&apos;édition du CV
               </Button>
 
               <Button

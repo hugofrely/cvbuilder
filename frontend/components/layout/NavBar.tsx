@@ -167,7 +167,7 @@ export default function NavBar() {
                 sx={{
                   flexGrow: 1,
                   display: 'flex',
-                  gap: 1,
+                  gap: 0.5,
                   listStyle: 'none',
                   margin: 0,
                   padding: 0,
@@ -179,12 +179,16 @@ export default function NavBar() {
                       <Button
                         color="inherit"
                         aria-label={item.ariaLabel || item.label}
-                        startIcon={item.icon}
                         sx={{
                           minHeight: 44,
-                          minWidth: 44,
+                          px: 2,
+                          fontWeight: 500,
+                          color: 'text.primary',
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
                           '&:hover': {
-                            backgroundColor: 'rgba(37, 99, 235, 0.04)',
+                            backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                            color: 'primary.main',
                           },
                         }}
                       >
@@ -199,12 +203,16 @@ export default function NavBar() {
                       <Button
                         color="inherit"
                         aria-label={item.ariaLabel || item.label}
-                        startIcon={item.icon}
                         sx={{
                           minHeight: 44,
-                          minWidth: 44,
+                          px: 2,
+                          fontWeight: 500,
+                          color: 'text.primary',
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
                           '&:hover': {
-                            backgroundColor: 'rgba(37, 99, 235, 0.04)',
+                            backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                            color: 'primary.main',
                           },
                         }}
                       >
@@ -216,47 +224,69 @@ export default function NavBar() {
               </Box>
 
               {/* Boutons d'authentification Desktop */}
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <Link href="/builder" style={{ textDecoration: 'none' }} tabIndex={-1}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<CreateIcon />}
-                    aria-label="Créer mon CV"
-                    sx={{
-                      fontWeight: 600,
-                      minHeight: 44,
-                      minWidth: 44,
-                    }}
-                  >
-                    Créer mon CV
-                  </Button>
-                </Link>
+              <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
                 {isAuthenticated ? (
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={handleLogout}
-                    startIcon={<LogoutIcon />}
-                    aria-label="Se déconnecter"
-                    sx={{
-                      minHeight: 44,
-                      minWidth: 44,
-                    }}
-                  >
-                    Déconnexion
-                  </Button>
+                  <>
+                    <Link href="/builder" style={{ textDecoration: 'none' }} tabIndex={-1}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CreateIcon />}
+                        aria-label="Créer mon CV"
+                        sx={{
+                          fontWeight: 600,
+                          minHeight: 40,
+                          px: 3,
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
+                          boxShadow: 2,
+                          '&:hover': {
+                            boxShadow: 4,
+                          },
+                        }}
+                      >
+                        Créer mon CV
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="text"
+                      color="inherit"
+                      onClick={handleLogout}
+                      aria-label="Se déconnecter"
+                      sx={{
+                        minHeight: 40,
+                        px: 2,
+                        fontWeight: 500,
+                        textTransform: 'none',
+                        fontSize: '0.95rem',
+                        color: 'text.secondary',
+                        '&:hover': {
+                          backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                          color: 'error.main',
+                        },
+                      }}
+                    >
+                      Déconnexion
+                    </Button>
+                  </>
                 ) : (
                   <>
                     <Link href="/auth/login" style={{ textDecoration: 'none' }} tabIndex={-1}>
                       <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<LoginIcon />}
+                        variant="text"
+                        color="inherit"
                         aria-label="Se connecter à votre compte"
                         sx={{
-                          minHeight: 44,
-                          minWidth: 44,
+                          minHeight: 40,
+                          px: 2.5,
+                          fontWeight: 500,
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
+                          color: 'text.primary',
+                          '&:hover': {
+                            backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                            color: 'primary.main',
+                          },
                         }}
                       >
                         Se connecter
@@ -264,16 +294,44 @@ export default function NavBar() {
                     </Link>
                     <Link href="/auth/register" style={{ textDecoration: 'none' }} tabIndex={-1}>
                       <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<PersonAddIcon />}
+                        variant="text"
+                        color="inherit"
                         aria-label="Créer un nouveau compte"
                         sx={{
-                          minHeight: 44,
-                          minWidth: 44,
+                          minHeight: 40,
+                          px: 2.5,
+                          fontWeight: 500,
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
+                          color: 'text.primary',
+                          '&:hover': {
+                            backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                            color: 'primary.main',
+                          },
                         }}
                       >
                         S&apos;inscrire
+                      </Button>
+                    </Link>
+                    <Link href="/builder" style={{ textDecoration: 'none' }} tabIndex={-1}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        startIcon={<CreateIcon />}
+                        aria-label="Créer mon CV"
+                        sx={{
+                          fontWeight: 600,
+                          minHeight: 40,
+                          px: 3,
+                          textTransform: 'none',
+                          fontSize: '0.95rem',
+                          boxShadow: 2,
+                          '&:hover': {
+                            boxShadow: 4,
+                          },
+                        }}
+                      >
+                        Créer mon CV
                       </Button>
                     </Link>
                   </>
@@ -365,19 +423,19 @@ export default function NavBar() {
                 <ListItemButton
                   aria-label={item.ariaLabel || item.label}
                   sx={{
-                    minHeight: 48,
+                    minHeight: 56,
+                    px: 3,
                     '&:hover': {
-                      backgroundColor: 'rgba(37, 99, 235, 0.04)',
+                      backgroundColor: 'rgba(37, 99, 235, 0.06)',
                     },
                   }}
                 >
-                  <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
-                    {item.icon}
-                  </Box>
                   <ListItemText
                     primary={item.label}
                     primaryTypographyProps={{
                       fontWeight: 500,
+                      fontSize: '1rem',
+                      color: 'text.primary',
                     }}
                   />
                 </ListItemButton>
@@ -398,19 +456,19 @@ export default function NavBar() {
                     <ListItemButton
                       aria-label={item.ariaLabel || item.label}
                       sx={{
-                        minHeight: 48,
+                        minHeight: 56,
+                        px: 3,
                         '&:hover': {
-                          backgroundColor: 'rgba(37, 99, 235, 0.04)',
+                          backgroundColor: 'rgba(37, 99, 235, 0.06)',
                         },
                       }}
                     >
-                      <Box sx={{ mr: 2, display: 'flex', alignItems: 'center', color: 'primary.main' }}>
-                        {item.icon}
-                      </Box>
                       <ListItemText
                         primary={item.label}
                         primaryTypographyProps={{
                           fontWeight: 500,
+                          fontSize: '1rem',
+                          color: 'text.primary',
                         }}
                       />
                     </ListItemButton>
@@ -424,7 +482,7 @@ export default function NavBar() {
         <Divider />
 
         {/* Boutons d'authentification Mobile */}
-        <Box sx={{ p: 2 }} role="group" aria-label="Actions utilisateur">
+        <Box sx={{ p: 3 }} role="group" aria-label="Actions utilisateur">
           <Link href="/builder" style={{ textDecoration: 'none' }}>
             <Button
               fullWidth
@@ -433,7 +491,14 @@ export default function NavBar() {
               startIcon={<CreateIcon />}
               aria-label="Créer mon CV"
               onClick={handleMobileMenuClose}
-              sx={{ mb: 1, fontWeight: 600 }}
+              sx={{
+                mb: 1.5,
+                fontWeight: 600,
+                py: 1.5,
+                textTransform: 'none',
+                fontSize: '1rem',
+                boxShadow: 2,
+              }}
             >
               Créer mon CV
             </Button>
@@ -441,12 +506,21 @@ export default function NavBar() {
           {isAuthenticated ? (
             <Button
               fullWidth
-              variant="outlined"
-              color="primary"
+              variant="text"
+              color="inherit"
               onClick={handleLogout}
-              startIcon={<LogoutIcon />}
               aria-label="Se déconnecter"
-              sx={{ justifyContent: 'flex-start', px: 2 }}
+              sx={{
+                fontWeight: 500,
+                py: 1.5,
+                textTransform: 'none',
+                fontSize: '1rem',
+                color: 'text.secondary',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                  color: 'error.main',
+                },
+              }}
             >
               Déconnexion
             </Button>
@@ -455,10 +529,21 @@ export default function NavBar() {
               <Link href="/auth/login" style={{ textDecoration: 'none' }}>
                 <Button
                   fullWidth
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<LoginIcon />}
+                  variant="text"
+                  color="inherit"
                   aria-label="Se connecter à votre compte"
+                  onClick={handleMobileMenuClose}
+                  sx={{
+                    fontWeight: 500,
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    color: 'text.primary',
+                    '&:hover': {
+                      backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                      color: 'primary.main',
+                    },
+                  }}
                 >
                   Se connecter
                 </Button>
@@ -466,10 +551,21 @@ export default function NavBar() {
               <Link href="/auth/register" style={{ textDecoration: 'none' }}>
                 <Button
                   fullWidth
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<PersonAddIcon />}
+                  variant="text"
+                  color="inherit"
                   aria-label="Créer un nouveau compte"
+                  onClick={handleMobileMenuClose}
+                  sx={{
+                    fontWeight: 500,
+                    py: 1.5,
+                    textTransform: 'none',
+                    fontSize: '1rem',
+                    color: 'text.primary',
+                    '&:hover': {
+                      backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                      color: 'primary.main',
+                    },
+                  }}
                 >
                   S&apos;inscrire
                 </Button>
