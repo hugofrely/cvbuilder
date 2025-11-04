@@ -6,6 +6,7 @@ import { StructuredData } from "./structured-data";
 import { AuthProvider } from "@/context/AuthContext";
 import LayoutContent from "./LayoutContent";
 import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
+import GoogleTagManager from "@/components/analytics/GoogleTagManager";
 import Contentsquare from "@/components/analytics/Contentsquare";
 
 const inter = Inter({
@@ -16,20 +17,29 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "uncvpro.fr - Créez votre CV professionnel en 5 minutes | Gratuit et Sans Inscription",
-  description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise. Interface intuitive et prévisualisation en temps réel. Démarquez-vous avec un CV professionnel.",
+  title: "Créer un CV Gratuit en Ligne | CV Professionnel en 5 Minutes - uncvpro.fr",
+  description: "Créer CV gratuit en ligne : 15+ modèles professionnels, sans inscription. Faire un CV moderne et le télécharger en PDF gratuitement. CV professionnel pour étudiants et professionnels.",
   keywords: [
-    "cv en ligne",
-    "créateur de cv",
+    // Mots-clés prioritaires Google Ads
+    "créer cv",
+    "créer cv en ligne",
     "cv gratuit",
-    "template cv",
-    "modèle cv professionnel",
-    "cv pdf",
+    "cv professionnel",
     "faire un cv",
-    "cv builder",
+    // Mots-clés secondaires
+    "créer un cv",
+    "créer cv gratuit",
+    "faire cv en ligne",
+    "cv en ligne gratuit",
+    "créateur de cv",
+    "modèle cv gratuit",
+    "template cv",
+    "cv pdf gratuit",
     "générateur cv",
     "cv moderne",
-    "curriculum vitae",
+    "faire cv gratuit",
+    "créer cv professionnel",
+    "cv étudiant",
   ],
   authors: [{ name: "uncvpro.fr" }],
   creator: "uncvpro.fr",
@@ -54,14 +64,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fr_FR",
     url: "https://uncvpro.fr",
-    title: "uncvpro.fr - Créez votre CV professionnel en 5 minutes",
-    description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise.",
+    title: "Créer un CV Gratuit en Ligne | CV Professionnel - uncvpro.fr",
+    description: "Créer CV gratuit en ligne : 15+ modèles professionnels, sans inscription. Faire un CV moderne et le télécharger en PDF gratuitement.",
     siteName: "uncvpro.fr",
   },
   twitter: {
     card: "summary_large_image",
-    title: "uncvpro.fr - Créez votre CV professionnel en 5 minutes",
-    description: "Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs.",
+    title: "Créer un CV Gratuit en Ligne | CV Professionnel - uncvpro.fr",
+    description: "Créer CV gratuit en ligne : 15+ modèles professionnels, sans inscription. Faire un CV moderne en PDF gratuitement.",
   },
   verification: {
     google: "google-site-verification-code", // À remplacer par votre code
@@ -82,6 +92,9 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className={`${inter.variable} antialiased`}>
+        {process.env.NEXT_PUBLIC_GTM_ID && (
+          <GoogleTagManager GTM_ID={process.env.NEXT_PUBLIC_GTM_ID} />
+        )}
         {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
           <GoogleAnalytics GA_MEASUREMENT_ID={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
         )}
