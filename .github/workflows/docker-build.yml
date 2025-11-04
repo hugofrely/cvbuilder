@@ -9,6 +9,7 @@ env:
   REGISTRY: registry.frely.fr
   IMAGE_NAME: cvbuilder
   NEXT_PUBLIC_API_URL: https://api.uncvpro.fr
+  NEXT_PUBLIC_BASE_URL: https://uncvpro.fr
   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_51SNWHR2Vp7eF2jdKICcwrEgWMRhEI5e9SuhCXaWHW6S0wnGencnfd2GgtqVZbhhAeQEoFdRdbl7xaW9vF2V6YEMx00RdVWIBnZ
   NEXT_PUBLIC_SUPABASE_URL: https://yxkhydsttvkkkpqhjwtx.supabase.co
   NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl4a2h5ZHN0dHZra2twcWhqd3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIwNTM5NTcsImV4cCI6MjA3NzYyOTk1N30.Z-tSRtlnZS3sTBmE4w4aaRmEm2dtGq_vPSWva9o4lWE
