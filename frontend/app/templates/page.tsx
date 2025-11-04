@@ -89,7 +89,14 @@ export default function TemplatesPage() {
       }
 
       const data = await templateApi.getAll(params);
-      setTemplates(data.results);
+      // Transform thumbnail URLs to paths for Next.js Image component
+      const templatesWithFixedThumbnails = data.results.map((template: Template) => ({
+        ...template,
+        thumbnail: template.thumbnail && template.thumbnail.startsWith('http')
+          ? new URL(template.thumbnail).pathname
+          : template.thumbnail
+      }));
+      setTemplates(templatesWithFixedThumbnails);
       setTotalCount(data.count);
     } catch (err) {
       setError('Erreur lors du chargement des templates');
