@@ -3,6 +3,7 @@ import { resumeApi } from '@/lib/api/resume';
 import { Resume, SaveStatus } from '@/types/resume';
 import { CVData } from '@/types/cv';
 import { mapCVDataToResume, mapResumeToCVData } from '@/lib/services/resumeMapper';
+import { trackCVExported, trackCVCreated } from '@/lib/analytics';
 
 interface UseResumeOptions {
   autoSave?: boolean;
@@ -128,6 +129,12 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
         if (finalResumeId) {
           localStorage.setItem('currentResumeId', finalResumeId);
         }
+
+        // Track CV creation event
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          const templateName = templateId || 'default';
+          trackCVCreated(templateName);
+        }
       }
 
       // Update last saved data hash
@@ -252,6 +259,11 @@ export function useResume(options: UseResumeOptions = {}): UseResumeReturn {
 
       // Clean up the blob URL
       window.URL.revokeObjectURL(blobUrl);
+
+      // Track CV export event
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        trackCVExported('pdf');
+      }
 
       return {
         filename: result.filename,

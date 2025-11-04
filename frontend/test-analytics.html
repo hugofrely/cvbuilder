@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Analytics - CVBuilder</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .event-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+        }
+        .event-section h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        .log {
+            background: #1e1e1e;
+            color: #4af626;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+        }
+        .success {
+            color: #4af626;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+        .info {
+            color: #4dabf7;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.ready {
+            background: #51cf66;
+            color: white;
+        }
+        .status.not-ready {
+            background: #ff6b6b;
+            color: white;
+        }
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+        .instructions h4 {
+            margin-top: 0;
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test des événements Google Analytics</h1>
+        <p class="subtitle">Vérifier que les événements de tracking fonctionnent correctement</p>
+
+        <div class="instructions">
+            <h4>📋 Instructions</h4>
+            <ol>
+                <li>Ouvrez la console du navigateur (F12)</li>
+                <li>Installez l'extension <strong>Google Analytics Debugger</strong></li>
+                <li>Cliquez sur les boutons ci-dessous pour tester chaque événement</li>
+                <li>Vérifiez les logs dans la console et dans cette page</li>
+                <li>Allez dans GA4 → Rapports → Temps réel → Événements</li>
+            </ol>
+        </div>
+
+        <div id="status">
+            <h3>Statut Google Analytics <span id="ga-status" class="status not-ready">NON DÉTECTÉ</span></h3>
+            <p id="ga-id">Measurement ID: <code>Non configuré</code></p>
+        </div>
+
+        <hr>
+
+        <div class="event-section">
+            <h3>1. 💳 Payment Success</h3>
+            <p>Simule un paiement réussi avec un montant</p>
+            <button onclick="testPaymentSuccess()">Tester payment_success</button>
+            <p><small>Événement: <code>payment_success</code> | Catégorie: <code>conversion</code></small></p>
+        </div>
+
+        <div class="event-section">
+            <h3>2. 📥 CV Exported</h3>
+            <p>Simule l'export d'un CV en PDF</p>
+            <button onclick="testCVExported()">Tester cv_exported</button>
+            <p><small>Événement: <code>cv_exported</code> | Catégorie: <code>conversion</code></small></p>
+        </div>
+
+        <div class="event-section">
+            <h3>3. 🎨 CV Created</h3>
+            <p>Simule la création d'un nouveau CV</p>
+            <button onclick="testCVCreated()">Tester cv_created</button>
+            <p><small>Événement: <code>cv_created</code> | Catégorie: <code>engagement</code></small></p>
+        </div>
+
+        <div class="event-section">
+            <h3>4. 👁️ Template Viewed</h3>
+            <p>Simule la prévisualisation d'un template</p>
+            <button onclick="testTemplateViewed()">Tester template_viewed</button>
+            <p><small>Événement: <code>template_viewed</code> | Catégorie: <code>engagement</code></small></p>
+        </div>
+
+        <div class="event-section">
+            <h3>5. ⭐ Premium Click</h3>
+            <p>Simule le clic sur un template premium</p>
+            <button onclick="testPremiumClick()">Tester premium_click</button>
+            <p><small>Événement: <code>premium_click</code> | Catégorie: <code>engagement</code></small></p>
+        </div>
+
+        <hr>
+
+        <h3>📊 Logs en temps réel</h3>
+        <button onclick="clearLogs()">Effacer les logs</button>
+        <div class="log" id="log-container">
+            <div class="log-entry info">🔵 En attente d'événements...</div>
+        </div>
+    </div>
+
+    <script>
+        // Check if gtag is loaded
+        const GA_TRACKING_ID = 'G-XXXXXXXXXX'; // Replace with your actual ID
+
+        function checkGAStatus() {
+            const gaStatus = document.getElementById('ga-status');
+            const gaId = document.getElementById('ga-id');
+
+            if (typeof window.gtag !== 'undefined') {
+                gaStatus.textContent = 'DÉTECTÉ';
+                gaStatus.className = 'status ready';
+                gaId.innerHTML = `Measurement ID: <code>${GA_TRACKING_ID}</code>`;
+                addLog('✅ Google Analytics détecté et prêt', 'success');
+            } else {
+                gaStatus.textContent = 'NON DÉTECTÉ';
+                gaStatus.className = 'status not-ready';
+                gaId.innerHTML = `Measurement ID: <code>Non configuré</code>`;
+                addLog('⚠️ Google Analytics non détecté. Assurez-vous que gtag.js est chargé.', 'error');
+            }
+        }
+
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('log-container');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+
+            // Also log to console
+            console.log(`[Analytics Test] ${message}`);
+        }
+
+        function clearLogs() {
+            document.getElementById('log-container').innerHTML = '';
+            addLog('🔵 Logs effacés', 'info');
+        }
+
+        // Mock analytics functions
+        function event({ action, category, label, value }) {
+            if (typeof window.gtag !== 'undefined') {
+                window.gtag('event', action, {
+                    event_category: category,
+                    event_label: label,
+                    value: value,
+                });
+                addLog(`✅ Événement envoyé: ${action}`, 'success');
+                addLog(`   Catégorie: ${category}`, 'info');
+                if (label) addLog(`   Label: ${label}`, 'info');
+                if (value) addLog(`   Valeur: ${value}`, 'info');
+            } else {
+                addLog(`❌ Impossible d'envoyer ${action} - gtag non chargé`, 'error');
+            }
+        }
+
+        // Test functions
+        function testPaymentSuccess() {
+            addLog('🧪 Test: payment_success', 'info');
+            event({
+                action: 'payment_success',
+                category: 'conversion',
+                label: 'premium_purchase',
+                value: 9.99
+            });
+        }
+
+        function testCVExported() {
+            addLog('🧪 Test: cv_exported', 'info');
+            event({
+                action: 'cv_exported',
+                category: 'conversion',
+                label: 'pdf'
+            });
+        }
+
+        function testCVCreated() {
+            addLog('🧪 Test: cv_created', 'info');
+            event({
+                action: 'cv_created',
+                category: 'engagement',
+                label: 'Modern Template'
+            });
+        }
+
+        function testTemplateViewed() {
+            addLog('🧪 Test: template_viewed', 'info');
+            event({
+                action: 'template_viewed',
+                category: 'engagement',
+                label: 'Professional CV'
+            });
+        }
+
+        function testPremiumClick() {
+            addLog('🧪 Test: premium_click', 'info');
+            event({
+                action: 'premium_click',
+                category: 'engagement',
+                label: 'premium_button'
+            });
+        }
+
+        // Check GA status on load
+        window.addEventListener('load', () => {
+            setTimeout(checkGAStatus, 1000);
+        });
+    </script>
+</body>
+</html>

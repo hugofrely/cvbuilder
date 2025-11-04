@@ -39,6 +39,7 @@ import {
 } from '@mui/icons-material';
 import { templateApi } from '@/lib/api/template';
 import { Template, TemplateCategory } from '@/types/resume';
+import { trackTemplateViewed, trackPremiumClick } from '@/lib/analytics';
 
 interface TemplateSelectorProps {
   open: boolean;
@@ -160,6 +161,14 @@ export default function TemplateSelector({
 
   const handleSelect = () => {
     if (selectedId) {
+      // Track premium click if a premium template is selected
+      const selectedTemplate = templates.find(t => t.id === selectedId);
+      const isPremium = selectedTemplate?.isPremium || selectedTemplate?.is_premium;
+
+      if (isPremium && typeof window !== 'undefined' && (window as any).gtag) {
+        trackPremiumClick();
+      }
+
       // Check if CV is paid and template is different
       if (isPaidResume && selectedId !== currentTemplateId) {
         // Show duplicate dialog
@@ -201,6 +210,11 @@ export default function TemplateSelector({
     if (template.thumbnail) {
       setPreviewTemplate(template);
       setPreviewOpen(true);
+
+      // Track template preview event
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        trackTemplateViewed(template.name);
+      }
     }
   };
 

@@ -21,6 +21,7 @@ import {
   Error as ErrorIcon,
 } from '@mui/icons-material';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { trackPaymentSuccess } from '@/lib/analytics';
 
 function PaymentSuccessContent() {
   const theme = useTheme();
@@ -61,6 +62,12 @@ function PaymentSuccessContent() {
           setPaymentStatus('succeeded');
           setStatusMessage('Paiement confirmé avec succès');
           setLoading(false);
+
+          // Track payment success event
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            trackPaymentSuccess(data.amount || 0);
+          }
+
           return true; // Stop polling
         } else if (data.status === 'failed') {
           setPaymentStatus('failed');
