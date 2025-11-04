@@ -59,8 +59,8 @@ export default function Home() {
     },
     {
       icon: <CloudDownload sx={{ fontSize: 48 }} />,
-      title: 'Export multi-formats',
-      description: 'Téléchargez votre CV en PDF, Google Docs, Word ou OpenOffice en un clic',
+      title: 'Export PDF',
+      description: 'Téléchargez votre CV en PDF en un clic',
     },
     {
       icon: <CheckCircle sx={{ fontSize: 48 }} />,

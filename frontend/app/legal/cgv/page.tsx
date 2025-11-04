@@ -562,7 +562,7 @@ export default function CGVPage() {
               <Typography variant="body1" paragraph>
                 <strong>Raison sociale :</strong> uncvpro.fr<br />
                 <strong>Email :</strong> contact@uncvpro.fr<br />
-                <strong>Hébergeur :</strong> [À compléter avec les informations de l&apos;hébergeur]
+                <strong>Hébergeur :</strong> OVH SAS, 2 rue Kellermann, 59100 Roubaix, France
               </Typography>
             </Box>
           </Box>

@@ -51,31 +51,31 @@ function PaymentContent() {
   // Plan details
   const plans = {
     'pay-per-download': {
-      title: 'Paiement par CV',
+      title: 'Paiement par CV Premium',
       price: 2.40,
       paymentType: 'single' as const,
-      description: 'Export PDF de votre CV premium',
+      description: 'Parfait pour un besoin ponctuel',
       features: [
-        'Export PDF haute qualité',
-        'Téléchargement immédiat',
-        'Valable pour 1 CV premium',
-        'Sans abonnement',
+        'Accès à 1 modèle premium',
+        'Modifications illimitées',
+        'Téléchargements PDF illimités',
+        'Pas d\'abonnement',
+        'Sans inscription possible',
+        '1 template CV premium = 1 paiement',
       ],
       color: theme.palette.primary.main,
       icon: Download,
     },
     'premium': {
-      title: 'Premium à Vie',
+      title: 'Premium Illimité',
       price: 24.00,
       paymentType: 'lifetime' as const,
-      description: 'Accès illimité permanent à tous les modèles',
+      description: 'Pour créer tous vos CV sans limite',
       features: [
         'Tous les modèles premium',
-        'Export PDF illimité',
-        'Créez autant de CV que vous voulez',
-        'Accès à vie (paiement unique)',
-        'Support prioritaire',
-        'Nouvelles fonctionnalités incluses',
+        'Export PDF',
+        'CV illimités',
+        'Téléchargement de tous vos CV',
       ],
       color: theme.palette.warning.main,
       icon: WorkspacePremium,
@@ -480,19 +480,19 @@ function PaymentContent() {
                 <Box sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <Typography variant="body1" color="text.secondary">
-                      Sous-total
+                      Sous-total HT
                     </Typography>
                     <Typography variant="body1" fontWeight={600}>
-                      {selectedPlan.price.toFixed(2)}€
+                      {(selectedPlan.price / 1.20).toFixed(2)}€
                     </Typography>
                   </Box>
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
                     <Typography variant="body2" color="text.secondary">
-                      TVA (incluse)
+                      TVA 20% (incluse)
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      0,00€
+                      {(selectedPlan.price - (selectedPlan.price / 1.20)).toFixed(2)}€
                     </Typography>
                   </Box>
                 </Box>
