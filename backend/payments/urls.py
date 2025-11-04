@@ -4,7 +4,8 @@ from .views import (
     StripeWebhookView,
     PaymentListView,
     SubscriptionDetailView,
-    CancelSubscriptionView
+    CancelSubscriptionView,
+    CheckPaymentStatusView
 )
 
 app_name = 'payments'
@@ -17,6 +18,10 @@ urlpatterns = [
     # Stripe Webhook - Support both with and without trailing slash
     path('webhook/', StripeWebhookView.as_view(), name='stripe_webhook'),
     path('webhook', StripeWebhookView.as_view(), name='stripe_webhook_no_slash'),
+
+    # Payment Status Check
+    path('check-status/', CheckPaymentStatusView.as_view(), name='check_payment_status'),
+    path('check-status', CheckPaymentStatusView.as_view(), name='check_payment_status_no_slash'),
 
     # Payment & Subscription Management
     path('payments/', PaymentListView.as_view(), name='payment_list'),

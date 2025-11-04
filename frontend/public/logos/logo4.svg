@@ -1,0 +1,32 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo 4: C et V dans un design de badge/shield -->
+  <defs>
+    <linearGradient id="grad4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow4">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Shield/Badge shape -->
+  <path d="M 32 6 L 52 14 L 52 32 C 52 42 44 52 32 58 C 20 52 12 42 12 32 L 12 14 Z"
+        fill="url(#grad4)"
+        filter="url(#shadow4)"/>
+
+  <!-- Letter C - white/light -->
+  <path d="M 27 22 C 21 22 18 25.5 18 32 C 18 38.5 21 42 27 42 C 29.5 42 31.5 41.2 33 40"
+        stroke="#ffffff"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Letter V - white/light with accent -->
+  <path d="M 36 22 L 40.5 38 L 46 22"
+        stroke="#38bdf8"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

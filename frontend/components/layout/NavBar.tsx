@@ -29,6 +29,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CreateIcon from '@mui/icons-material/Create';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -116,15 +117,32 @@ export default function NavBar() {
           {/* Logo et titre */}
           <Link
             href="/"
-            style={{ textDecoration: 'none', color: 'inherit' }}
+            style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '12px' }}
             aria-label="UnCVpro.fr - Retour à l'accueil"
           >
+            <Box
+              sx={{
+                width: { xs: 32, sm: 40 },
+                height: { xs: 32, sm: 40 },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Image
+                src="/logo.svg"
+                alt="UnCVpro.fr Logo"
+                width={40}
+                height={40}
+                priority
+                style={{ width: '100%', height: 'auto' }}
+              />
+            </Box>
             <Typography
               variant="h6"
               component="div"
               noWrap
               sx={{
-                mr: { xs: 2, md: 4 },
                 fontWeight: 800,
                 cursor: 'pointer',
                 fontSize: { xs: '1.2rem', sm: '1.4rem' },
@@ -138,6 +156,8 @@ export default function NavBar() {
               <Box component="span" sx={{ fontWeight: 400 }}>Un</Box>CVpro<Box component="span" sx={{ fontWeight: 400 }}>.fr</Box>
             </Typography>
           </Link>
+
+          <Box sx={{ mr: { xs: 2, md: 4 } }} />
 
           {/* Navigation Desktop */}
           {!isMobile && (

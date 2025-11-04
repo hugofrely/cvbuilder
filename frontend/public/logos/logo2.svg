@@ -1,0 +1,29 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo 2: C et V dans un hexagone moderne -->
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Hexagon background -->
+  <path d="M 32 4 L 54 16 L 54 40 L 32 52 L 10 40 L 10 16 Z"
+        fill="url(#grad2)"
+        opacity="0.15"/>
+
+  <!-- Letter C - bold and modern -->
+  <path d="M 26 20 C 18 20 14 24 14 32 C 14 40 18 44 26 44 C 29 44 32 43 34 41"
+        stroke="#1e3a8a"
+        stroke-width="4.5"
+        fill="none"
+        stroke-linecap="round"/>
+
+  <!-- Letter V - bold and modern -->
+  <path d="M 36 20 L 41 38 L 50 20"
+        stroke="#0ea5e9"
+        stroke-width="4.5"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg>

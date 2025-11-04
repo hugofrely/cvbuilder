@@ -30,6 +30,11 @@ export const metadata: Metadata = {
   authors: [{ name: "uncvpro.fr" }],
   creator: "uncvpro.fr",
   publisher: "uncvpro.fr",
+  icons: {
+    icon: "/logo.svg",
+    shortcut: "/logo.svg",
+    apple: "/logo.svg",
+  },
   robots: {
     index: true,
     follow: true,

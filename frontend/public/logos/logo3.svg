@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo 3: C et V minimaliste avec forme géométrique -->
+  <defs>
+    <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#38bdf8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect x="8" y="8" width="48" height="48" rx="12" fill="url(#grad3)" opacity="0.12"/>
+
+  <!-- Letter C - filled style -->
+  <path d="M 27 18 C 20 18 16 22.5 16 32 C 16 41.5 20 46 27 46 C 30 46 33 45 35.5 43 L 33 38.5 C 31.5 39.5 29.5 40 27.5 40 C 23.5 40 22 37 22 32 C 22 27 23.5 24 27.5 24 C 29.5 24 31.5 24.5 33 25.5 L 35.5 21 C 33 19 30 18 27 18 Z"
+        fill="#1e3a8a"/>
+
+  <!-- Letter V - filled style -->
+  <path d="M 38 18 L 42 36 L 46 18 L 52 18 L 45 46 L 39 46 L 32 18 L 38 18 Z"
+        fill="#0ea5e9"/>
+</svg>

@@ -472,3 +472,61 @@ class CancelSubscriptionView(APIView):
                 'error': 'Stripe error',
                 'detail': str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CheckPaymentStatusView(APIView):
+    """
+    Check the status of a payment by session_id.
+    Used to poll payment status after Stripe checkout.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        session_id = request.query_params.get('session_id')
+        resume_id = request.query_params.get('resume_id')
+
+        if not session_id:
+            return Response({
+                'error': 'session_id is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Find payment by session_id
+            payment = Payment.objects.filter(
+                stripe_checkout_session_id=session_id
+            ).first()
+
+            if not payment:
+                return Response({
+                    'status': 'not_found',
+                    'message': 'Payment not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            # Check if payment is completed
+            is_completed = payment.status == 'succeeded'
+
+            # If resume_id provided, check if resume is paid
+            resume_paid = False
+            if resume_id:
+                try:
+                    from resumes.models import Resume
+                    resume = Resume.objects.get(id=resume_id)
+                    resume_paid = resume.is_paid
+                except Resume.DoesNotExist:
+                    pass
+
+            return Response({
+                'status': payment.status,
+                'payment_type': payment.payment_type,
+                'is_completed': is_completed,
+                'resume_paid': resume_paid,
+                'amount': str(payment.amount),
+                'currency': payment.currency,
+                'created_at': payment.created_at.isoformat(),
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'error': 'Failed to check payment status',
+                'detail': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
