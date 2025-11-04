@@ -10,6 +10,7 @@ import {
   Stack,
 } from '@mui/material';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Palette,
   CloudDownload,
@@ -362,7 +363,7 @@ export default function Home() {
       {/* CV Templates Showcase - Infinite Scroll Animation */}
       <Box
         component="section"
-        aria-label="Exemples de CV disponibles"
+        aria-labelledby="templates-showcase-title"
         sx={{
           bgcolor: 'background.default',
           py: { xs: 6, md: 10 },
@@ -374,6 +375,7 @@ export default function Home() {
           <Typography
             variant="h2"
             component="h2"
+            id="templates-showcase-title"
             sx={{
               fontSize: { xs: '1.75rem', md: '2.25rem' },
               fontWeight: 700,
@@ -399,6 +401,8 @@ export default function Home() {
 
         {/* Infinite Scroll Container */}
         <Box
+          role="group"
+          aria-label="Galerie de modèles de CV - Première rangée"
           sx={{
             '@keyframes scroll': {
               '0%': {
@@ -438,19 +442,19 @@ export default function Home() {
                 overflow: 'hidden',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                position: 'relative',
                 '&:hover': {
                   transform: 'scale(1.05)',
                   boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
                 },
               }}
             >
-              <Box
-                component="img"
+              <Image
                 src={`/${img}`}
-                alt={`Exemple de CV ${index + 1}`}
-                sx={{
-                  width: '100%',
-                  height: '100%',
+                alt={`Exemple de CV professionnel ${index + 1} - Modèle moderne`}
+                fill
+                sizes="280px"
+                style={{
                   objectFit: 'cover',
                   objectPosition: 'top',
                 }}
@@ -480,19 +484,19 @@ export default function Home() {
                 overflow: 'hidden',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                position: 'relative',
                 '&:hover': {
                   transform: 'scale(1.05)',
                   boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
                 },
               }}
             >
-              <Box
-                component="img"
+              <Image
                 src={`/${img}`}
-                alt={`Exemple de CV ${index + 1}`}
-                sx={{
-                  width: '100%',
-                  height: '100%',
+                alt={`Exemple de CV professionnel ${index + 1} - Modèle moderne`}
+                fill
+                sizes="280px"
+                style={{
                   objectFit: 'cover',
                   objectPosition: 'top',
                 }}
@@ -504,6 +508,8 @@ export default function Home() {
 
         {/* Second Row - Scrolling in opposite direction */}
         <Box
+          role="group"
+          aria-label="Galerie de modèles de CV - Deuxième rangée"
           sx={{
             '@keyframes scrollReverse': {
               '0%': {
@@ -544,19 +550,19 @@ export default function Home() {
                 overflow: 'hidden',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                position: 'relative',
                 '&:hover': {
                   transform: 'scale(1.05)',
                   boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
                 },
               }}
             >
-              <Box
-                component="img"
+              <Image
                 src={`/${img}`}
-                alt={`Exemple de CV ${index + 11}`}
-                sx={{
-                  width: '100%',
-                  height: '100%',
+                alt={`Exemple de CV professionnel ${index + 11} - Design élégant`}
+                fill
+                sizes="280px"
+                style={{
                   objectFit: 'cover',
                   objectPosition: 'top',
                 }}
@@ -586,19 +592,19 @@ export default function Home() {
                 overflow: 'hidden',
                 boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                 transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                position: 'relative',
                 '&:hover': {
                   transform: 'scale(1.05)',
                   boxShadow: '0 8px 30px rgba(0,0,0,0.15)',
                 },
               }}
             >
-              <Box
-                component="img"
+              <Image
                 src={`/${img}`}
-                alt={`Exemple de CV ${index + 11}`}
-                sx={{
-                  width: '100%',
-                  height: '100%',
+                alt={`Exemple de CV professionnel ${index + 11} - Design élégant`}
+                fill
+                sizes="280px"
+                style={{
                   objectFit: 'cover',
                   objectPosition: 'top',
                 }}

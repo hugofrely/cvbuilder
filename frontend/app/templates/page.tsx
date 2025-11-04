@@ -27,6 +27,7 @@ import {
   MenuItem,
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StarIcon from '@mui/icons-material/Star';
@@ -300,7 +301,7 @@ export default function TemplatesPage() {
 
           {/* Empty State */}
           {!loading && !error && templates.length === 0 && (
-            <Box sx={{ textAlign: 'center', py: 12 }} role="status">
+            <Box sx={{ textAlign: 'center', py: 12 }} role="status" aria-live="polite">
               <Typography variant="h3" color="text.secondary" gutterBottom sx={{ fontSize: '1.5rem' }}>
                 Aucun template disponible
               </Typography>
@@ -342,10 +343,22 @@ export default function TemplatesPage() {
                           transform: 'translateY(-8px)',
                           boxShadow: theme.shadows[12],
                         },
+                        '&:focus-within': {
+                          outline: '3px solid',
+                          outlineColor: 'primary.main',
+                          outlineOffset: '2px',
+                        },
                       }}
                       role="article"
                       aria-labelledby={`template-${template.id}-name`}
                       onClick={() => handleTemplateSelect(template)}
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleTemplateSelect(template);
+                        }
+                      }}
                     >
                         {/* Premium Badge */}
                         {isPremium && (
@@ -383,13 +396,12 @@ export default function TemplatesPage() {
                           aria-label={`Aperçu du modèle ${template.name}`}
                         >
                           {template.thumbnail ? (
-                            <Box
-                              component="img"
+                            <Image
                               src={template.thumbnail}
                               alt={`Aperçu du template ${template.name}`}
-                              sx={{
-                                width: '100%',
-                                height: '100%',
+                              fill
+                              sizes="(max-width: 600px) 100vw, (max-width: 960px) 50vw, 33vw"
+                              style={{
                                 objectFit: 'cover',
                                 objectPosition: 'top',
                               }}
@@ -492,12 +504,19 @@ export default function TemplatesPage() {
                             <Button
                               variant="outlined"
                               fullWidth
-                              startIcon={<VisibilityIcon />}
+                              startIcon={<VisibilityIcon aria-hidden="true" />}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleTemplateSelect(template);
                               }}
                               aria-label={`Prévisualiser le modèle ${template.name}`}
+                              sx={{
+                                '&:focus-visible': {
+                                  outline: '3px solid',
+                                  outlineColor: 'primary.main',
+                                  outlineOffset: '2px',
+                                },
+                              }}
                             >
                               Prévisualiser
                             </Button>
@@ -509,6 +528,13 @@ export default function TemplatesPage() {
                                 handleUseTemplate(template.id!);
                               }}
                               aria-label={`Utiliser le modèle ${template.name}`}
+                              sx={{
+                                '&:focus-visible': {
+                                  outline: '3px solid',
+                                  outlineColor: 'primary.dark',
+                                  outlineOffset: '2px',
+                                },
+                              }}
                             >
                               Utiliser
                             </Button>
@@ -642,7 +668,17 @@ export default function TemplatesPage() {
               Aperçu : {selectedTemplate?.name}
             </Typography>
           </Box>
-          <IconButton onClick={() => setPreviewOpen(false)} aria-label="Fermer la prévisualisation">
+          <IconButton
+            onClick={() => setPreviewOpen(false)}
+            aria-label="Fermer la prévisualisation"
+            sx={{
+              '&:focus-visible': {
+                outline: '3px solid',
+                outlineColor: 'primary.main',
+                outlineOffset: '2px',
+              },
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
@@ -660,16 +696,23 @@ export default function TemplatesPage() {
             <>
               {selectedTemplate.thumbnail ? (
                 <Box
-                  component="img"
-                  src={selectedTemplate.thumbnail}
-                  alt={`Aperçu détaillé du modèle ${selectedTemplate.name}`}
                   sx={{
+                    position: 'relative',
                     width: '100%',
-                    maxHeight: '80vh',
-                    objectFit: 'contain',
-                    display: 'block',
+                    minHeight: '60vh',
                   }}
-                />
+                >
+                  <Image
+                    src={selectedTemplate.thumbnail}
+                    alt={`Aperçu détaillé du modèle ${selectedTemplate.name}`}
+                    fill
+                    sizes="100vw"
+                    style={{
+                      objectFit: 'contain',
+                    }}
+                    priority
+                  />
+                </Box>
               ) : (
                 <Box
                   sx={{
@@ -696,6 +739,13 @@ export default function TemplatesPage() {
                   size="large"
                   onClick={() => handleUseTemplate(selectedTemplate.id!)}
                   aria-label={`Commencer avec le modèle ${selectedTemplate.name}`}
+                  sx={{
+                    '&:focus-visible': {
+                      outline: '3px solid',
+                      outlineColor: 'primary.dark',
+                      outlineOffset: '2px',
+                    },
+                  }}
                 >
                   Utiliser ce modèle
                 </Button>
