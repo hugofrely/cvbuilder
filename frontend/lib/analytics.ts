@@ -28,13 +28,6 @@ export const event = ({ action, category, label, value }: GTagEvent) => {
   }
 };
 
-// Meta Pixel Event Tracking
-export const trackMetaEvent = (eventName: string, params?: Record<string, any>) => {
-  if (typeof window !== 'undefined' && (window as any).fbq) {
-    (window as any).fbq('track', eventName, params);
-  }
-};
-
 // Custom event tracking helpers
 export const trackCVCreated = (templateName: string) => {
   event({
@@ -42,7 +35,6 @@ export const trackCVCreated = (templateName: string) => {
     category: 'engagement',
     label: templateName,
   });
-  trackMetaEvent('Lead', { template: templateName });
 };
 
 export const trackCVExported = (format: string) => {
@@ -51,7 +43,6 @@ export const trackCVExported = (format: string) => {
     category: 'conversion',
     label: format,
   });
-  trackMetaEvent('Purchase', { format: format, value: 0, currency: 'EUR' });
 };
 
 export const trackTemplateViewed = (templateName: string) => {
@@ -68,7 +59,6 @@ export const trackPremiumClick = () => {
     category: 'engagement',
     label: 'premium_button',
   });
-  trackMetaEvent('InitiateCheckout');
 };
 
 export const trackPaymentSuccess = (amount: number) => {
@@ -78,5 +68,4 @@ export const trackPaymentSuccess = (amount: number) => {
     label: 'premium_purchase',
     value: amount,
   });
-  trackMetaEvent('Purchase', { value: amount, currency: 'EUR' });
 };
