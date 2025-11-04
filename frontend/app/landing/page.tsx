@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Button,
-  Grid,
   Card,
   CardContent,
   Stack,
@@ -183,48 +182,64 @@ export default function LandingPage() {
           >
             Pourquoi choisir uncvpro.fr ?
           </Typography>
-          <Grid container spacing={4}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: {
+                xs: '1fr',
+                md: 'repeat(3, 1fr)',
+              },
+              gap: 4,
+            }}
+          >
             {benefits.map((benefit, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Card
-                  elevation={0}
-                  sx={{
-                    height: '100%',
-                    p: 3,
-                    textAlign: 'center',
-                    border: '2px solid',
-                    borderColor: 'primary.main',
-                    borderRadius: 2,
-                  }}
-                >
-                  <CardContent>
-                    <Box
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        borderRadius: 2,
-                        background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.light} 100%)`,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '0 auto',
-                        mb: 2,
-                        color: 'white',
-                      }}
-                    >
-                      {benefit.icon}
-                    </Box>
-                    <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
-                      {benefit.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {benefit.description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
+              <Card
+                key={index}
+                elevation={0}
+                sx={{
+                  height: '100%',
+                  width: '100%',
+                  p: 3,
+                  textAlign: 'center',
+                  border: '2px solid',
+                  borderColor: 'primary.main',
+                  borderRadius: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <CardContent sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  width: '100%'
+                }}>
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 2,
+                      background: `linear-gradient(135deg, ${themeColors.primary.main} 0%, ${themeColors.primary.light} 100%)`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mb: 2,
+                      color: 'white',
+                    }}
+                  >
+                    {benefit.icon}
+                  </Box>
+                  <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, textAlign: 'center' }}>
+                    {benefit.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+                    {benefit.description}
+                  </Typography>
+                </CardContent>
+              </Card>
             ))}
-          </Grid>
+          </Box>
         </Container>
       </Box>
 
@@ -240,7 +255,7 @@ export default function LandingPage() {
           >
             En 3 étapes simples
           </Typography>
-          <Stack spacing={3}>
+          <Stack spacing={3} alignItems="center">
             {steps.map((step, index) => (
               <Card
                 key={index}
@@ -250,9 +265,11 @@ export default function LandingPage() {
                   border: '1px solid',
                   borderColor: 'divider',
                   borderRadius: 2,
+                  width: '100%',
+                  textAlign: 'center',
                 }}
               >
-                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, textAlign: 'center' }}>
                   {step}
                 </Typography>
               </Card>
