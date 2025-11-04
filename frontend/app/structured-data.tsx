@@ -15,13 +15,6 @@ export function StructuredData() {
           price: '0',
           priceCurrency: 'EUR',
         },
-        aggregateRating: {
-          '@type': 'AggregateRating',
-          ratingValue: '4.8',
-          ratingCount: '10000',
-          bestRating: '5',
-          worstRating: '1',
-        },
         description:
           'Créez votre CV professionnel en ligne gratuitement. Plus de 15 templates modernes, export PDF/Word/Docs. Sans inscription requise.',
         url: 'https://uncvpro.fr',
