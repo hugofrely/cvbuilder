@@ -11,6 +11,8 @@ import Contentsquare from "@/components/analytics/Contentsquare";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: 'swap',
+  preload: true,
 });
 
 export const metadata: Metadata = {

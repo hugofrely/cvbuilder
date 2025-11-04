@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Box } from '@mui/material';
+import Image from 'next/image';
 
 const cvImages = [
   '023f0553-baf8-4bab-9a4e-d80801426bb6-two-column-elegant.png',
@@ -54,17 +55,12 @@ export default function HeroCarousel() {
         {cvImages.map((img, index) => (
           <Box
             key={img}
-            component="img"
-            src={`/${img}`}
-            alt={`Exemple de CV professionnel ${index + 1}`}
             sx={{
               position: 'absolute',
               top: 0,
               left: 0,
               width: '100%',
               height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'top',
               borderRadius: 3,
               boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
               border: '3px solid rgba(255,255,255,0.3)',
@@ -72,9 +68,21 @@ export default function HeroCarousel() {
               transform: currentIndex === index ? 'scale(1)' : 'scale(0.95)',
               transition: 'opacity 0.8s ease-in-out, transform 0.8s ease-in-out',
               zIndex: currentIndex === index ? 1 : 0,
+              overflow: 'hidden',
             }}
-            loading={index === 0 ? 'eager' : 'lazy'}
-          />
+          >
+            <Image
+              src={`/${img}`}
+              alt={`Exemple de CV professionnel ${index + 1}`}
+              fill
+              sizes="400px"
+              style={{
+                objectFit: 'cover',
+                objectPosition: 'top',
+              }}
+              priority={index === 0}
+            />
+          </Box>
         ))}
       </Box>
 

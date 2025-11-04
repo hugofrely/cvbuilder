@@ -7,7 +7,7 @@ export default function Contentsquare({ CONTENTSQUARE_ID }: { CONTENTSQUARE_ID: 
     <Script
       id="contentsquare"
       src={`https://t.contentsquare.net/uxa/${CONTENTSQUARE_ID}.js`}
-      strategy="afterInteractive"
+      strategy="lazyOnload"
     />
   );
 }
